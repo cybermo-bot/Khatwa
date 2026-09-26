@@ -262,10 +262,13 @@ class AiGateway {
       'contents': [
         {'role': 'user', 'parts': parts}
       ],
+      // Gemini 3 models think before answering and the thinking counts
+      // against maxOutputTokens: keep it low and leave room for the JSON.
       'generationConfig': {
         'temperature': 0.2,
-        'maxOutputTokens': 1400,
+        'maxOutputTokens': 4096,
         'responseMimeType': 'application/json',
+        'thinkingConfig': {'thinkingLevel': 'low'},
       },
       'safetySettings': const <Map<String, String>>[],
     });
@@ -415,7 +418,11 @@ class AiGateway {
               headers: _headers,
               body: jsonEncode({
                 'contents': contents,
-                'generationConfig': {'temperature': 0.4, 'maxOutputTokens': 700},
+                'generationConfig': {
+                  'temperature': 0.4,
+                  'maxOutputTokens': 1024,
+                  'thinkingConfig': {'thinkingLevel': 'low'},
+                },
               }),
             )
             .timeout(const Duration(seconds: 40));
