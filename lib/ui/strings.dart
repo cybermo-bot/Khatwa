@@ -81,6 +81,108 @@ class S {
     'home.history': ['السجل', 'السجل', 'Historique', 'History'],
     'home.tools': ['المتابعة اليومية', 'المتابعة', 'Suivi quotidien', 'Daily follow-up'],
     'home.profile': ['ملفي الطبي', 'الملف متاعي', 'Mon dossier médical', 'My medical record'],
+    // Monday first, one entry per day, comma separated.
+    'week.initials': ['ن,ث,ر,خ,ج,س,ح', 'ن,ث,ر,خ,ج,س,ح', 'L,M,M,J,V,S,D', 'M,T,W,T,F,S,S'],
+    'week.names': [
+      'الإثنين,الثلاثاء,الأربعاء,الخميس,الجمعة,السبت,الأحد',
+      'الاثنين,الثلاثاء,الاربعاء,الخميس,الجمعة,السبت,الأحد',
+      'Lundi,Mardi,Mercredi,Jeudi,Vendredi,Samedi,Dimanche',
+      'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday'
+    ],
+    // Tunisia uses the French-derived month names in Arabic and derja.
+    'month.names': [
+      'جانفي,فيفري,مارس,أفريل,ماي,جوان,جويلية,أوت,سبتمبر,أكتوبر,نوفمبر,ديسمبر',
+      'جانفي,فيفري,مارس,أفريل,ماي,جوان,جويلية,أوت,سبتمبر,أكتوبر,نوفمبر,ديسمبر',
+      'Janvier,Février,Mars,Avril,Mai,Juin,Juillet,Août,Septembre,Octobre,Novembre,Décembre',
+      'January,February,March,April,May,June,July,August,September,October,November,December'
+    ],
+    'home.nextTomorrow': ['الفحص القادم غدا', 'الفحص الجاي غدوة', 'Prochain contrôle demain', 'Next check tomorrow'],
+    'home.seeToday': ['عرض نتيجة اليوم', 'شوف نتيجة اليوم', 'Voir le résultat du jour', "See today's result"],
+    'home.week': ['هذا الأسبوع', 'الجمعة هاذي', 'Cette semaine', 'This week'],
+    'home.group.track': ['المتابعة', 'المتابعة', 'Suivi', 'Tracking'],
+    'home.group.learn': ['تعلّم', 'تعلّم', 'Apprendre', 'Learn'],
+    'home.group.care': ['التواصل مع الفريق الطبي', 'الطبة والمساعدة', 'Équipe de soins', 'Care team'],
+    'tab.today': ['اليوم', 'اليوم', 'Aujourd’hui', 'Today'],
+    'tab.check': ['الفحص', 'الفحص', 'Contrôle', 'Check'],
+    'tab.journal': ['السجل', 'السجل', 'Journal', 'Journal'],
+    'tab.learn': ['تعلّم', 'تعلّم', 'Apprendre', 'Learn'],
+    'tab.me': ['أنا', 'أنا', 'Moi', 'Me'],
+    'today.care': ['عنايتك اليوم', 'العناية متاعك اليوم', 'Vos soins du jour', 'Your care today'],
+    'today.care.check': ['فحص القدمين', 'فحص الساقين', 'Examiner les pieds', 'Check your feet'],
+    'today.care.wash': ['الغسل بماء فاتر', 'الغسيل بماء دافي', 'Laver à l’eau tiède', 'Wash in lukewarm water'],
+    'today.care.dry': ['التجفيف بين الأصابع', 'التنشيف بين الصوابع', 'Sécher entre les orteils', 'Dry between the toes'],
+    'today.care.cream': ['الترطيب، ليس بين الأصابع', 'الكريمة، موش بين الصوابع', 'Hydrater, pas entre les orteils', 'Moisturise, not between the toes'],
+    'today.care.shoes': ['تفقد الحذاء من الداخل', 'شوف الصباط من الداخل', 'Vérifier l’intérieur des chaussures', 'Check inside your shoes'],
+    'today.care.done': ['تم', 'تعمل', 'Fait', 'Done'],
+    'today.glucose': ['آخر قياس للسكر', 'آخر قيس للسكر', 'Dernière glycémie', 'Last blood sugar'],
+    'today.glucose.none': ['لم تسجل أي قياس بعد', 'مازال ما سجلت حتى قيس', 'Aucune mesure enregistrée', 'No reading yet'],
+    'today.glucose.add': ['إضافة قياس', 'زيد قيس', 'Ajouter une mesure', 'Add a reading'],
+    'today.photosOf': ['صور من 4', 'تصاور من 4', 'photos sur 4', 'of 4 photos'],
+    'check.daily': ['الفحص اليومي', 'الفحص اليومي', 'Contrôle du jour', 'Daily check'],
+    'check.daily.what': [
+      '4 صور للقدمين، ثم أسئلة قصيرة',
+      '4 تصاور للساقين، ومن بعد شوية أسئلة',
+      '4 photos des pieds, puis quelques questions',
+      '4 photos of your feet, then a few short questions'
+    ],
+    'check.positions': ['ماذا نصوّر', 'شنوّة نصوّرو', 'Ce que l’on photographie', 'What we photograph'],
+    'check.more': ['اختبارات أخرى', 'اختبارات أخرى', 'Autres examens', 'Other checks'],
+    'check.soon': [
+      'قريبا: صور بين الأصابع والكعب من الخلف، وفحص أسبوعي كامل.',
+      'قريب: تصاور بين الصوابع والكعب من تالي، وفحص كامل كل جمعة.',
+      'Bientôt : photos entre les orteils et du talon, et un contrôle complet chaque semaine.',
+      'Coming next: photos between the toes and of the heel, and a full weekly check.'
+    ],
+    'journal.empty': [
+      'لا شيء في هذا اليوم',
+      'ما فمّا شي في النهار هذا',
+      'Rien ce jour-là',
+      'Nothing on this day'
+    ],
+    'journal.check': ['فحص القدمين', 'فحص الساقين', 'Contrôle des pieds', 'Foot check'],
+    'journal.glucose': ['السكر', 'السكر', 'Glycémie', 'Blood sugar'],
+    'journal.log': ['سجّل حال قدميك', 'سجّل كيفاش ساقيك', 'Noter l’état de mes pieds', 'Log how my feet feel'],
+    'journal.logShort': ['ملاحظة', 'ملاحظة', 'Note', 'Log'],
+    'journal.logTitle': ['كيف حال قدميك اليوم؟', 'كيفاش ساقيك اليوم؟', 'Comment vont vos pieds aujourd’hui ?', 'How do your feet feel today?'],
+    'journal.logHint': ['اختر كل ما ينطبق', 'اختار الكل اللي صحيح', 'Choisissez tout ce qui s’applique', 'Choose all that apply'],
+    'journal.none': ['لا شيء غير عادي', 'ما فمّا حتى شي', 'Rien de particulier', 'Nothing unusual'],
+    'journal.note': ['ملاحظة (اختياري)', 'ملاحظة (موش لازم)', 'Note (facultatif)', 'Note (optional)'],
+    'journal.saved': ['تم الحفظ', 'تسجّل', 'Enregistré', 'Saved'],
+    'journal.flag': [
+      'علامة جديدة أو انتفاخ: افحص قدميك اليوم.',
+      'علامة جديدة ولا نفخة: أفحص ساقيك اليوم.',
+      'Nouvelle marque ou gonflement : faites un contrôle aujourd’hui.',
+      'A new mark or swelling: check your feet today.'
+    ],
+    'journal.checkNow': ['افحص الآن', 'أفحص توّا', 'Contrôler', 'Check now'],
+    'sym.pain': ['ألم', 'وجيعة', 'Douleur', 'Pain'],
+    'sym.tingling': ['تنميل أو حرقة', 'تنميل ولا حرقان', 'Fourmillements, brûlures', 'Tingling or burning'],
+    'sym.numbness': ['نقص الإحساس', 'ما نحسّش', 'Engourdissement', 'Numbness'],
+    'sym.swelling': ['انتفاخ', 'نفخة', 'Gonflement', 'Swelling'],
+    'sym.newMark': ['علامة أو بقعة جديدة', 'علامة جديدة', 'Nouvelle marque ou tache', 'New mark or spot'],
+    'sym.rubbing': ['الحذاء يحتك', 'الصباط يحكّ', 'La chaussure frotte', 'Shoe rubbing'],
+    'sym.cold': ['قدم باردة', 'ساق باردة', 'Pied froid', 'Cold feet'],
+    'sym.itching': ['حكة', 'حكّان', 'Démangeaisons', 'Itching'],
+    'me.health': ['صحتي', 'صحتي', 'Ma santé', 'My health'],
+    'me.record': ['ملفي الطبي', 'الملف متاعي', 'Mon dossier médical', 'My medical record'],
+    'me.team': ['فريقي الطبي', 'الطبة متاعي', 'Mon équipe de soins', 'My care team'],
+    'me.more': ['أدوات أخرى', 'حاجات أخرى', 'Autres outils', 'More tools'],
+    'me.app': ['التطبيق', 'التطبيق', 'Application', 'App'],
+    'me.privacy': ['الخصوصية والأمان', 'الخصوصية والأمان', 'Confidentialité et sécurité', 'Privacy and security'],
+    'settings.skin': ['لون البشرة في الرسوم', 'لون الجلد في الرسومات', 'Teinte de peau des dessins', 'Skin tone in the drawings'],
+    'settings.skinHint': [
+      'اختر اللون الأقرب لقدميك: الاحمرار وتغيّر اللون يظهران بشكل مختلف حسب البشرة.',
+      'اختار اللون الأقرب لساقيك: الحمورية وتبديل اللون يبانو بطريقة مختلفة.',
+      'Choisissez la teinte la plus proche de vos pieds : rougeur et changement de couleur ne se voient pas de la même façon.',
+      'Pick the tone closest to your feet: redness and colour change look different on different skin.'
+    ],
+    'settings.skin.fair': ['فاتحة', 'فاتح', 'Claire', 'Fair'],
+    'settings.skin.medium': ['متوسطة', 'متوسط', 'Moyenne', 'Medium'],
+    'settings.skin.deep': ['داكنة', 'غامق', 'Foncée', 'Deep'],
+    'settings.theme': ['المظهر', 'الشكل', 'Apparence', 'Appearance'],
+    'settings.theme.system': ['حسب الهاتف', 'كيف التليفون', 'Téléphone', 'Match phone'],
+    'settings.theme.light': ['فاتح', 'فاتح', 'Clair', 'Light'],
+    'settings.theme.dark': ['داكن', 'غامق', 'Sombre', 'Dark'],
     'home.streak': ['أيام متتالية', 'أيام متواصلة', 'jours de suite', 'day streak'],
     'tool.glycemia': ['السكري في الدم', 'السكر', 'Glycémie', 'Blood glucose'],
     'tool.temperature': ['الحرارة', 'الحرارة', 'Température', 'Temperature'],
@@ -146,6 +248,8 @@ class S {
       'Place the foot inside the shape, in good light'
     ],
     'capture.done': ['تم', 'سالم', 'Terminé', 'Done'],
+    'capture.adjust': ['حرّك الإطار بإصبع واحد وغيّر حجمه بإصبعين حتى يناسب قدمك', 'حرّك الرسمة بصبعك، وكبّرها ولا صغّرها بزوز صوابع باش توافق رجلك', 'Déplacez le repère avec un doigt, redimensionnez-le avec deux', 'Drag the outline with one finger, pinch with two to resize'],
+    'capture.reset': ['إعادة الضبط', 'رجّعها كيف كانت', 'Réinitialiser', 'Reset'],
     'analyse.s1': [
       'تحضير الصور',
       'نحضّرو التصاور',
@@ -155,7 +259,7 @@ class S {
     'analyse.s2': [
       'قراءة الصور بالذكاء الاصطناعي',
       'قراية التصاور بالذكاء الاصطناعي',
-      'Lecture des images par l IA',
+      'Lecture des images par l’IA',
       'Reading the images with AI'
     ],
     'analyse.s2offline': [
@@ -176,7 +280,7 @@ class S {
       'Rédaction du compte rendu',
       'Writing the report'
     ],
-    'level.none': ['لا توجد إشارات إنذار', 'كل شيء مليح لليوم', 'Aucun signe d alerte', 'No warning sign'],
+    'level.none': ['لا توجد إشارات إنذار', 'ما فماش علامات إنذار', 'Aucun signe d’alerte', 'No warning sign'],
     'level.yellow': ['يحتاج متابعة', 'لازم تتبّع', 'Surveillance rapprochée', 'Needs monitoring'],
     'level.red': ['استشر طبيبا بسرعة', 'أمشي للطبيب فيسع', 'Consultez rapidement', 'See a professional quickly'],
     'level.label.none': ['أخضر', 'أخضر', 'Vert', 'Green'],
@@ -236,7 +340,7 @@ class S {
     'glu.status.out': ['خارج المجال', 'برا المجال', 'Hors cible', 'Out of range'],
     'glu.status.critical': ['قيمة حرجة، استشر', 'قيمة خطيرة، شوف طبيب', 'Valeur critique, consultez', 'Critical value, consult'],
     'well.subtitle': ['كيف تشعر اليوم', 'كيفاش راك اليوم', 'Comment vous sentez-vous', 'How you feel today'],
-    'well.question': ['كيف حالك اليوم؟', 'كيفاش راك اليوم؟', 'Comment allez-vous aujourd hui ?', 'How are you today?'],
+    'well.question': ['كيف حالك اليوم؟', 'كيفاش راك اليوم؟', 'Comment allez-vous aujourd’hui ?', 'How are you today?'],
     'well.mood0': ['صعب جدا', 'صعيبة برشة', 'Très difficile', 'Very hard'],
     'well.mood1': ['صعب', 'صعيبة', 'Difficile', 'Hard'],
     'well.mood2': ['عادي', 'عادي', 'Moyen', 'Okay'],
@@ -244,14 +348,14 @@ class S {
     'well.mood4': ['ممتاز', 'باهي برشة', 'Très bien', 'Very good'],
     'well.feelings': ['ما تشعر به', 'إلي تحس بيه', 'Ce que vous ressentez', 'What you feel'],
     'well.tired': ['متعب', 'عيان', 'Fatigué', 'Tired'],
-    'well.pain': ['عندي ألم', 'عندي وجيعة', 'J ai mal', 'In pain'],
+    'well.pain': ['عندي ألم', 'عندي وجيعة', 'J’ai mal', 'In pain'],
     'well.worried': ['قلق', 'قلقان', 'Inquiet', 'Worried'],
     'well.motivated': ['متحفز', 'عندي إرادة', 'Motivé', 'Motivated'],
     'well.calm': ['هادئ', 'مرتاح', 'Calme', 'Calm'],
     'well.alone': ['وحيد', 'وحدي', 'Seul', 'Alone'],
     'well.note': ['ملاحظة', 'ملاحظة', 'Note', 'Note'],
     'well.recent': ['الأيام الأخيرة', 'الأيام لي فاتوا', 'Ces derniers jours', 'Recent days'],
-    'well.pickMood': ['اختر حالتك أولا', 'إختار كيفاش راك', 'Choisissez d abord votre état', 'Pick how you feel first'],
+    'well.pickMood': ['اختر حالتك أولا', 'إختار كيفاش راك', 'Choisissez d’abord votre état', 'Pick how you feel first'],
     'well.saved': ['تم الحفظ ✓', 'تسجل ✓', 'Enregistré ✓', 'Saved ✓'],
     'well.support': [
       'إذا كانت الأيام صعبة باستمرار، تحدث مع طبيبك أو شخص تثق به.',
@@ -263,14 +367,14 @@ class S {
     'report.findings': ['ما تمت ملاحظته', 'إلي تلاحظ', 'Observations', 'Observations'],
     'report.advice': ['ما العمل الآن', 'شنوا تعمل توا', 'Que faire maintenant', 'What to do now'],
     'report.send': ['أرسل إلى طبيب', 'إبعثها للطبيب', 'Envoyer à un professionnel', 'Send to a professional'],
-    'report.sent': ['تم الإرسال ✓ سيراجع الطبيب الحالة', 'تبعثت ✓ الطبيب باش يشوفها', 'Envoyé ✓ un professionnel va l examiner', 'Sent ✓ a professional will review it'],
+    'report.sent': ['تم الإرسال ✓ سيراجع الطبيب الحالة', 'تبعثت ✓ الطبيب باش يشوفها', 'Envoyé ✓ un professionnel va l’examiner', 'Sent ✓ a professional will review it'],
     'report.sentAlready': ['أُرسل إلى الطبيب', 'تبعثت للطبيب', 'Envoyé au professionnel', 'Sent to professional'],
     'report.source.ai': ['تحليل بالذكاء الاصطناعي + قواعد سريرية', 'تحليل ذكي + قواعد طبية', 'Analyse IA + règles cliniques', 'AI analysis + clinical rules'],
     'report.source.rules': ['قواعد سريرية فقط (بدون اتصال)', 'قواعد طبية برك (ما فماش إنترنت)', 'Règles cliniques seules (hors ligne)', 'Clinical rules only (offline)'],
     'report.disclaimer': [
       'هذا ليس تشخيصا. التطبيق يساعد على الرصد والفرز فقط، والقرار النهائي للطبيب.',
       'هذا موش تشخيص. التطبيق يعاون على الرصد برك، والقرار يرجع للطبيب.',
-      'Ceci n est pas un diagnostic. L outil aide au repérage et au triage ; la décision revient au professionnel.',
+      'Ceci n’est pas un diagnostic. L’outil aide au repérage et au triage ; la décision revient au professionnel.',
       'This is not a diagnosis. The tool supports detection and triage; the decision belongs to the professional.'
     ],
     'report.quality': ['جودة الصور', 'جودة التصاور', 'Qualité des photos', 'Photo quality'],
@@ -308,7 +412,7 @@ class S {
     'settings.keyHint': [
       'يُحفظ على هذا الجهاز فقط. بدونه يعمل التطبيق بالقواعد السريرية.',
       'يتحفظ في التليفون برك. من غيرو التطبيق يخدم بالقواعد الطبية.',
-      'Stockée uniquement sur cet appareil. Sans clé, l app fonctionne avec les règles cliniques.',
+      'Stockée uniquement sur cet appareil. Sans clé, l’app fonctionne avec les règles cliniques.',
       'Stored on this device only. Without it the app runs on clinical rules.'
     ],
     'settings.keyMissing': [
@@ -344,13 +448,13 @@ class S {
     'consent.share': [
       'أوافق على إرسال هذا الفحص إلى طبيب',
       'نوافق باش يتبعث الفحص هذا لطبيب',
-      'J accepte de transmettre ce contrôle à un professionnel',
+      'J’accepte de transmettre ce contrôle à un professionnel',
       'I agree to send this check to a professional'
     ],
     'consent.identity': [
       'أوافق على إظهار اسمي (بدونه يظهر رمز فقط)',
       'نوافق باش يبان إسمي (كان لا يبان كود برك)',
-      'J accepte d être identifié (sinon un pseudonyme est affiché)',
+      'J’accepte d’être identifié (sinon un pseudonyme est affiché)',
       'I agree to be identified (otherwise a pseudonym is shown)'
     ],
     'security.title': ['الأمان', 'الأمان', 'Sécurité', 'Security'],
@@ -369,11 +473,11 @@ class S {
     'security.idle': [
       'يتم تسجيل الخروج تلقائيا بعد 10 دقائق دون نشاط',
       'يخرجك تلقائي بعد 10 دقايق بلا حركة',
-      'Déconnexion automatique après 10 minutes d inactivité',
+      'Déconnexion automatique après 10 minutes d’inactivité',
       'Automatic sign out after 10 minutes of inactivity'
     ],
     'security.audit': ['سجل الوصول', 'سجل الوصول', 'Traçabilité des accès', 'Access trail'],
-    'security.reveal': ['إظهار الهوية', 'ورّي الهوية', 'Révéler l identité', 'Reveal identity'],
+    'security.reveal': ['إظهار الهوية', 'ورّي الهوية', 'Révéler l’identité', 'Reveal identity'],
     'security.masked': ['هوية مخفية', 'الهوية مخفية', 'Identité masquée', 'Identity masked'],
     'audit.submit': ['إرسال من المريض', 'تبعثت من المريض', 'Transmis par le patient', 'Submitted by patient'],
     'audit.open': ['فتح الملف', 'حل الملف', 'Consultation du dossier', 'Case opened'],
@@ -430,7 +534,7 @@ class S {
     'compare.title': ['المقارنة مع الفحص السابق', 'المقارنة مع الفحص لي قبل', 'Comparaison avec le contrôle précédent', 'Compared with the previous check'],
     'compare.since': ['الفحص السابق:', 'الفحص لي قبل:', 'Contrôle précédent :', 'Previous check:'],
     'compare.before': ['سابقا', 'قبل', 'Avant', 'Before'],
-    'compare.now': ['اليوم', 'اليوم', 'Aujourd hui', 'Today'],
+    'compare.now': ['اليوم', 'اليوم', 'Aujourd’hui', 'Today'],
     'report.copy': ['نسخ التقرير', 'أنسخ التقرير', 'Copier le compte rendu', 'Copy the report'],
     'doctor.delay': [
       'متوسط زمن المراجعة',
@@ -439,6 +543,22 @@ class S {
       'Median review delay'
     ],
     'settings.textSize': ['حجم النص', 'كبر الكتابة', 'Taille du texte', 'Text size'],
+    'settings.textSize.1.0': ['عادي', 'عادي', 'Normal', 'Normal'],
+    'settings.textSize.1.15': ['كبير', 'كبير', 'Grand', 'Large'],
+    'settings.textSize.1.3': ['كبير جدًا', 'كبير برشة', 'Très grand', 'Extra large'],
+    'settings.about': [
+      'Future Health Connectathon 2026، التحدّي 3.1\nاكتشاف علامات الإنذار في القدم السكرية مبكرًا',
+      'Future Health Connectathon 2026، التحدّي 3.1\nنلقاو علامات الخطر في ساق السكّري بكري',
+      'Future Health Connectathon 2026, défi 3.1\nRepérer plus tôt les signes d’alerte du pied diabétique',
+      'Future Health Connectathon 2026, challenge 3.1\nSpot diabetic foot warning signs earlier'
+    ],
+    'settings.dev': ['خيارات المطوّر', 'خيارات المطوّر', 'Options développeur', 'Developer options'],
+    'settings.devOn': [
+      'تم تفعيل خيارات المطوّر',
+      'خيارات المطوّر تحلّت',
+      'Options développeur activées',
+      'Developer options on'
+    ],
     'settings.textSizeHint': [
       'للأشخاص الذين يجدون صعوبة في القراءة',
       'للي يقراو بصعوبة',
@@ -449,7 +569,7 @@ class S {
     'common.cancel': ['إلغاء', 'بطّل', 'Annuler', 'Cancel'],
     'common.close': ['إغلاق', 'سكّر', 'Fermer', 'Close'],
     'common.retry': ['إعادة المحاولة', 'عاود', 'Réessayer', 'Retry'],
-    'common.today': ['اليوم', 'اليوم', 'Aujourd hui', 'Today'],
+    'common.today': ['اليوم', 'اليوم', 'Aujourd’hui', 'Today'],
     'common.open': ['فتح', 'حلّ', 'Ouvrir', 'Open'],
     'common.error': ['حدث خطأ', 'صار مشكل', 'Une erreur est survenue', 'Something went wrong'],
   };

@@ -181,7 +181,7 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
         child: Column(
           children: [
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: K.paper,
                 border: Border(bottom: BorderSide(color: K.line)),
               ),
@@ -190,7 +190,7 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back_rounded, color: K.ink),
+                    icon: Icon(Icons.arrow_back_rounded, color: K.ink),
                   ),
                   Expanded(
                     child: Column(
@@ -232,7 +232,7 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: K.card,
                 border: Border(top: BorderSide(color: K.line)),
               ),
@@ -246,7 +246,7 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
                         child: TextField(
                           controller: controller,
                           onSubmitted: (_) => send(),
-                          style: const TextStyle(fontSize: 15, color: K.ink),
+                          style: TextStyle(fontSize: 15, color: K.ink),
                           decoration: InputDecoration(
                             hintText: '...',
                             filled: true,
@@ -255,11 +255,11 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
                                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(999),
-                              borderSide: const BorderSide(color: K.line),
+                              borderSide: BorderSide(color: K.line),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(999),
-                              borderSide: const BorderSide(color: K.primary, width: 1.5),
+                              borderSide: BorderSide(color: K.primary, width: 1.5),
                             ),
                           ),
                         ),

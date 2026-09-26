@@ -59,7 +59,7 @@ class ReportPage extends StatelessWidget {
           bottom: sent
               ? Row(
                   children: [
-                    const Icon(Icons.check_circle_outline_rounded, color: K.ok),
+                    Icon(Icons.check_circle_outline_rounded, color: K.ok),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(S.t(lang, 'report.sentAlready'),
@@ -323,7 +323,7 @@ class ReportBody extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.check_rounded, size: 17, color: K.primary),
+                        Icon(Icons.check_rounded, size: 17, color: K.primary),
                         const SizedBox(width: 10),
                         Expanded(child: Text(item, style: K.body)),
                       ],
@@ -376,7 +376,7 @@ class ReportBody extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.verified_outlined, color: K.ok, size: 18),
+                    Icon(Icons.verified_outlined, color: K.ok, size: 18),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text('${footCase.decision!['doctor'] ?? ''}', style: K.bodyStrong),

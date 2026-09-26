@@ -33,16 +33,18 @@ class SensoryCheckPage extends StatefulWidget {
 
 class _SensoryCheckPageState extends State<SensoryCheckPage> {
   static const points = <_TestPoint>[
-    _TestPoint('r_hallux', FootSide.right, 0.42, 0.13, 'sens.hallux'),
-    _TestPoint('r_met1', FootSide.right, 0.36, 0.28, 'sens.met1'),
-    _TestPoint('r_met3', FootSide.right, 0.52, 0.26, 'sens.met3'),
-    _TestPoint('r_met5', FootSide.right, 0.68, 0.32, 'sens.met5'),
-    _TestPoint('r_heel', FootSide.right, 0.50, 0.85, 'sens.heel'),
-    _TestPoint('l_hallux', FootSide.left, 0.58, 0.13, 'sens.hallux'),
-    _TestPoint('l_met1', FootSide.left, 0.64, 0.28, 'sens.met1'),
-    _TestPoint('l_met3', FootSide.left, 0.48, 0.26, 'sens.met3'),
-    _TestPoint('l_met5', FootSide.left, 0.32, 0.32, 'sens.met5'),
-    _TestPoint('l_heel', FootSide.left, 0.50, 0.85, 'sens.heel'),
+    // Placed on the anatomy of FootShape: hallux pad, first, third and fifth
+    // metatarsal heads, heel pad. Right foot has the hallux on the left.
+    _TestPoint('r_hallux', FootSide.right, 0.228, 0.100, 'sens.hallux'),
+    _TestPoint('r_met1', FootSide.right, 0.205, 0.262, 'sens.met1'),
+    _TestPoint('r_met3', FootSide.right, 0.480, 0.245, 'sens.met3'),
+    _TestPoint('r_met5', FootSide.right, 0.775, 0.298, 'sens.met5'),
+    _TestPoint('r_heel', FootSide.right, 0.500, 0.855, 'sens.heel'),
+    _TestPoint('l_hallux', FootSide.left, 0.772, 0.100, 'sens.hallux'),
+    _TestPoint('l_met1', FootSide.left, 0.795, 0.262, 'sens.met1'),
+    _TestPoint('l_met3', FootSide.left, 0.520, 0.245, 'sens.met3'),
+    _TestPoint('l_met5', FootSide.left, 0.225, 0.298, 'sens.met5'),
+    _TestPoint('l_heel', FootSide.left, 0.500, 0.855, 'sens.heel'),
   ];
 
   /// null = not tested, true = felt, false = not felt
@@ -258,12 +260,21 @@ class _FootMapPainter extends CustomPainter {
         ..color = K.line,
     );
 
-    final toePaint = Paint()
+    // Faint anatomical reference lines instead of drawn-on toes: the toes are
+    // already part of the silhouette.
+    final detail = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4
+      ..strokeWidth = 1.2
+      ..strokeCap = StrokeCap.round
       ..color = K.line;
-    for (final toe in FootShape.toes(size, side)) {
-      canvas.drawOval(toe, toePaint);
+    for (final line in FootShape.creases(size, side)) {
+      final crease = Path()..moveTo(line.first.dx, line.first.dy);
+      for (var i = 0; i < line.length - 1; i++) {
+        final a = line[i];
+        final b = line[i + 1];
+        crease.quadraticBezierTo(a.dx, a.dy, (a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
+      }
+      canvas.drawPath(crease, detail);
     }
   }
 

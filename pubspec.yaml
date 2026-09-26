@@ -63,6 +63,20 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Readex Pro (SIL OFL 1.1, assets/fonts/OFL.txt): one family for Arabic
+  # and Latin, drawn for readability. Bundled so it works offline.
+  fonts:
+    - family: ReadexPro
+      fonts:
+        - asset: assets/fonts/ReadexPro-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ReadexPro-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ReadexPro-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ReadexPro-Bold.ttf
+          weight: 700
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

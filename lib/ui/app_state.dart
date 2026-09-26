@@ -23,6 +23,44 @@ Future<void> saveTextScale(double value) async {
   await prefs.setDouble(_kTextScaleKey, value);
 }
 
+/// Light, dark, or follow the phone. Follows the phone by default.
+final ValueNotifier<ThemeMode> appThemeMode = ValueNotifier<ThemeMode>(ThemeMode.system);
+
+const String _kThemeModeKey = 'khatwa_theme_mode';
+
+Future<void> loadThemeMode() async {
+  final prefs = await SharedPreferences.getInstance();
+  final stored = prefs.getString(_kThemeModeKey);
+  appThemeMode.value = ThemeMode.values.firstWhere(
+    (mode) => mode.name == stored,
+    orElse: () => ThemeMode.system,
+  );
+}
+
+Future<void> saveThemeMode(ThemeMode mode) async {
+  appThemeMode.value = mode;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(_kThemeModeKey, mode.name);
+}
+
+/// Skin tone of the foot drawings: 'fair', 'medium' or 'deep'. The patient
+/// picks the one closest to their own feet, because redness and colour
+/// change look different on different skin.
+final ValueNotifier<String> appSkinTone = ValueNotifier<String>('medium');
+
+const String _kSkinToneKey = 'khatwa_skin_tone';
+
+Future<void> loadSkinTone() async {
+  final prefs = await SharedPreferences.getInstance();
+  appSkinTone.value = prefs.getString(_kSkinToneKey) ?? 'medium';
+}
+
+Future<void> saveSkinTone(String tone) async {
+  appSkinTone.value = tone;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(_kSkinToneKey, tone);
+}
+
 /// Compact language switcher used in page headers.
 class LanguageButton extends StatelessWidget {
   const LanguageButton({super.key});

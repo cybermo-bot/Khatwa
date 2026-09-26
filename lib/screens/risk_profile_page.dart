@@ -78,11 +78,11 @@ class _RiskProfilePageState extends State<RiskProfilePage> {
             child: Column(
               children: [
                 _question('risk.q1', neuropathy, (v) => setState(() => neuropathy = v)),
-                const Divider(height: 24, color: K.line),
+                Divider(height: 24, color: K.line),
                 _question('risk.q2', arterial, (v) => setState(() => arterial = v)),
-                const Divider(height: 24, color: K.line),
+                Divider(height: 24, color: K.line),
                 _question('risk.q3', deformity, (v) => setState(() => deformity = v)),
-                const Divider(height: 24, color: K.line),
+                Divider(height: 24, color: K.line),
                 _question('risk.q4', history, (v) => setState(() => history = v)),
               ],
             ),
