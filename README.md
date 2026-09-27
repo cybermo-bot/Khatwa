@@ -23,7 +23,7 @@
 &nbsp;&nbsp;
 <img src="docs/images/qr-demo.png" width="220" alt="QR code to try Khatwa"/>
 
-<sub>Home on the patient's 3D foot · an urgent sign told to the assistant · scan to try it (guest mode, no install)</sub>
+<sub>Home on the patient's 3D foot · an urgent sign told to the assistant · scan to try it (no install)</sub>
 
 </div>
 
@@ -236,7 +236,7 @@ flutter build web --release # the QR demo site
 
 | Link | Opens |
 |---|---|
-| `https://khatwa-demo.netlify.app/?demo` | a guest patient, straight to the 3D home |
+| `https://khatwa-demo.netlify.app/?demo` | the intro, then the profile choice ("Continuer en invité" in one tap) |
 | `https://khatwa-demo.netlify.app/?medecin` | the doctor dashboard, live after the demo doctor signs in |
 
 The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build.

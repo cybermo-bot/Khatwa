@@ -7,6 +7,7 @@ import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/holo_backdrop.dart';
 import '../ui/foot_twin.dart';
 import '../ui/k_image.dart';
 import '../ui/strings.dart';
@@ -25,8 +26,7 @@ class _LandingPageState extends State<LandingPage> {
   String role = 'patient';
   bool busy = false;
 
-  void _open(Widget page) =>
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  void _open(Widget page) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +35,9 @@ class _LandingPageState extends State<LandingPage> {
     final actions = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(S.t(lang, 'auth.promise'),
-            textAlign: TextAlign.center, style: K.h1.copyWith(height: 1.3)),
+        Text(S.t(lang, 'auth.promise'), textAlign: TextAlign.center, style: K.h1.copyWith(height: 1.3)),
         const SizedBox(height: 10),
-        Text(S.t(lang, 'app.tagline'),
-            textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
+        Text(S.t(lang, 'app.tagline'), textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
         const SizedBox(height: 28),
         Text(S.t(lang, 'auth.iam'), style: K.bodyStrong),
         const SizedBox(height: 10),
@@ -167,38 +165,39 @@ class LandingVisual extends StatelessWidget {
     return ExcludeSemantics(
       child: Container(
         height: height,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(K.r28),
-          gradient: RadialGradient(
-            center: const Alignment(0, -0.1),
-            radius: 0.9,
-            colors: [K.primarySoft, K.ground],
-          ),
+          color: HoloBackdrop.navy,
         ),
-        child: FootTwin.supported
-            ? ModelViewer(
-                key: ValueKey('landing-${K.isDark}'),
-                src: modelAsset('assets/models/foot_holo.glb'),
-                alt: 'Khatwa',
-                backgroundColor: Colors.transparent,
-                cameraControls: false,
-                disableZoom: true,
-                interactionPrompt: InteractionPrompt.none,
-                autoRotate: true,
-                autoRotateDelay: 0,
-                rotationPerSecond: '14deg',
-                cameraOrbit: '-150deg 60deg 105%',
-                exposure: 1.1,
-                shadowIntensity: 0,
-                relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; }',
-              )
-            : Center(
-                child: KImage('hero_twin',
-                    fit: BoxFit.contain,
-                    height: height,
-                    radius: K.r28,
-                    placeholder: Icon(Icons.view_in_ar_rounded, size: height * 0.3, color: K.primary)),
-              ),
+        child: Stack(children: [
+          const Positioned.fill(child: HoloBackdrop(ringY: 0.82)),
+          Positioned.fill(
+              child: FootTwin.supported
+                  ? ModelViewer(
+                      key: ValueKey('landing-${K.isDark}'),
+                      src: modelAsset('assets/models/foot_holo.glb'),
+                      alt: 'Khatwa',
+                      backgroundColor: Colors.transparent,
+                      cameraControls: false,
+                      disableZoom: true,
+                      interactionPrompt: InteractionPrompt.none,
+                      autoRotate: true,
+                      autoRotateDelay: 0,
+                      rotationPerSecond: '14deg',
+                      cameraOrbit: '-150deg 60deg 105%',
+                      exposure: 1.25,
+                      shadowIntensity: 0,
+                      relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; }',
+                    )
+                  : Center(
+                      child: KImage('hero_twin',
+                          fit: BoxFit.contain,
+                          height: height,
+                          radius: K.r28,
+                          placeholder: Icon(Icons.view_in_ar_rounded, size: height * 0.3, color: HoloBackdrop.cyan)),
+                    )),
+        ]),
       ),
     );
   }
@@ -213,7 +212,7 @@ class RoleChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = appLanguage.value;
-    Widget tile(String role, String label, IconData icon) {
+    Widget tile(String role, String label, IconData icon, String image) {
       final on = value == role;
       return Expanded(
         child: Semantics(
@@ -228,7 +227,7 @@ class RoleChoice extends StatelessWidget {
               duration: KMotion.standard,
               curve: KMotion.standardCurve,
               constraints: const BoxConstraints(minHeight: 88),
-              padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
               decoration: BoxDecoration(
                 color: on ? K.primarySoft : K.surface,
                 borderRadius: BorderRadius.circular(K.r20),
@@ -239,22 +238,40 @@ class RoleChoice extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Stack(
                     children: [
-                      Icon(icon, color: on ? K.primaryStrong : K.inkSoft, size: 26),
-                      const Spacer(),
-                      AnimatedOpacity(
-                        duration: KMotion.quick,
-                        opacity: on ? 1 : 0,
-                        child: Icon(Icons.check_circle_rounded, color: K.primary, size: 20),
+                      KImage(image,
+                          height: 92,
+                          width: double.infinity,
+                          radius: K.r12,
+                          placeholder: SizedBox(
+                            height: 40,
+                            child: Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Icon(icon, color: on ? K.primaryStrong : K.inkSoft, size: 26),
+                            ),
+                          )),
+                      PositionedDirectional(
+                        top: 6,
+                        end: 6,
+                        child: AnimatedOpacity(
+                          duration: KMotion.quick,
+                          opacity: on ? 1 : 0,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(color: K.surface, shape: BoxShape.circle),
+                            child: Icon(Icons.check_circle_rounded, color: K.primary, size: 22),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(label,
-                      style: K.bodyStrong.copyWith(
-                          color: on ? K.primaryStrong : K.ink,
-                          fontWeight: on ? FontWeight.w700 : FontWeight.w500)),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(label,
+                        style: K.bodyStrong.copyWith(
+                            color: on ? K.primaryStrong : K.ink, fontWeight: on ? FontWeight.w700 : FontWeight.w500)),
+                  ),
                 ],
               ),
             ),
@@ -267,9 +284,9 @@ class RoleChoice extends StatelessWidget {
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        tile('patient', S.t(lang, 'role.patient'), Icons.person_outline_rounded),
+        tile('patient', S.t(lang, 'role.patient'), Icons.person_outline_rounded, 'care_check_mirror'),
         const SizedBox(width: 12),
-        tile('doctor', S.t(lang, 'role.doctorShort'), Icons.medical_services_outlined),
+        tile('doctor', S.t(lang, 'role.doctorShort'), Icons.medical_services_outlined, 'hero_doctor'),
       ],
     ));
   }
@@ -533,8 +550,8 @@ class _AuthPageState extends State<AuthPage> {
         TextButton(
           onPressed: busy
               ? null
-              : () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => CreateAccountPage(role: widget.role))),
+              : () => Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (_) => CreateAccountPage(role: widget.role))),
           child: Text(S.t(lang, 'auth.none')),
         ),
         const SizedBox(height: 18),
