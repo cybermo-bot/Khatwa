@@ -28,6 +28,7 @@ Future<void> main() async {
   await ApiConfig.load();
   await KhatwaCloud.instance.init();
   await _demoQuickStart();
+  await loadLanguage();
   await loadTextScale();
   await loadThemeMode();
   await loadSkinTone();

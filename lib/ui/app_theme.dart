@@ -1097,12 +1097,14 @@ class KTag extends StatelessWidget {
             Icon(icon, size: 14, color: fg),
             const SizedBox(width: 5),
           ],
-          Text(text,
-              style: TextStyle(
-                  fontFamily: K.family,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: fg)),
+          Flexible(
+            child: Text(text,
+                style: TextStyle(
+                    fontFamily: K.family,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: fg)),
+          ),
         ],
       ),
     );

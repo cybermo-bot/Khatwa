@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -38,11 +39,18 @@ class KhatwaCloud extends ChangeNotifier {
     try {
       await Supabase.initialize(url: _url, publishableKey: _key);
       ready = true;
-      await _loadServer();
-      await _restoreDoctor();
     } catch (e) {
       lastError = '$e';
     }
+    notifyListeners();
+    // The network part runs after the first screen: without a connection it
+    // would hold the app on a blank page for several seconds.
+    if (ready) unawaited(_warmUp());
+  }
+
+  Future<void> _warmUp() async {
+    await _loadServer().timeout(const Duration(seconds: 8), onTimeout: () {});
+    await _restoreDoctor().timeout(const Duration(seconds: 8), onTimeout: () {});
     notifyListeners();
   }
 

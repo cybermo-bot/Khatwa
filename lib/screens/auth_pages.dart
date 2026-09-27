@@ -88,7 +88,10 @@ class _LandingPageState extends State<LandingPage> {
                     const SizedBox(width: 10),
                     Expanded(child: Text('Khatwa', style: K.h2, maxLines: 1, overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 8),
-                    const Flexible(child: LanguagePill()),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: box.maxWidth * 0.62),
+                      child: const LanguagePill(),
+                    ),
                   ],
                 ),
               ),
@@ -173,7 +176,7 @@ class LandingVisual extends StatelessWidget {
         child: FootTwin.supported
             ? ModelViewer(
                 key: ValueKey('landing-${K.isDark}'),
-                src: 'assets/models/foot_holo.glb',
+                src: modelAsset('assets/models/foot_holo.glb'),
                 alt: 'Khatwa',
                 backgroundColor: Colors.transparent,
                 cameraControls: false,
@@ -222,28 +225,34 @@ class RoleChoice extends StatelessWidget {
             child: AnimatedContainer(
               duration: KMotion.standard,
               curve: KMotion.standardCurve,
-              constraints: const BoxConstraints(minHeight: 76),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              constraints: const BoxConstraints(minHeight: 88),
+              padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
               decoration: BoxDecoration(
                 color: on ? K.primarySoft : K.surface,
                 borderRadius: BorderRadius.circular(K.r20),
                 border: Border.all(color: on ? K.primary : K.control, width: on ? 2 : 1.2),
               ),
-              child: Row(
+              // Icon above, the name on the full tile width: long words never
+              // break, even at the largest text size.
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(icon, color: on ? K.primaryStrong : K.inkSoft, size: 26),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(label,
-                        style: K.bodyStrong.copyWith(
-                            color: on ? K.primaryStrong : K.ink,
-                            fontWeight: on ? FontWeight.w700 : FontWeight.w500)),
+                  Row(
+                    children: [
+                      Icon(icon, color: on ? K.primaryStrong : K.inkSoft, size: 26),
+                      const Spacer(),
+                      AnimatedOpacity(
+                        duration: KMotion.quick,
+                        opacity: on ? 1 : 0,
+                        child: Icon(Icons.check_circle_rounded, color: K.primary, size: 20),
+                      ),
+                    ],
                   ),
-                  AnimatedOpacity(
-                    duration: KMotion.quick,
-                    opacity: on ? 1 : 0,
-                    child: Icon(Icons.check_circle_rounded, color: K.primary, size: 20),
-                  ),
+                  const SizedBox(height: 8),
+                  Text(label,
+                      style: K.bodyStrong.copyWith(
+                          color: on ? K.primaryStrong : K.ink,
+                          fontWeight: on ? FontWeight.w700 : FontWeight.w500)),
                 ],
               ),
             ),
@@ -252,14 +261,15 @@ class RoleChoice extends StatelessWidget {
       );
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return IntrinsicHeight(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         tile('patient', S.t(lang, 'role.patient'), Icons.person_outline_rounded),
         const SizedBox(width: 12),
         tile('doctor', S.t(lang, 'role.doctorShort'), Icons.medical_services_outlined),
       ],
-    );
+    ));
   }
 }
 
@@ -304,16 +314,22 @@ class AuthFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The language sits above the form rather than in the header, so a long
+    // title keeps the full width at large text sizes.
     return KPage(
       title: title,
       subtitle: subtitle,
-      actions: const [LanguagePill(), SizedBox(width: 4)],
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [const SizedBox(height: 10), ...children],
+            children: [
+              const SizedBox(height: 4),
+              const Align(alignment: AlignmentDirectional.centerEnd, child: LanguagePill()),
+              const SizedBox(height: 10),
+              ...children,
+            ],
           ),
         ),
       ),

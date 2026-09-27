@@ -21,6 +21,7 @@ class _Msg {
   final String urgency; // none | soon | urgent
   final List<String> articles;
   bool pending; // a voice message sent, its words not back yet
+  bool failed = false; // could not reach Khatwa
   _Msg(this.mine, this.text, {this.urgency = 'none', this.articles = const [], this.pending = false});
 }
 
@@ -213,6 +214,7 @@ class _VoicePageState extends State<VoicePage> {
   void _failed(_Msg mine, bool voice) => setState(() {
         _thinking = false;
         mine.pending = false;
+        mine.failed = true;
         if (voice) mine.text = tr('Message vocal non envoyé', aeb: 'الرسالة ما تبعثتش', ar: 'لم تُرسل الرسالة', en: 'Voice message not sent');
       });
 
@@ -292,16 +294,21 @@ class _VoicePageState extends State<VoicePage> {
 class _Welcome extends StatelessWidget {
   const _Welcome();
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, box) => SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: (box.maxHeight - 48).clamp(0, double.infinity)),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.record_voice_over_rounded, size: 64, color: K.primary),
           const SizedBox(height: 16),
           Text(tr('Parlez à Khatwa', aeb: 'اضغط على الزر و احكي', ar: 'اضغط على الزر وتحدّث', en: 'Talk to Khatwa'), textAlign: TextAlign.center, style: K.h2),
           const SizedBox(height: 8),
           Text(tr('Maintenez le bouton et parlez, relâchez pour envoyer. Ou touchez une fois pour commencer, une fois pour envoyer.', aeb: 'شدّ على الزر و احكي، و سيّبو باش تبعث.', ar: 'اضغط على الزر مطوّلًا وتحدّث، ثم اتركه للإرسال.', en: 'Hold the button and speak, release to send. Or tap once to start, once to send.'),
               textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
-        ]),
+            ]),
+          ),
+        ),
       );
 }
 
@@ -330,6 +337,17 @@ class _Bubble extends StatelessWidget {
             ])
           else
             Text(m.text, textDirection: dirOf(m.text), style: K.body.copyWith(fontSize: 17, height: 1.5)),
+          if (m.failed) ...[
+            const SizedBox(height: 6),
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.cloud_off_rounded, size: 16, color: K.inkSoft),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(tr('Non envoyé', aeb: 'ما تبعثش', ar: 'لم يُرسل', en: 'Not sent'),
+                    style: K.small.copyWith(color: K.inkSoft)),
+              ),
+            ]),
+          ],
           if (m.articles.isNotEmpty) ...[
             const SizedBox(height: 8),
             Wrap(spacing: 6, runSpacing: 6, children: [

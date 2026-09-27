@@ -609,7 +609,7 @@ class _Legend extends StatelessWidget {
         children: [
           mark,
           const SizedBox(width: 6),
-          Text(label, style: K.label),
+          Flexible(child: Text(label, style: K.label)),
         ],
       );
 }

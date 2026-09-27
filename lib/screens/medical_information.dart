@@ -64,7 +64,7 @@ class _MedicalInformationPageState
           'Anything else you want your healthcare team to know',
       'private':
           'Your medical information is private and securely protected.',
-      'continue': 'Continue',
+      'continue': 'Save',
       'error': 'Please select your diabetes type.',
     },
 
@@ -96,7 +96,7 @@ class _MedicalInformationPageState
           'Toute autre information importante',
       'private':
           'Vos informations médicales sont privées et protégées.',
-      'continue': 'Continuer',
+      'continue': 'Enregistrer',
       'error':
           'Veuillez sélectionner votre type de diabète.',
     },
@@ -129,7 +129,7 @@ class _MedicalInformationPageState
           'أي معلومات أخرى تريد أن يعرفها فريقك الطبي',
       'private':
           'معلوماتك الطبية خاصة ومحمية بشكل آمن.',
-      'continue': 'متابعة',
+      'continue': 'حفظ',
       'error':
           'يرجى اختيار نوع السكري.',
     },
@@ -162,7 +162,7 @@ class _MedicalInformationPageState
           'أي حاجة أخرى تحب الفريق الطبي يعرفها',
       'private':
           'معلوماتك الطبية خاصة ومأمّنة.',
-      'continue': 'نكمل',
+      'continue': 'سجّل',
       'error': 'إختار نوع السكري.',
     },
   };

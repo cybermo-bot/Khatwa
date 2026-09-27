@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../ui/foot_twin.dart' show modelAsset;
 
 /// Where a 3D foot comes from: the model foot bundled with the app, or a
 /// twin's glTF bytes from the Khatwa server.
@@ -73,7 +74,7 @@ class _FootViewerState extends State<FootViewer> {
     final m = widget.model;
     String src;
     if (m.asset != null) {
-      src = m.asset!;
+      src = modelAsset(m.asset!);
     } else {
       src = await glbSource(m.glb!, m.id);
     }

@@ -6,6 +6,16 @@ import 'strings.dart';
 /// App-wide language. Changing it rebuilds the whole app, including direction.
 final ValueNotifier<String> appLanguage = ValueNotifier<String>(S.fallback);
 
+const String _kLanguageKey = 'khatwa_language';
+
+/// Restores the chosen language, then remembers every change.
+Future<void> loadLanguage() async {
+  final prefs = await SharedPreferences.getInstance();
+  final stored = prefs.getString(_kLanguageKey);
+  if (stored != null && S.languages.contains(stored)) appLanguage.value = stored;
+  appLanguage.addListener(() => prefs.setString(_kLanguageKey, appLanguage.value));
+}
+
 /// Text size, for patients with reduced vision. Many people with diabetes have
 /// retinopathy, so this is not a cosmetic setting.
 final ValueNotifier<double> appTextScale = ValueNotifier<double>(1.0);

@@ -318,16 +318,22 @@ class _TwinStageState extends State<_TwinStage> {
                     child: Text(S.t(lang, 'twin.hint'),
                         style: K.label, overflow: TextOverflow.ellipsis),
                   ),
-                  _ViewChip(
-                    label: S.t(lang, 'twin.top'),
-                    selected: _view == TwinView.top,
-                    onTap: () => _toggleView(TwinView.top),
+                  Flexible(
+                    flex: 2,
+                    child: _ViewChip(
+                      label: S.t(lang, 'twin.top'),
+                      selected: _view == TwinView.top,
+                      onTap: () => _toggleView(TwinView.top),
+                    ),
                   ),
                   const SizedBox(width: 6),
-                  _ViewChip(
-                    label: S.t(lang, 'twin.sole'),
-                    selected: _view == TwinView.sole,
-                    onTap: () => _toggleView(TwinView.sole),
+                  Flexible(
+                    flex: 2,
+                    child: _ViewChip(
+                      label: S.t(lang, 'twin.sole'),
+                      selected: _view == TwinView.sole,
+                      onTap: () => _toggleView(TwinView.sole),
+                    ),
                   ),
                 ],
               ),
@@ -444,6 +450,8 @@ class _ViewChip extends StatelessWidget {
             ),
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: K.label.copyWith(
                 color: selected ? K.onPrimary : K.ink,
                 fontWeight: FontWeight.w600,
