@@ -16,6 +16,7 @@ import 'package:diabetic_foot_app/screens/feature_pages.dart';
 import 'package:diabetic_foot_app/screens/foot_check.dart';
 import 'package:diabetic_foot_app/screens/glycemia.dart';
 import 'package:diabetic_foot_app/screens/medical_information.dart';
+import 'package:diabetic_foot_app/screens/onboarding.dart';
 import 'package:diabetic_foot_app/screens/risk_profile_page.dart';
 import 'package:diabetic_foot_app/screens/sensory_check.dart';
 import 'package:diabetic_foot_app/screens/wellbeing.dart';
@@ -49,6 +50,7 @@ Future<void> setUpScreens() async {
 
 Map<String, Widget Function()> screens() {
   return <String, Widget Function()>{
+    'onboarding': () => const OnboardingPage(),
     'landing': () => const LandingPage(),
     'sign-in': () => const AuthPage(role: 'patient'),
     'sign-in doctor': () => const AuthPage(role: 'doctor'),

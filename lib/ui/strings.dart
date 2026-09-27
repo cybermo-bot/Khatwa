@@ -60,6 +60,30 @@ class S {
     'auth.err.exists': ['هذا الرقم مسجل من قبل', 'النمرة هذي مسجلة', 'Ce numéro est déjà enregistré', 'This number is already registered'],
     'auth.err.bad': ['البريد أو كلمة السر خاطئة', 'الإيمايل ولا كلمة السر غالطين', 'E-mail ou mot de passe incorrect', 'Wrong e-mail or password'],
     'auth.welcome': ['مرحبا', 'أهلا', 'Bonjour', 'Welcome'],
+    'onb.skip': ['تخطي', 'فوّت', 'Passer', 'Skip'],
+    'onb.next': ['التالي', 'اللي بعدو', 'Suivant', 'Next'],
+    'onb.start': ['ابدأ', 'يلّا نبداو', 'Commencer', 'Get started'],
+    'onb.1.title': ['قدماك، كل يوم', 'ساقيك، كل يوم', 'Vos pieds, chaque jour', 'Your feet, every day'],
+    'onb.1.body': [
+      'فحص قصير كل يوم بالصور وبعض الأسئلة. عند أي علامة مقلقة، يطّلع عليها طبيب. خطوة لا تشخّص: هي تساعدك على الانتباه مبكرا.',
+      'فحص قصير كل يوم بالتصاور وشوية أسئلة. كي تبان علامة تقلق، يشوفها طبيب. خطوة ما تشخّصش: تعاونك تنتبه بكري.',
+      'Un contrôle court chaque jour, avec des photos et quelques questions. Au moindre signe inquiétant, un soignant regarde. Khatwa ne pose pas de diagnostic : elle vous aide à voir tôt.',
+      'A short check every day, with photos and a few questions. At any worrying sign, a health professional looks. Khatwa does not diagnose: it helps you notice early.'
+    ],
+    'onb.2.title': ['قدمك ثلاثية الأبعاد', 'ساقك في 3D', 'Votre pied en 3D', 'Your foot in 3D'],
+    'onb.2.body': [
+      'دوّر القدم بإصبعك. العلامات التي تسجّلها تظهر في مكانها، ويرى الطبيب الشيء نفسه.',
+      'دوّر الساق بصبعك. العلامات اللي تسجّلها تبان في بلاصتها، والطبيب يشوف نفس الحاجة.',
+      'Tournez le pied du doigt. Les signes que vous notez apparaissent à leur place, et le soignant voit la même chose.',
+      'Turn the foot with your finger. The signs you note appear in their place, and the health professional sees the same.'
+    ],
+    'onb.3.title': ['تحدّث مع خطوة', 'احكي مع خطوة', 'Parlez à Khatwa', 'Talk to Khatwa'],
+    'onb.3.body': [
+      'اضغط على الزر وتكلّم بالدارجة أو العربية أو الفرنسية. خطوة تجيبك بصوتها، وعند علامة خطيرة تقول لك اتصل بـ 190.',
+      'شدّ الزر واحكي بالتونسي ولا بالعربية ولا بالفرنسية. خطوة تجاوبك بالصوت، وكي تكون علامة خطيرة تقلك اطلب 190.',
+      'Maintenez le bouton et parlez en derja, en arabe ou en français. Khatwa vous répond à voix haute, et devant un signe grave vous dit d’appeler le 190.',
+      'Hold the button and speak in derja, Arabic or French. Khatwa answers out loud, and for a serious sign tells you to call 190.'
+    ],
     'demo.noRealData': [
       'نسخة تجريبية: لا تُدخل بيانات حقيقية.',
       'نسخة تجريبية: ما تدخّلش معلومات حقيقية.',

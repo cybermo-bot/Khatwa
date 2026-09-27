@@ -11,6 +11,7 @@ import 'data/case_store.dart';
 import 'data/khatwa_store.dart';
 import 'screens/auth_pages.dart';
 import 'screens/doctor_home.dart';
+import 'screens/onboarding.dart';
 import 'screens/shell.dart';
 import 'ui/app_state.dart';
 import 'ui/app_theme.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
   await KhatwaCloud.instance.init();
   await _demoQuickStart();
   await loadLanguage();
+  await loadOnboarded();
   await loadTextScale();
   await loadThemeMode();
   await loadSkinTone();
@@ -190,10 +192,12 @@ class _RootGateState extends State<RootGate> {
       onPointerDown: (_) => AuthStore.instance.touch(),
       onPointerSignal: (_) => AuthStore.instance.touch(),
       child: AnimatedBuilder(
-        animation: AuthStore.instance,
+        animation: Listenable.merge([AuthStore.instance, appOnboarded]),
         builder: (context, _) {
           final account = AuthStore.instance.current;
-          if (account == null) return const LandingPage();
+          if (account == null) {
+            return appOnboarded.value ? const LandingPage() : const OnboardingPage();
+          }
           if (account.role == 'doctor') {
             return DoctorHomePage(language: appLanguage.value);
           }

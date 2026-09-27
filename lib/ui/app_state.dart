@@ -6,6 +6,22 @@ import 'strings.dart';
 /// App-wide language. Changing it rebuilds the whole app, including direction.
 final ValueNotifier<String> appLanguage = ValueNotifier<String>(S.fallback);
 
+/// False until the three first-launch cards were seen or skipped.
+final ValueNotifier<bool> appOnboarded = ValueNotifier<bool>(true);
+
+const String _kOnboardedKey = 'khatwa_onboarded';
+
+Future<void> loadOnboarded() async {
+  final prefs = await SharedPreferences.getInstance();
+  appOnboarded.value = prefs.getBool(_kOnboardedKey) ?? false;
+}
+
+Future<void> finishOnboarding() async {
+  appOnboarded.value = true;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(_kOnboardedKey, true);
+}
+
 const String _kLanguageKey = 'khatwa_language';
 
 /// Restores the chosen language, then remembers every change.
