@@ -204,9 +204,9 @@ class K {
       ? const []
       : [
           BoxShadow(
-              color: _p.shadow.withAlpha(10),
-              blurRadius: 24,
-              offset: const Offset(0, 10)),
+              color: _p.shadow.withAlpha(9),
+              blurRadius: 18,
+              offset: const Offset(0, 4)),
         ];
 
   // ---- radius ----
@@ -1463,20 +1463,27 @@ class KFrostedNavBar extends StatelessWidget {
                                               destinations[i].icon)
                                           : destinations[i].icon,
                                       const SizedBox(height: 3),
-                                      Text(
-                                        destinations[i].label,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        style: TextStyle(
-                                          fontFamily: K.family,
-                                          fontSize: 11.5,
-                                          fontWeight: i == selectedIndex
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                          color: i == selectedIndex
-                                              ? activeFg
-                                              : K.muted,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            destinations[i].label,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.fade,
+                                            softWrap: false,
+                                            style: TextStyle(
+                                              fontFamily: K.family,
+                                              fontSize: 11.5,
+                                              fontWeight: i == selectedIndex
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w500,
+                                              color: i == selectedIndex
+                                                  ? activeFg
+                                                  : K.muted,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],

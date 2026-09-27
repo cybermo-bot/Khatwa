@@ -197,6 +197,36 @@ components:
 
 # Design System: Khatwa
 
+## Design A "Clinique clair" (current, chosen 27 September 2026)
+
+Chosen from three mockups (canvas "Khatwa redesign directions"). It
+supersedes the dark v3 look described below wherever they differ; the
+components and names below stay.
+
+- **Light by default** (`appThemeMode` starts at light); dark stays in
+  Settings. Ground `#F4F7F8`, white cards with a 1 px `#E1E8EA` edge and one
+  very soft shadow, ink `#0F2A33`, teal `#0E7C86` for action, `#14B8A6` for
+  the hologram and progress, red only for urgent (and the 190 call).
+- **No blur by default** (`GlassCard.blur` false): fast on older phones.
+- **Pill buttons** (stadium), 52 to 56 px tall.
+- **Floating tab bar** (`KFrostedNavBar`): a white pill, every tab with icon
+  and label (older patients read labels), the current tab on a dark pill.
+- **Home opens on the 3D twin** (`FootTwin`, `lib/ui/foot_twin.dart`):
+  `assets/models/foot_holo.glb` (the model foot with a translucent teal
+  material) in model-viewer; one finger turns it, two zoom; gentle
+  auto-rotate; pins on the zones of `foot_regions.json` (teal, amber for
+  watch, red for urgent); left/right switch (right is the mirror) and
+  top/sole shortcuts. Then the daily check card, care and glucose tiles,
+  routine, tip and last result. Web loads model-viewer from
+  `web/index.html`.
+- **Check**: one card with progress, the four photo slots (number, name,
+  foot map) and the start button, then the other tests.
+- **Learn**: the urgent card first with a one-tap call to 190, then picture
+  cards (know your feet, signs), then care, daily life and food lists.
+
+---
+
+
 ## v3 "Clinical futuristic" (demo, September 2026)
 
 v3 is the look of the Telehealth Connect demo, for an audience of ministers,
