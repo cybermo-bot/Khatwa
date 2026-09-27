@@ -88,7 +88,7 @@ flowchart TB
         S5["Risk profile"]
     end
     subgraph DATA["Data layer"]
-        D1["auth_store<br/>accounts, PIN, lockout"]
+        D1["auth_store<br/>accounts, e-mail code, lockout"]
         D2["crypto_box<br/>encryption at rest"]
         D3["case_store<br/>cases, consent, audit trail"]
         D4["rule_engine"]
@@ -102,7 +102,7 @@ flowchart TB
     UI --> DATA
     D5 --> X1
     D6 --> X2
-    D1 -->|"PIN unlocks the key"| D2
+    D1 -->|"password unlocks the key"| D2
     D2 --> D3
 ```
 
@@ -112,7 +112,7 @@ flowchart TB
 flowchart LR
     PAT["Patient"] -->|"own cases only"| STORE["Encrypted store<br/>on the device"]
     DOC["Clinician"] -->|"submitted cases"| STORE
-    STORE -.->|"no PIN, no key"| LOCKED["Unreadable<br/>ciphertext"]
+    STORE -.->|"no password, no key"| LOCKED["Unreadable<br/>ciphertext"]
     DOC --> MASK{"Patient consented<br/>to be named?"}
     MASK -->|no| INIT["Initials + case number"]
     MASK -->|yes| NAME["Full name"]
@@ -201,10 +201,11 @@ Every case can be exported as an HL7 FHIR R4 bundle, the standard hospitals use:
 ### Security
 
 - Passwords are hashed, never stored as text
-- A PIN is required on top of the password
-- Everything stored on the device is encrypted, and the key is locked by the PIN
+- Sign-up confirms the e-mail with a 6-digit code (Supabase Auth); sign-in asks for the code too, except on a device where "Rester connecté" was ticked in the last 30 days
+- Everything stored on the device is encrypted, and the key is sealed with a key derived from the password (older PIN accounts move over at their next sign-in)
 - 5 wrong attempts locks the account for a minute
-- Automatic sign out after 10 minutes without activity
+- Automatic sign out after 10 minutes without activity, unless "Rester connecté" was ticked (the session and its key then stay on that device)
+- "Continuer en invité": a guest account with no data typed, which can become a real account later
 - The patient must tick consent before anything is sent
 - Without consent to be named, the doctor sees initials and a case number
 - Every access to a case is recorded (who, what, when)
@@ -216,7 +217,7 @@ Every case can be exported as an HL7 FHIR R4 bundle, the standard hospitals use:
 ```
 lib/
   data/
-    auth_store.dart    accounts, PIN, lockout
+    auth_store.dart    accounts, e-mail code, guest, lockout
     crypto_box.dart    encryption
     case_store.dart    cases, consent, access trail
     rule_engine.dart   the clinical rules
