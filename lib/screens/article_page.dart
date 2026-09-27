@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/learn_content.dart';
+import '../data/learn_videos.dart';
+import '../features/common.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
 import '../ui/foot_map.dart';
 import '../ui/k_image.dart';
 import '../ui/sign_art.dart';
+import 'learn_video.dart';
 
 class ArticlePage extends StatefulWidget {
   final LearnArticle article;
@@ -123,9 +126,12 @@ class _ArticlePageState extends State<ArticlePage>
           const SizedBox(height: 22),
           Text(a.summary.of(lang),
               style: K.h2.copyWith(fontWeight: FontWeight.w500, height: 1.4)),
-          if (a.hasVideo) ...[
+          if (a.hasVideo || videoFor(a.id, langCode()) != null) ...[
             const SizedBox(height: 22),
-            _VideoSlot(label: LearnLabels.video.of(lang)),
+            ArticleVideo(
+              articleId: a.id,
+              placeholder: _VideoSlot(label: LearnLabels.video.of(lang)),
+            ),
           ],
           if (a.urgentNow.isNotEmpty) ...[
             const SizedBox(height: 26),
