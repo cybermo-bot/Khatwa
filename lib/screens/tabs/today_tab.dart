@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../features/diet/diet_page.dart';
+import '../../features/messages/doctor_messages_page.dart';
+import '../../features/common.dart';
 import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
 import '../../data/khatwa_store.dart';
@@ -52,7 +55,7 @@ class _TodayTabState extends State<TodayTab> {
         final todayCase = doneToday ? last : null;
         final streak = CaseStore.instance.streak(patientId);
         final now = DateTime.now();
-        final name = _firstName(account?.name ?? '');
+        final name = (account?.guest ?? false) ? '' : _firstName(account?.name ?? '');
         final tip = tipFor(now);
 
         return KPage(
@@ -98,6 +101,38 @@ class _TodayTabState extends State<TodayTab> {
                   lang: lang,
                   checkDone: doneToday,
                   onGlucose: () => _open(GlycemiaPage(language: lang)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const KReveal(order: 3, child: DoctorMessagesCard()),
+              const SizedBox(height: 12),
+              KReveal(
+                order: 3,
+                child: KCard(
+                  onTap: () => _open(const DietPage()),
+                  padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(color: K.primarySoft, borderRadius: BorderRadius.circular(K.r12)),
+                        child: Icon(Icons.restaurant_rounded, color: K.primaryStrong),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(tr('Alimentation', aeb: 'الماكلة', ar: 'التغذية', en: 'Food'), style: K.bodyStrong),
+                            Text(tr('Quoi manger, et combien', aeb: 'شنوّة تاكل، وقدّاش', ar: 'ماذا تأكل وكم', en: 'What to eat, and how much'),
+                                style: K.small),
+                          ],
+                        ),
+                      ),
+                      Icon(S.isRtl(lang) ? Icons.chevron_left_rounded : Icons.chevron_right_rounded, color: K.muted),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
@@ -286,16 +321,22 @@ class _TwinStageState extends State<_TwinStage> {
                     child: Text(S.t(lang, 'twin.hint'),
                         style: K.label, overflow: TextOverflow.ellipsis),
                   ),
-                  _ViewChip(
-                    label: S.t(lang, 'twin.top'),
-                    selected: _view == TwinView.top,
-                    onTap: () => _toggleView(TwinView.top),
+                  Flexible(
+                    flex: 2,
+                    child: _ViewChip(
+                      label: S.t(lang, 'twin.top'),
+                      selected: _view == TwinView.top,
+                      onTap: () => _toggleView(TwinView.top),
+                    ),
                   ),
                   const SizedBox(width: 6),
-                  _ViewChip(
-                    label: S.t(lang, 'twin.sole'),
-                    selected: _view == TwinView.sole,
-                    onTap: () => _toggleView(TwinView.sole),
+                  Flexible(
+                    flex: 2,
+                    child: _ViewChip(
+                      label: S.t(lang, 'twin.sole'),
+                      selected: _view == TwinView.sole,
+                      onTap: () => _toggleView(TwinView.sole),
+                    ),
                   ),
                 ],
               ),
@@ -350,7 +391,7 @@ class _Segmented extends StatelessWidget {
                 onTap: () => onSelect(i),
                 child: AnimatedContainer(
                   duration: KMotion.standard,
-                  constraints: const BoxConstraints(minHeight: 38),
+                  constraints: const BoxConstraints(minHeight: 48),
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(
@@ -402,7 +443,7 @@ class _ViewChip extends StatelessWidget {
           onTap: onTap,
           child: AnimatedContainer(
             duration: KMotion.standard,
-            constraints: const BoxConstraints(minHeight: 38),
+            constraints: const BoxConstraints(minHeight: 48),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
@@ -412,6 +453,8 @@ class _ViewChip extends StatelessWidget {
             ),
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: K.label.copyWith(
                 color: selected ? K.onPrimary : K.ink,
                 fontWeight: FontWeight.w600,

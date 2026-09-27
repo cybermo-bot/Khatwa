@@ -43,7 +43,7 @@ class _PublicHealthViewState extends State<PublicHealthView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DSectionTitle('Lésions actives, tous patients', trailing: Text('$lesions', style: DText.small(p))),
+              DSectionTitle(dl('Lésions actives, tous patients', 'Active lesions, all patients'), trailing: Text('$lesions', style: DText.small(p))),
               FootView(
                 enable3d: scope.enable3d,
                 sizeByCount: true,
@@ -55,7 +55,7 @@ class _PublicHealthViewState extends State<PublicHealthView> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text('Les deux pieds sont réunis sur un pied de référence. Taille du repère : nombre de lésions.',
+              Text(dl('Les deux pieds sont réunis sur un pied de référence. Taille du repère : nombre de lésions.', 'Both feet are shown on one reference foot. Marker size: number of lesions.'),
                   style: DText.small(p)),
               const SizedBox(height: 10),
               for (final e in (s.findingsByRegion.entries.where((e) => e.value > 0).toList()
@@ -68,7 +68,7 @@ class _PublicHealthViewState extends State<PublicHealthView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DSectionTitle('Catégories de risque IWGDF', trailing: Text('${s.patients} patients', style: DText.small(p))),
+              DSectionTitle(dl('Catégories de risque IWGDF', 'IWGDF risk categories'), trailing: Text('${s.patients} patients', style: DText.small(p))),
               for (final r in [0, 1, 2, 3])
                 _Bar(label: 'IWGDF $r', value: s.patientsByRisk[r] ?? 0, max: s.patients, color: p.risk(r)),
             ],
@@ -79,7 +79,7 @@ class _PublicHealthViewState extends State<PublicHealthView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const DSectionTitle('Alertes par semaine'),
+              DSectionTitle(dl('Alertes par semaine', 'Alerts per week')),
               SizedBox(
                 height: 180,
                 child: BarChart(
@@ -133,13 +133,14 @@ class _PublicHealthViewState extends State<PublicHealthView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const DSectionTitle('Patients par gouvernorat'),
+              DSectionTitle(dl('Patients par gouvernorat', 'Patients by governorate')),
               _GovernorateGrid(stats: s),
             ],
           ),
         );
         final note = Text(
-          'Données de démonstration, synthétiques et pseudonymisées. Recherche, seuils provisoires.',
+          dl('Données de démonstration, synthétiques et pseudonymisées. Recherche, seuils provisoires.',
+              'Demonstration data, synthetic and pseudonymised. Research, provisional thresholds.'),
           style: DText.small(p).copyWith(fontStyle: FontStyle.italic),
         );
 

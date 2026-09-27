@@ -9,6 +9,11 @@ import 'app_theme.dart';
 import 'foot_map.dart';
 import 'foot_shapes.dart';
 
+/// The address model-viewer needs for a bundled model. On Android the plugin
+/// reads the asset itself; in the browser Flutter serves assets under
+/// `assets/`, so the bundled path gains that prefix.
+String modelAsset(String path) => kIsWeb ? 'assets/$path' : path;
+
 /// Where the camera looks at the twin from. [free] is the three-quarter
 /// view the home opens on; the patient can then turn it freely.
 enum TwinView { free, top, sole }
@@ -175,9 +180,12 @@ model-viewer { --poster-color: transparent; background: transparent; }
       valueListenable: TwinRegion.loaded,
       builder: (context, regions, _) {
         if (regions == null) return const SizedBox.expand();
+        final hotspots = _hotspots(regions);
         return ModelViewer(
-          key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}'),
-          src: src ?? 'assets/models/foot_holo.glb',
+          // The labels are part of the page inside the web view: a new
+          // language or status needs a new view, not just a rebuild.
+          key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}-${hotspots.hashCode}-$alt'),
+          src: src ?? modelAsset('assets/models/foot_holo.glb'),
           alt: alt,
           backgroundColor: Colors.transparent,
           cameraControls: true,
@@ -193,7 +201,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           exposure: 1.1,
           shadowIntensity: 0,
           scale: side == FootSide.right && src == null ? '1 1 -1' : null,
-          innerModelViewerHtml: _hotspots(regions),
+          innerModelViewerHtml: hotspots,
           relatedCss: _css,
         );
       },

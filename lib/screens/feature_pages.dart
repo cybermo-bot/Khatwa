@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../ui/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/khatwa_store.dart';
@@ -50,7 +51,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
   final controller = TextEditingController();
 
   String text(String en, String fr, String ar, String tn) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -154,7 +155,7 @@ class _ActivityPageState extends State<ActivityPage> {
   final distance = TextEditingController();
 
   String text(String en, String fr, String ar, String tn) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -254,7 +255,7 @@ class _FoodPageState extends State<FoodPage> {
   final controller = TextEditingController();
 
   String text(String en, String fr, String ar, String tn) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -343,7 +344,7 @@ class _SensoryPageState extends State<SensoryPage> {
   };
 
   String text(String en, String fr, String ar, String tn) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -561,7 +562,7 @@ class AiReportPage extends StatelessWidget {
   const AiReportPage({super.key, required this.language});
 
   String text(String en, String fr, String ar, String tn) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -727,7 +728,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
   TimeOfDay? selectedTime;
 
   String text(String en, String fr, String ar, String tn) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -876,6 +877,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
           const SizedBox(height: 20),
 
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: selectedDoctor,
             decoration: InputDecoration(
               labelText: text(
@@ -975,7 +977,7 @@ class ExercisesPage extends StatelessWidget {
   const ExercisesPage({super.key, required this.language});
 
   String text(String en, String fr, String ar, String tn) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -1056,7 +1058,7 @@ class VideosPage extends StatelessWidget {
   const VideosPage({super.key, required this.language});
 
   String text(String en, String fr, String ar, String tn) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -1106,7 +1108,7 @@ class TipsPage extends StatelessWidget {
   const TipsPage({super.key, required this.language});
 
   String text(String en, String fr, String ar, String tn) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':

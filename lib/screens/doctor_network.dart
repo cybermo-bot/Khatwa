@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import '../ui/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/ai_engine.dart';
@@ -44,8 +45,8 @@ class _DoctorNetworkPageState
   ];
 
   bool get rtl =>
-      widget.language == 'العربية' ||
-      widget.language == 'تونسي';
+      appLanguage.value == 'العربية' ||
+      appLanguage.value == 'تونسي';
 
   String text(
     String en,
@@ -53,7 +54,7 @@ class _DoctorNetworkPageState
     String ar,
     String tn,
   ) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -164,7 +165,7 @@ class _DoctorNetworkPageState
                             builder: (_) =>
                                 DoctorConsentPage(
                               language:
-                                  widget.language,
+                                  appLanguage.value,
                               doctorName:
                                   doctor['name']!,
                               specialty:
@@ -214,7 +215,7 @@ class _DoctorConsentPageState
     String ar,
     String tn,
   ) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -295,8 +296,8 @@ class _DoctorConsentPageState
   @override
   Widget build(BuildContext context) {
     final rtl =
-        widget.language == 'العربية' ||
-            widget.language == 'تونسي';
+        appLanguage.value == 'العربية' ||
+            appLanguage.value == 'تونسي';
 
     return Directionality(
       textDirection:
@@ -444,7 +445,7 @@ class _DoctorLoginPageState
     String ar,
     String tn,
   ) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -497,7 +498,7 @@ class _DoctorLoginPageState
         context,
         MaterialPageRoute(
           builder: (_) => DoctorDashboardPage(
-            language: widget.language,
+            language: appLanguage.value,
             doctorName: savedName,
             doctorId: savedId,
             specialty: savedSpecialty,
@@ -523,8 +524,8 @@ class _DoctorLoginPageState
   @override
   Widget build(BuildContext context) {
     final rtl =
-        widget.language == 'العربية' ||
-            widget.language == 'تونسي';
+        appLanguage.value == 'العربية' ||
+            appLanguage.value == 'تونسي';
 
     return Directionality(
       textDirection:
@@ -622,7 +623,7 @@ class _DoctorLoginPageState
                           builder: (_) =>
                               DoctorCreateAccountPage(
                             language:
-                                widget.language,
+                                appLanguage.value,
                           ),
                         ),
                       );
@@ -682,7 +683,7 @@ class _DoctorCreateAccountPageState
     String ar,
     String tn,
   ) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
@@ -869,7 +870,7 @@ class _DoctorCreateAccountPageState
       context,
       MaterialPageRoute(
         builder: (_) => DoctorDashboardPage(
-          language: widget.language,
+          language: appLanguage.value,
           doctorName:
               nameController.text.trim(),
           doctorId: doctorId,
@@ -911,8 +912,8 @@ class _DoctorCreateAccountPageState
   @override
   Widget build(BuildContext context) {
     final rtl =
-        widget.language == 'العربية' ||
-            widget.language == 'تونسي';
+        appLanguage.value == 'العربية' ||
+            appLanguage.value == 'تونسي';
 
     return Directionality(
       textDirection:
@@ -1090,8 +1091,8 @@ class DoctorDashboardPage
   });
 
   bool get rtl =>
-      language == 'العربية' ||
-      language == 'تونسي';
+      appLanguage.value == 'العربية' ||
+      appLanguage.value == 'تونسي';
 
   String text(
     String en,
@@ -1099,7 +1100,7 @@ class DoctorDashboardPage
     String ar,
     String tn,
   ) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':

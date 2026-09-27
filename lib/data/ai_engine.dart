@@ -48,8 +48,6 @@ class KhatwaAiEngine {
     DateTime? latestTemperatureDate;
 
     for (final entry in store.entries) {
-      if (entry is! Map) continue;
-
       final type =
           '${entry['type'] ?? entry['field'] ?? ''}'.toLowerCase();
 
@@ -111,21 +109,21 @@ class KhatwaAiEngine {
       if (temperature == null ||
           (entryDate != null &&
               (latestTemperatureDate == null ||
-                  entryDate.isAfter(latestTemperatureDate!)))) {
+                  entryDate.isAfter(latestTemperatureDate)))) {
         temperature = foundTemperature;
         latestTemperatureDate = entryDate;
       }
     }
 
     if (temperature != null) {
-      if (temperature! >= 39 || temperature! < 35) {
+      if (temperature >= 39 || temperature < 35) {
         red(
-          'Temperature: ${temperature!.toStringAsFixed(1)} °C. '
+          'Temperature: ${temperature.toStringAsFixed(1)} °C. '
           'This value needs prompt professional review.',
         );
-      } else if (temperature! >= 38 || temperature! < 36) {
+      } else if (temperature >= 38 || temperature < 36) {
         yellow(
-          'Temperature: ${temperature!.toStringAsFixed(1)} °C. '
+          'Temperature: ${temperature.toStringAsFixed(1)} °C. '
           'This value is outside the usual range and should be monitored.',
         );
       }
@@ -139,8 +137,6 @@ class KhatwaAiEngine {
     String? glucoseUnit;
 
     for (final entry in store.entries) {
-      if (entry is! Map) continue;
-
       final type =
           '${entry['type'] ?? entry['field'] ?? ''}'.toLowerCase();
 
@@ -180,21 +176,21 @@ class KhatwaAiEngine {
       final unit = (glucoseUnit ?? 'mg/dL').toLowerCase();
 
       if (unit.contains('mmol')) {
-        if (glucose! < 3.0 || glucose! >= 13.9) {
+        if (glucose < 3.0 || glucose >= 13.9) {
           red(
             'A glucose value was recorded in a very low or very high range.',
           );
-        } else if (glucose! < 3.9 || glucose! > 10) {
+        } else if (glucose < 3.9 || glucose > 10) {
           yellow(
             'A glucose value was recorded outside the selected usual monitoring range.',
           );
         }
       } else {
-        if (glucose! < 54 || glucose! >= 250) {
+        if (glucose < 54 || glucose >= 250) {
           red(
             'A glucose value was recorded in a very low or very high range.',
           );
-        } else if (glucose! < 70 || glucose! > 180) {
+        } else if (glucose < 70 || glucose > 180) {
           yellow(
             'A glucose value was recorded outside the selected usual monitoring range.',
           );
@@ -207,8 +203,6 @@ class KhatwaAiEngine {
     // ============================================================
 
     for (final entry in store.entries) {
-      if (entry is! Map) continue;
-
       final type =
           '${entry['type'] ?? ''}'.toLowerCase();
 
@@ -235,8 +229,6 @@ class KhatwaAiEngine {
     // ============================================================
 
     for (final entry in store.entries) {
-      if (entry is! Map) continue;
-
       final type =
           '${entry['type'] ?? ''}'.toLowerCase();
 

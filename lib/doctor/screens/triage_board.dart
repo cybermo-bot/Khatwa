@@ -70,10 +70,10 @@ class _TriageBoardState extends State<TriageBoard> {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         _KpiGrid(tiles: [
-          _Kpi('Patients suivis', '${data.patients.length}', Icons.people_alt_outlined, p.primary),
-          _Kpi('Alertes urgentes', '$urgentOpen', Icons.priority_high_rounded, urgentOpen > 0 ? p.urgent : p.ok),
-          _Kpi('Lésions actives', '$activeFindings', Icons.healing_outlined, p.soon),
-          _Kpi('Contrôles du jour', '$checksToday', Icons.fact_check_outlined, p.mint),
+          _Kpi(dl('Patients suivis', 'Patients followed'), '${data.patients.length}', Icons.people_alt_outlined, p.primary),
+          _Kpi(dl('Alertes urgentes', 'Urgent alerts'), '$urgentOpen', Icons.priority_high_rounded, urgentOpen > 0 ? p.urgent : p.ok),
+          _Kpi(dl('Lésions actives', 'Active lesions'), '$activeFindings', Icons.healing_outlined, p.soon),
+          _Kpi(dl('Contrôles du jour', 'Today\'s checks'), '$checksToday', Icons.fact_check_outlined, p.mint),
         ]),
         const SizedBox(height: 16),
         TextField(
@@ -82,7 +82,7 @@ class _TriageBoardState extends State<TriageBoard> {
           style: DText.body(p).copyWith(color: p.ink),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.search_rounded, color: p.muted),
-            hintText: 'Pseudonyme ou référence',
+            hintText: dl('Pseudonyme ou référence', 'Pseudonym or reference'),
           ),
         ),
         const SizedBox(height: 12),
@@ -91,7 +91,7 @@ class _TriageBoardState extends State<TriageBoard> {
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            _Choice('Tous risques', risk == null, () => setState(() => risk = null)),
+            _Choice(dl('Tous risques', 'All risks'), risk == null, () => setState(() => risk = null)),
             for (final r in [3, 2, 1, 0])
               _Choice('IWGDF $r', risk == r, () => setState(() => risk = risk == r ? null : r), color: p.risk(r)),
           ],
@@ -104,9 +104,9 @@ class _TriageBoardState extends State<TriageBoard> {
           children: [
             for (final (value, text) in [
               ('urgent', 'Urgent'),
-              ('soon', 'Bientôt'),
+              ('soon', dl('Bientôt', 'Soon')),
               ('info', 'Info'),
-              ('calm', 'Calme'),
+              ('calm', dl('Calme', 'Calm')),
             ])
               _Choice(text, level == value, () => setState(() => level = level == value ? null : value),
                   color: value == 'calm' ? p.ok : p.level(value)),
@@ -118,9 +118,9 @@ class _TriageBoardState extends State<TriageBoard> {
           ],
         ),
         const SizedBox(height: 16),
-        DSectionTitle('Patients, urgents en premier', trailing: Text('${list.length}', style: DText.small(p))),
+        DSectionTitle(dl('Patients, urgents en premier', 'Patients, urgent first'), trailing: Text('${list.length}', style: DText.small(p))),
         if (list.isEmpty)
-          GlassPanel(child: Text('Aucun patient ne correspond aux filtres.', style: DText.body(p)))
+          GlassPanel(child: Text(dl('Aucun patient ne correspond aux filtres.', 'No patient matches the filters.'), style: DText.body(p)))
         else
           for (final patient in list)
             Padding(
@@ -236,10 +236,10 @@ class _GovernorateMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = DPalette.of(context);
     return PopupMenuButton<String>(
-      tooltip: 'Gouvernorat',
+      tooltip: dl('Gouvernorat', 'Governorate'),
       onSelected: (g) => onChanged(g.isEmpty ? null : g),
       itemBuilder: (context) => [
-        const PopupMenuItem(value: '', child: Text('Tous les gouvernorats')),
+        PopupMenuItem(value: '', child: Text(dl('Tous les gouvernorats', 'All governorates'))),
         for (final g in options) PopupMenuItem(value: g, child: Text(g)),
       ],
       child: Container(
@@ -254,7 +254,7 @@ class _GovernorateMenu extends StatelessWidget {
           children: [
             Icon(Icons.place_outlined, size: 15, color: p.inkSoft),
             const SizedBox(width: 4),
-            Text(value ?? 'Gouvernorat',
+            Text(value ?? dl('Gouvernorat', 'Governorate'),
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: p.inkSoft)),
             Icon(Icons.arrow_drop_down_rounded, size: 18, color: p.inkSoft),
           ],
@@ -323,7 +323,7 @@ class PatientRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${patient.ref} · ${patient.age ?? '?'} ans · ${patient.governorate ?? ''}',
+                  '${patient.ref} · ${patient.age ?? '?'} ${dl('ans', 'years')} · ${patient.governorate ?? ''}',
                   style: DText.small(p),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

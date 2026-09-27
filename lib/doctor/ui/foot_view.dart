@@ -7,6 +7,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import 'labels.dart';
 import 'style.dart';
+import '../../ui/foot_twin.dart' show modelAsset;
 
 /// A zone of the model foot: 3D position and normal from
 /// `assets/models/foot_regions.json` (metres, y up, left foot).
@@ -157,8 +158,9 @@ class _Foot3d extends StatelessWidget {
       borderRadius: BorderRadius.circular(dRadius),
       child: ModelViewer(
         key: key,
-        src: src ?? 'assets/models/foot_model.glb',
-        alt: 'Modèle 3D du ${sideLabel(side).toLowerCase()} avec les zones signalées',
+        src: src ?? modelAsset('assets/models/foot_model.glb'),
+        alt: dl('Modèle 3D du ${sideLabel(side).toLowerCase()} avec les zones signalées',
+            '3D model of the ${sideLabel(side).toLowerCase()} with the reported zones'),
         cameraControls: true,
         disableZoom: false,
         autoRotate: false,

@@ -5,6 +5,7 @@ import '../data/auth_store.dart';
 import '../data/cloud.dart';
 import '../doctor/data/supabase_repository.dart';
 import '../doctor/screens/doctor_dashboard.dart';
+import '../doctor/ui/labels.dart';
 import '../data/case_store.dart';
 import '../data/fhir_export.dart';
 import '../data/triage.dart';
@@ -36,19 +37,19 @@ class DoctorHomePage extends StatelessWidget {
       key: ValueKey(live),
       repository: live ? SupabaseDoctorRepository() : null,
       subtitle: live
-          ? 'Données partagées en direct'
+          ? dl('Données partagées en direct', 'Live shared data')
           : account == null
               ? null
               : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
       actions: [
         if (!live)
           IconButton(
-            tooltip: 'Connecter aux données des patients',
+            tooltip: dl('Connecter aux données des patients', 'Connect to patient data'),
             icon: const Icon(Icons.cloud_sync_outlined, size: 21),
             onPressed: () => _connect(context),
           ),
         IconButton(
-          tooltip: 'Dossiers reçus',
+          tooltip: dl('Dossiers reçus', 'Received cases'),
           icon: const Icon(Icons.inbox_outlined, size: 21),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const DoctorCaseQueuePage()),
@@ -96,14 +97,14 @@ class DoctorHomePage extends StatelessWidget {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setState) => AlertDialog(
-          title: const Text('Données des patients'),
+          title: Text(dl('Données des patients', 'Patient data')),
           content: Column(mainAxisSize: MainAxisSize.min, children: [
             TextField(controller: email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'E-mail')),
-            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: 'Mot de passe')),
+            TextField(controller: password, obscureText: true, decoration: InputDecoration(labelText: dl('Mot de passe', 'Password'))),
             if (error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(error!, style: TextStyle(color: K.danger))),
           ]),
           actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Annuler')),
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(dl('Annuler', 'Cancel'))),
             FilledButton(
               onPressed: () async {
                 final e = await KhatwaCloud.instance.signInDoctor(email.text, password.text);
@@ -113,7 +114,7 @@ class DoctorHomePage extends StatelessWidget {
                   setState(() => error = e);
                 }
               },
-              child: const Text('Se connecter'),
+              child: Text(dl('Se connecter', 'Sign in')),
             ),
           ],
         ),

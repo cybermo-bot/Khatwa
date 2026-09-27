@@ -55,11 +55,145 @@ class S {
     'auth.logout': ['خروج', 'خروج', 'Déconnexion', 'Sign out'],
     'auth.err.fields': ['عمّر كل الخانات', 'لازم تعمّر الكل', 'Veuillez remplir tous les champs', 'Please fill in all fields'],
     'auth.err.phone': ['رقم الهاتف غير صحيح', 'النمرة موش صحيحة', 'Numéro invalide (8 chiffres)', 'Invalid phone number (8 digits)'],
-    'auth.err.short': ['كلمة السر قصيرة (6 على الأقل)', 'كلمة السر قصيرة برشة', 'Mot de passe trop court (6 min.)', 'Password too short (6 min.)'],
+    'auth.err.short': ['كلمة السر قصيرة (8 أحرف على الأقل)', 'كلمة السر قصيرة برشة (8 حروف على الأقل)', 'Mot de passe trop court (8 caractères min.)', 'Password too short (8 characters min.)'],
     'auth.err.match': ['كلمتا السر غير متطابقتين', 'الكلمتين موش كيف كيف', 'Les mots de passe ne correspondent pas', 'Passwords do not match'],
     'auth.err.exists': ['هذا الرقم مسجل من قبل', 'النمرة هذي مسجلة', 'Ce numéro est déjà enregistré', 'This number is already registered'],
-    'auth.err.bad': ['رقم أو كلمة سر خاطئة', 'النمرة ولا كلمة السر غالطة', 'Numéro ou mot de passe incorrect', 'Wrong number or password'],
+    'auth.err.bad': ['البريد أو كلمة السر خاطئة', 'الإيمايل ولا كلمة السر غالطين', 'E-mail ou mot de passe incorrect', 'Wrong e-mail or password'],
     'auth.welcome': ['مرحبا', 'أهلا', 'Bonjour', 'Welcome'],
+    'onb.skip': ['تخطي', 'فوّت', 'Passer', 'Skip'],
+    'onb.next': ['التالي', 'اللي بعدو', 'Suivant', 'Next'],
+    'onb.start': ['ابدأ', 'يلّا نبداو', 'Commencer', 'Get started'],
+    'onb.1.title': ['قدماك، كل يوم', 'ساقيك، كل يوم', 'Vos pieds, chaque jour', 'Your feet, every day'],
+    'onb.1.body': [
+      'فحص قصير كل يوم بالصور وبعض الأسئلة. عند أي علامة مقلقة، يطّلع عليها طبيب. خطوة لا تشخّص: هي تساعدك على الانتباه مبكرا.',
+      'فحص قصير كل يوم بالتصاور وشوية أسئلة. كي تبان علامة تقلق، يشوفها طبيب. خطوة ما تشخّصش: تعاونك تنتبه بكري.',
+      'Un contrôle court chaque jour, avec des photos et quelques questions. Au moindre signe inquiétant, un soignant regarde. Khatwa ne pose pas de diagnostic : elle vous aide à voir tôt.',
+      'A short check every day, with photos and a few questions. At any worrying sign, a health professional looks. Khatwa does not diagnose: it helps you notice early.'
+    ],
+    'onb.2.title': ['قدمك ثلاثية الأبعاد', 'ساقك في 3D', 'Votre pied en 3D', 'Your foot in 3D'],
+    'onb.2.body': [
+      'دوّر القدم بإصبعك. العلامات التي تسجّلها تظهر في مكانها، ويرى الطبيب الشيء نفسه.',
+      'دوّر الساق بصبعك. العلامات اللي تسجّلها تبان في بلاصتها، والطبيب يشوف نفس الحاجة.',
+      'Tournez le pied du doigt. Les signes que vous notez apparaissent à leur place, et le soignant voit la même chose.',
+      'Turn the foot with your finger. The signs you note appear in their place, and the health professional sees the same.'
+    ],
+    'onb.3.title': ['تحدّث مع خطوة', 'احكي مع خطوة', 'Parlez à Khatwa', 'Talk to Khatwa'],
+    'onb.3.body': [
+      'اضغط على الزر وتكلّم بالدارجة أو العربية أو الفرنسية. خطوة تجيبك بصوتها، وعند علامة خطيرة تقول لك اتصل بـ 190.',
+      'شدّ الزر واحكي بالتونسي ولا بالعربية ولا بالفرنسية. خطوة تجاوبك بالصوت، وكي تكون علامة خطيرة تقلك اطلب 190.',
+      'Maintenez le bouton et parlez en derja, en arabe ou en français. Khatwa vous répond à voix haute, et devant un signe grave vous dit d’appeler le 190.',
+      'Hold the button and speak in derja, Arabic or French. Khatwa answers out loud, and for a serious sign tells you to call 190.'
+    ],
+    'demo.noRealData': [
+      'نسخة تجريبية: لا تُدخل بيانات حقيقية.',
+      'نسخة تجريبية: ما تدخّلش معلومات حقيقية.',
+      'Démo : n’entrez pas de données réelles.',
+      'Demo: do not enter real data.'
+    ],
+    'auth.email': ['البريد الإلكتروني', 'الإيمايل', 'E-mail', 'E-mail'],
+    'auth.identifier': [
+      'البريد الإلكتروني (أو رقم الهاتف لحساب قديم)',
+      'الإيمايل (ولا النمرة لحساب قديم)',
+      'E-mail (ou numéro pour un ancien compte)',
+      'E-mail (or phone number for an older account)'
+    ],
+    'auth.phoneOptional': ['رقم الهاتف (اختياري)', 'نمرة التليفون (موش لازم)', 'Numéro de téléphone (facultatif)', 'Phone number (optional)'],
+    'auth.stay': ['البقاء متصلا', 'خليني داخل', 'Rester connecté', 'Stay signed in'],
+    'auth.stayHint': [
+      'على هذا الجهاز فقط: لا قفل بعد 10 دقائق، ولا رمز بالبريد لمدة 30 يوما.',
+      'في التليفون هذا برك: ما يتسكرش بعد 10 دقايق، وما يلزمكش كود بالإيمايل 30 يوم.',
+      'Sur cet appareil seulement : pas de verrouillage après 10 minutes, pas de code par e-mail pendant 30 jours.',
+      'On this device only: no lock after 10 minutes, no e-mail code for 30 days.'
+    ],
+    'auth.err.email': ['البريد الإلكتروني غير صحيح', 'الإيمايل موش صحيح', 'Adresse e-mail invalide', 'Invalid e-mail address'],
+    'auth.err.emailExists': [
+      'هذا البريد مسجل من قبل على هذا الجهاز',
+      'الإيمايل هذا مسجّل من قبل في التليفون',
+      'Cet e-mail a déjà un compte sur cet appareil',
+      'This e-mail already has an account on this device'
+    ],
+    'auth.err.needPin': [
+      'أدخل رمزك السري القديم، مرة أخيرة فقط.',
+      'دخّل الكود السري القديم متاعك، آخر مرة برك.',
+      'Entrez votre ancien code PIN, une dernière fois seulement.',
+      'Enter your old PIN, one last time only.'
+    ],
+    'auth.oldPin': ['الرمز السري القديم', 'الكود السري القديم', 'Ancien code PIN', 'Old PIN'],
+    'auth.err.codeSend': [
+      'لم نتمكن من إرسال الرمز الآن (إرسالات كثيرة أو لا يوجد اتصال). حاول بعد قليل، أو واصل كضيف.',
+      'ما نجمناش نبعثو الكود توّا (برشة إرسالات ولا ما فماش كونكسيون). عاود بعد شوية، ولا كمّل كضيف.',
+      'Nous n’avons pas pu envoyer le code pour le moment (trop d’envois ou pas de connexion). Réessayez dans un moment, ou continuez en invité.',
+      'We could not send the code right now (too many e-mails or no connection). Try again in a moment, or continue as a guest.'
+    ],
+    'auth.err.code': [
+      'الرمز غير صحيح أو انتهت صلاحيته',
+      'الكود غالط ولا وفى وقتو',
+      'Code incorrect ou expiré',
+      'Wrong or expired code'
+    ],
+    'auth.code.title': ['رمز التحقق', 'كود التأكيد', 'Code de vérification', 'Verification code'],
+    'auth.code.sent': [
+      'أرسلنا رمزا من 6 أرقام إلى',
+      'بعثنالك كود فيه 6 أرقام لـ',
+      'Nous avons envoyé un code à 6 chiffres à',
+      'We sent a 6-digit code to'
+    ],
+    'auth.code.sending': ['جار إرسال الرمز…', 'قاعدين نبعثو في الكود…', 'Envoi du code…', 'Sending the code…'],
+    'auth.code.label': ['الرمز (6 أرقام)', 'الكود (6 أرقام)', 'Code à 6 chiffres', '6-digit code'],
+    'auth.code.verify': ['تحقق', 'تأكّد', 'Vérifier', 'Verify'],
+    'auth.code.resend': ['إعادة إرسال الرمز', 'عاود ابعث الكود', 'Renvoyer le code', 'Send the code again'],
+    'auth.code.spam': [
+      'لم يصلك؟ تحقق من البريد غير المرغوب فيه.',
+      'ما وصلكش؟ شوف في البريد المزعج.',
+      'Rien reçu ? Regardez dans les courriers indésirables.',
+      'Nothing received? Check your spam folder.'
+    ],
+    'auth.guest': ['المتابعة كضيف', 'كمّل كضيف', 'Continuer en invité', 'Continue as a guest'],
+    'auth.guestNote': [
+      'بدون إدخال أي معلومات. يمكنك إنشاء حسابك لاحقا.',
+      'بلا ما تكتب حتى شي. تنجم تعمل حسابك من بعد.',
+      'Aucune donnée à saisir. Vous pourrez créer votre compte plus tard.',
+      'Nothing to type. You can create your account later.'
+    ],
+    'auth.guestName': ['ضيف', 'ضيف', 'Invité', 'Guest'],
+    'auth.guestBadge': ['حساب ضيف', 'حساب ضيف', 'Compte invité', 'Guest account'],
+    'auth.guestUpgrade': ['إنشاء حسابي', 'اعمل حسابي', 'Créer mon compte', 'Create my account'],
+    'auth.guestUpgradeSub': [
+      'احتفظ بمتابعتك: أضف بريدا إلكترونيا وكلمة سر.',
+      'حافظ على المتابعة متاعك: زيد إيمايل وكلمة سر.',
+      'Gardez votre suivi : ajoutez un e-mail et un mot de passe.',
+      'Keep your follow-up: add an e-mail and a password.'
+    ],
+    'auth.guestLeave': [
+      'عند الخروج، تُحذف بيانات الضيف من هذا الجهاز. هل تريد الخروج؟',
+      'كي تخرج، المعلومات متاع الضيف تتفسخ من التليفون. تحب تخرج؟',
+      'En vous déconnectant, les données de l’invité seront effacées de cet appareil. Vous déconnecter ?',
+      'Signing out erases the guest data from this device. Sign out?'
+    ],
+    'auth.back': ['رجوع', 'ارجع', 'Retour', 'Back'],
+    'auth.promise': [
+      'نظرة على قدميك كل يوم، وطبيب وراء كل تنبيه',
+      'تشوف ساقيك كل يوم، وطبيب معاك كي يلزم',
+      'Un regard sur vos pieds chaque jour, un soignant derrière chaque alerte',
+      'A look at your feet every day, a health professional behind every alert'
+    ],
+    'auth.iam': ['أنا', 'أنا', 'Je suis', 'I am'],
+    'role.doctorShort': ['طبيب أو ممرض', 'طبيب ولا فرملي', 'Soignant', 'Health professional'],
+    'auth.welcomeBack': ['مرحبا بعودتك', 'مرحبا بيك من جديد', 'Content de vous revoir', 'Welcome back'],
+    'auth.signinSub': [
+      'أدخل معلوماتك لتجد متابعتك.',
+      'دخّل المعلومات متاعك باش تلقى المتابعة متاعك.',
+      'Entrez vos identifiants pour retrouver votre suivi.',
+      'Enter your details to find your follow-up.'
+    ],
+    'auth.signupSub': [
+      'بضع معلومات فقط، ثم نبدأ.',
+      'شوية معلومات برك، ومبعد نبداو.',
+      'Quelques informations, puis on commence.',
+      'A few details, then we start.'
+    ],
+    'auth.show': ['إظهار كلمة السر', 'ورّي كلمة السر', 'Afficher le mot de passe', 'Show password'],
+    'auth.hide': ['إخفاء كلمة السر', 'خبّي كلمة السر', 'Masquer le mot de passe', 'Hide password'],
     'auth.secure': [
       'بياناتك محفوظة على هذا الجهاز، وكلمة السر مشفّرة.',
       'المعلومات متاعك تقعد في التليفون، وكلمة السر مشفّرة.',
@@ -477,10 +611,10 @@ class S {
     ],
     'security.title': ['الأمان', 'الأمان', 'Sécurité', 'Security'],
     'security.encrypted': [
-      'البيانات مشفّرة على هذا الجهاز، والمفتاح يُفتح برمزك السري',
-      'المعلومات مشفّرة في التليفون، والمفتاح يتحل بالكود متاعك',
-      'Données chiffrées sur cet appareil, clé déverrouillée par votre code PIN',
-      'Data encrypted on this device, key unlocked by your PIN'
+      'البيانات مشفّرة على هذا الجهاز، والمفتاح يُفتح بكلمة السر',
+      'المعلومات مشفّرة في التليفون، والمفتاح يتحل بكلمة السر متاعك',
+      'Données chiffrées sur cet appareil, clé déverrouillée par votre mot de passe',
+      'Data encrypted on this device, key unlocked by your password'
     ],
     'security.notEncrypted': [
       'التشفير غير مفعّل لهذا الحساب',

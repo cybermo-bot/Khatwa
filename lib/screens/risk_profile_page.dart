@@ -237,6 +237,8 @@ class _Toggle extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        constraints: const BoxConstraints(minHeight: 48),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? background : K.card,
           border: Border.all(color: selected ? color : K.line, width: selected ? 1.5 : 1),

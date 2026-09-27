@@ -364,6 +364,7 @@ class _Pill extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        constraints: const BoxConstraints(minHeight: 48),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? K.primarySoft : K.card,

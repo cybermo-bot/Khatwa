@@ -24,13 +24,24 @@ class ScanPage extends StatefulWidget {
 
 enum _Step { side, intro, camera, uploading, processing, done, rejected }
 
-const _rejectFr = {
-  'video_unreadable': 'La vidéo n’a pas pu être lue. Recommencez l’enregistrement.',
-  'mat_not_seen': 'La feuille Khatwa n’était pas assez visible. Gardez toute la feuille dans l’image et tournez plus lentement.',
-  'foot_not_seen': 'Le pied n’a pas été reconnu sur assez d’images. Gardez tout le pied dans l’image, à environ 50 cm.',
-  'too_few_points': 'Pas assez de détails du pied. Recommencez avec plus de lumière, sans contre-jour.',
-  'erased': 'Les données ont été effacées.',
-};
+String? _reject(Object? code) => switch (code) {
+      'video_unreadable' => tr('La vidéo n’a pas pu être lue. Recommencez l’enregistrement.',
+          aeb: 'الفيديو ما تقراش. عاود صوّر.', ar: 'تعذّرت قراءة الفيديو. أعد التسجيل.', en: 'The video could not be read. Record it again.'),
+      'mat_not_seen' => tr('La feuille Khatwa n’était pas assez visible. Gardez toute la feuille dans l’image et tournez plus lentement.',
+          aeb: 'ورقة خطوة ما بانتش مليح. خلّي الورقة الكل في التصويرة ودور بشوية.',
+          ar: 'ورقة خطوة لم تكن واضحة بما يكفي. أبقِ الورقة كاملة في الصورة ودُر ببطء أكثر.',
+          en: 'The Khatwa sheet was not visible enough. Keep the whole sheet in the picture and turn more slowly.'),
+      'foot_not_seen' => tr('Le pied n’a pas été reconnu sur assez d’images. Gardez tout le pied dans l’image, à environ 50 cm.',
+          aeb: 'الساق ما تعرفتش في تصاور كافية. خلّي الساق الكل في التصويرة، على بعد 50 صم تقريب.',
+          ar: 'لم يُتعرّف على القدم في صور كافية. أبقِ القدم كاملة في الصورة، على بعد 50 سم تقريبًا.',
+          en: 'The foot was not recognised in enough frames. Keep the whole foot in the picture, about 50 cm away.'),
+      'too_few_points' => tr('Pas assez de détails du pied. Recommencez avec plus de lumière, sans contre-jour.',
+          aeb: 'تفاصيل الساق موش كافية. عاود مع ضو أكثر، والضو موش من التالي.',
+          ar: 'تفاصيل القدم غير كافية. أعد المحاولة بإضاءة أكثر ودون إضاءة خلفية.',
+          en: 'Not enough detail of the foot. Try again with more light, not against the light.'),
+      'erased' => tr('Les données ont été effacées.', aeb: 'المعطيات تفسخت.', ar: 'حُذفت البيانات.', en: 'The data was erased.'),
+      _ => null,
+    };
 
 class _ScanPageState extends State<ScanPage> {
   static const _seconds = 25;
@@ -54,7 +65,8 @@ class _ScanPageState extends State<ScanPage> {
     super.dispose();
   }
 
-  String get _title => 'Scanner le ${sideFr(_side)}';
+  String get _title => tr('Scanner le ${sideName(_side)}',
+      aeb: 'سكان ${sideName(_side)}', ar: 'مسح ${sideName(_side)}', en: 'Scan the ${sideName(_side)}');
 
   Future<void> _openCamera() async {
     if (kIsWeb) {
@@ -75,7 +87,15 @@ class _ScanPageState extends State<ScanPage> {
         _step = _Step.camera;
       });
     } catch (e) {
-      if (mounted) kToast(context, 'Caméra indisponible. Autorisez la caméra et réessayez.', error: true);
+      if (mounted) {
+        kToast(
+            context,
+            tr('Caméra indisponible. Autorisez la caméra et réessayez.',
+                aeb: 'الكاميرا موش متوفرة. اسمح بالكاميرا وعاود.',
+                ar: 'الكاميرا غير متاحة. اسمح بالكاميرا وأعد المحاولة.',
+                en: 'Camera unavailable. Allow the camera and try again.'),
+            error: true);
+      }
     }
   }
 
@@ -111,7 +131,10 @@ class _ScanPageState extends State<ScanPage> {
 
   void _stopTapped() {
     if (_elapsed < _minSeconds) {
-      kToast(context, 'Continuez encore un peu : faites tout le tour du pied.');
+      kToast(
+          context,
+          tr('Continuez encore un peu : faites tout le tour du pied.',
+              aeb: 'كمّل شوية: دور على الساق الكل.', ar: 'واصل قليلًا: دُر حول القدم كاملة.', en: 'Keep going a little: go all the way round the foot.'));
       return;
     }
     _finish();
@@ -139,7 +162,8 @@ class _ScanPageState extends State<ScanPage> {
       while (mounted) {
         await Future.delayed(const Duration(seconds: 3));
         if (DateTime.now().isAfter(deadline)) {
-          _reject('Le serveur met trop de temps. Réessayez plus tard.');
+          _fail(tr('Le serveur met trop de temps. Réessayez plus tard.',
+              aeb: 'السيرفر طوّل برشة. عاود من بعد.', ar: 'الخادم يستغرق وقتًا طويلًا. أعد المحاولة لاحقًا.', en: 'The server is taking too long. Try again later.'));
           break;
         }
         final Map<String, dynamic> st;
@@ -160,18 +184,22 @@ class _ScanPageState extends State<ScanPage> {
           break;
         }
         if (state == 'rejected' || state == 'failed' || state == 'erased') {
-          _reject(_rejectFr[st['code'] ?? state] ?? 'Le scan n’a pas pu être traité. Recommencez.');
+          _fail(_reject(st['code'] ?? state) ??
+              tr('Le scan n’a pas pu être traité. Recommencez.',
+                  aeb: 'السكان ما تعالجش. عاود.', ar: 'تعذّرت معالجة المسح. أعد المحاولة.', en: 'The scan could not be processed. Try again.'));
           break;
         }
       }
     } on ServerError {
-      _reject('Le serveur a refusé la vidéo. Recommencez.');
+      _fail(tr('Le serveur a refusé la vidéo. Recommencez.',
+          aeb: 'السيرفر رفض الفيديو. عاود.', ar: 'رفض الخادم الفيديو. أعد المحاولة.', en: 'The server refused the video. Try again.'));
     } catch (_) {
-      _reject('Envoi impossible. Vérifiez la connexion.');
+      _fail(tr('Envoi impossible. Vérifiez la connexion.',
+          aeb: 'ما نجمناش نبعثو. ثبّت في الكونكسيون.', ar: 'تعذّر الإرسال. تحقّق من الاتصال.', en: 'Could not send. Check the connection.'));
     }
   }
 
-  void _reject(String message) {
+  void _fail(String message) {
     if (!mounted) return;
     setState(() {
       _message = message;
@@ -185,13 +213,16 @@ class _ScanPageState extends State<ScanPage> {
     try {
       await _server.deleteScan(id);
       if (!mounted) return;
-      kToast(context, 'Scan supprimé.');
+      kToast(context, tr('Scan supprimé.', aeb: 'السكان تفسخ.', ar: 'حُذف المسح.', en: 'Scan deleted.'));
       setState(() {
         _result = null;
         _step = _Step.side;
       });
     } catch (_) {
-      if (mounted) kToast(context, 'Suppression impossible. Réessayez.', error: true);
+      if (mounted) {
+        kToast(context, tr('Suppression impossible. Réessayez.', aeb: 'ما نجمناش نفسخو. عاود.', ar: 'تعذّر الحذف. أعد المحاولة.', en: 'Could not delete. Try again.'),
+            error: true);
+      }
     }
   }
 
@@ -199,11 +230,14 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     switch (_step) {
       case _Step.side:
-        return _page('Scanner mon pied',
-            SidePicker(onPick: (s) => setState(() {
-                  _side = s;
-                  _step = _Step.intro;
-                }), title: 'Quel pied allez-vous scanner ?'));
+        return _page(
+            tr('Scanner mon pied', aeb: 'اعمل سكان لساقي', ar: 'امسح قدمي', en: 'Scan my foot'),
+            SidePicker(
+                onPick: (s) => setState(() {
+                      _side = s;
+                      _step = _Step.intro;
+                    }),
+                title: tr('Quel pied allez-vous scanner ?', aeb: 'أما ساق باش تعمللها سكان؟', ar: 'أي قدم ستمسح؟', en: 'Which foot will you scan?')));
       case _Step.camera:
         return _cameraView();
       case _Step.intro:
@@ -216,7 +250,13 @@ class _ScanPageState extends State<ScanPage> {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               const CircularProgressIndicator(),
               const SizedBox(height: 20),
-              Text(_step == _Step.uploading ? 'Envoi de la vidéo…' : 'Construction de votre pied en 3D…\n(environ 2 minutes)',
+              Text(
+                  _step == _Step.uploading
+                      ? tr('Envoi de la vidéo…', aeb: 'قاعدين نبعثو في الفيديو…', ar: 'جارٍ إرسال الفيديو…', en: 'Sending the video…')
+                      : tr('Construction de votre pied en 3D…\n(environ 2 minutes)',
+                          aeb: 'قاعدين نبنيو ساقك في 3D…\n(دقيقتين تقريب)',
+                          ar: 'جارٍ بناء قدمك ثلاثية الأبعاد…\n(دقيقتان تقريبًا)',
+                          en: 'Building your 3D foot…\n(about 2 minutes)'),
                   textAlign: TextAlign.center, style: K.body),
             ]),
           ),
@@ -230,7 +270,9 @@ class _ScanPageState extends State<ScanPage> {
           ListView(padding: const EdgeInsets.all(16), children: [
             KCard(color: K.warnSoft, child: Text(_message, style: K.body)),
             const SizedBox(height: 16),
-            FilledButton(onPressed: () => setState(() => _step = _Step.intro), child: const Text('Recommencer')),
+            FilledButton(
+                onPressed: () => setState(() => _step = _Step.intro),
+                child: Text(tr('Recommencer', aeb: 'عاود', ar: 'أعد المحاولة', en: 'Start again'))),
           ]),
         );
     }
@@ -245,18 +287,40 @@ class _ScanPageState extends State<ScanPage> {
   Widget _intro() => _page(
         _title,
         ListView(padding: const EdgeInsets.all(16), children: [
-          const _StepCard(n: 1, text: 'Imprimez la feuille Khatwa à 100 % (taille réelle). Vérifiez la règle de 10 cm.'),
-          const _StepCard(n: 2, text: 'Asseyez-vous, pied nu posé à plat, la feuille juste devant les orteils. Pas de pansement ni de chaussette.'),
-          const _StepCard(
+          _StepCard(
+              n: 1,
+              text: tr('Imprimez la feuille Khatwa à 100 % (taille réelle). Vérifiez la règle de 10 cm.',
+                  aeb: 'اطبع ورقة خطوة بـ 100 % (القياس الحقيقي). ثبّت في المسطرة متاع 10 صم.',
+                  ar: 'اطبع ورقة خطوة بنسبة 100 % (الحجم الحقيقي). تحقّق من مسطرة 10 سم.',
+                  en: 'Print the Khatwa sheet at 100 % (actual size). Check the 10 cm ruler.')),
+          _StepCard(
+              n: 2,
+              text: tr('Asseyez-vous, pied nu posé à plat, la feuille juste devant les orteils. Pas de pansement ni de chaussette.',
+                  aeb: 'اقعد، ساقك حافية على الأرض، والورقة قدّام الصوابع. بلا ضمادة وبلا كلسيطة.',
+                  ar: 'اجلس، القدم حافية ومسطحة، والورقة أمام الأصابع مباشرة. دون ضمادة أو جورب.',
+                  en: 'Sit down, bare foot flat, the sheet just in front of the toes. No dressing, no sock.')),
+          _StepCard(
               n: 3,
-              text: 'Une autre personne tient le téléphone à l’horizontale et fait lentement le tour du pied, à environ 50 cm, '
-                  'pendant 25 secondes. Le pied et la feuille restent dans l’image.'),
-          const _StepCard(n: 4, text: 'Si vous avez une plaie ouverte, ne faites pas de scan : montrez-la à un soignant.'),
+              text: tr(
+                  'Une autre personne tient le téléphone à l’horizontale et fait lentement le tour du pied, à environ 50 cm, '
+                      'pendant 25 secondes. Le pied et la feuille restent dans l’image.',
+                  aeb: 'واحد آخر يشدّ التليفون بالعرض ويدور بشوية على الساق، على بعد 50 صم تقريب، مدة 25 ثانية. الساق والورقة يقعدو في التصويرة.',
+                  ar: 'يمسك شخص آخر الهاتف أفقيًا ويدور ببطء حول القدم، على بعد 50 سم تقريبًا، لمدة 25 ثانية. تبقى القدم والورقة في الصورة.',
+                  en: 'Someone else holds the phone sideways and slowly circles the foot, about 50 cm away, '
+                      'for 25 seconds. The foot and the sheet stay in the picture.')),
+          _StepCard(
+              n: 4,
+              text: tr('Si vous avez une plaie ouverte, ne faites pas de scan : montrez-la à un soignant.',
+                  aeb: 'كان عندك جرح مفتوح، ما تعملش سكان: ورّيه للطبيب.',
+                  ar: 'إذا كان لديك جرح مفتوح فلا تقم بالمسح: اعرضه على الطبيب.',
+                  en: 'If you have an open wound, do not scan: show it to a health professional.')),
           const SizedBox(height: 8),
           FilledButton.icon(
               onPressed: _openCamera,
               icon: const Icon(Icons.videocam_rounded),
-              label: const Text(kIsWeb ? 'Filmer mon pied' : 'Ouvrir la caméra')),
+              label: Text(kIsWeb
+                  ? tr('Filmer mon pied', aeb: 'صوّر ساقي فيديو', ar: 'صوّر قدمي فيديو', en: 'Film my foot')
+                  : tr('Ouvrir la caméra', aeb: 'حلّ الكاميرا', ar: 'افتح الكاميرا', en: 'Open the camera'))),
         ]),
       );
 
@@ -264,12 +328,15 @@ class _ScanPageState extends State<ScanPage> {
     final c = _cam!;
     final left = _seconds - _elapsed;
     final tip = !_recording
-        ? 'Cadrez le ${sideFr(_side)} et la feuille, puis appuyez sur le bouton.'
+        ? tr('Cadrez le ${sideName(_side)} et la feuille, puis appuyez sur le bouton.',
+            aeb: 'حط ${sideName(_side)} والورقة في التصويرة، ومبعد اضغط على الزر.',
+            ar: 'ضع ${sideName(_side)} والورقة في الإطار، ثم اضغط على الزر.',
+            en: 'Frame the ${sideName(_side)} and the sheet, then press the button.')
         : _elapsed < 8
-            ? 'Tournez lentement autour du pied…'
+            ? tr('Tournez lentement autour du pied…', aeb: 'دور بشوية على الساق…', ar: 'دُر ببطء حول القدم…', en: 'Slowly circle the foot…')
             : _elapsed < 17
-                ? 'Continuez, gardez la feuille visible…'
-                : 'Encore un peu, finissez le tour.';
+                ? tr('Continuez, gardez la feuille visible…', aeb: 'كمّل، خلّي الورقة باينة…', ar: 'واصل، وأبقِ الورقة ظاهرة…', en: 'Keep going, keep the sheet visible…')
+                : tr('Encore un peu, finissez le tour.', aeb: 'شوية أخرى، كمّل الدورة.', ar: 'قليلًا بعد، أكمل الدورة.', en: 'A little more, finish the circle.');
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(fit: StackFit.expand, children: [
@@ -291,7 +358,9 @@ class _ScanPageState extends State<ScanPage> {
           child: Center(
             child: Semantics(
               button: true,
-              label: _recording ? 'Arrêter' : 'Enregistrer',
+              label: _recording
+                  ? tr('Arrêter', aeb: 'وقّف', ar: 'إيقاف', en: 'Stop')
+                  : tr('Enregistrer', aeb: 'سجّل', ar: 'تسجيل', en: 'Record'),
               child: GestureDetector(
                 onTap: _recording ? _stopTapped : _record,
                 child: SizedBox(
@@ -329,30 +398,46 @@ class _ScanPageState extends State<ScanPage> {
     final detected = q['side_detected'] as String?;
     final mismatch = detected != null && detected != _side && !_sideConfirmed;
     return _page(
-      'Pied scanné',
+      tr('Pied scanné', aeb: 'الساق تعمللها سكان', ar: 'تم مسح القدم', en: 'Foot scanned'),
       ListView(padding: const EdgeInsets.all(16), children: [
         if (mismatch)
           KCard(
             color: K.warnSoft,
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Text('La vidéo ressemble plutôt à un ${sideFr(detected)}. Est-ce bien votre ${sideFr(_side)} ?', style: K.bodyStrong),
+              Text(
+                  tr('La vidéo ressemble plutôt à un ${sideName(detected)}. Est-ce bien votre ${sideName(_side)} ?',
+                      aeb: 'الفيديو يشبه أكثر لـ ${sideName(detected)}. متأكد إنها ${sideName(_side)}؟',
+                      ar: 'يبدو الفيديو أقرب إلى ${sideName(detected)}. هل هي فعلًا ${sideName(_side)}؟',
+                      en: 'The video looks more like a ${sideName(detected)}. Is it really your ${sideName(_side)}?'),
+                  style: K.bodyStrong),
               const SizedBox(height: 12),
-              FilledButton(onPressed: () => setState(() => _sideConfirmed = true), child: Text('Oui, c’est le ${sideFr(_side)}')),
+              FilledButton(
+                  onPressed: () => setState(() => _sideConfirmed = true),
+                  child: Text(tr('Oui, c’est le ${sideName(_side)}',
+                      aeb: 'إيه، هي ${sideName(_side)}', ar: 'نعم، إنها ${sideName(_side)}', en: 'Yes, it is the ${sideName(_side)}'))),
               const SizedBox(height: 8),
-              OutlinedButton(onPressed: _deleteWrongSide, child: const Text('Non : supprimer ce scan et recommencer')),
+              OutlinedButton(
+                  onPressed: _deleteWrongSide,
+                  child: Text(tr('Non : supprimer ce scan et recommencer',
+                      aeb: 'لا: افسخ السكان هذا وعاود', ar: 'لا: احذف هذا المسح وأعد', en: 'No: delete this scan and start again'))),
             ]),
           )
         else ...[
           KCard(
             color: K.primarySoft,
-            child: Text('Votre ${sideFr(_side)} en 3D est prêt (${q['views_used'] ?? '?'} vues utilisées).', style: K.bodyStrong),
+            child: Text(
+                tr('Votre ${sideName(_side)} en 3D est prêt (${q['views_used'] ?? '?'} vues utilisées).',
+                    aeb: '${sideName(_side)} في 3D حاضرة (${q['views_used'] ?? '?'} تصويرة مستعملة).',
+                    ar: '${sideName(_side)} ثلاثية الأبعاد جاهزة (${q['views_used'] ?? '?'} صورة مستخدمة).',
+                    en: 'Your ${sideName(_side)} in 3D is ready (${q['views_used'] ?? '?'} views used).'),
+                style: K.bodyStrong),
           ),
           const SizedBox(height: 12),
           KCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              for (final e in measureFr.entries) _row(e.value.$1, fmtMeasure(e.key, m[e.key])),
+              for (final key in measurePrecision.keys) _row(measureName(key), fmtMeasure(key, m[key])),
               const SizedBox(height: 8),
-              Text(precisionNote, style: K.small.copyWith(color: K.muted)),
+              Text(precisionNote(), style: K.small.copyWith(color: K.muted)),
             ]),
           ),
           const SizedBox(height: 12),
@@ -361,7 +446,11 @@ class _ScanPageState extends State<ScanPage> {
               Icon(Icons.flip_rounded, color: K.primary),
               const SizedBox(width: 12),
               Expanded(
-                  child: Text('Le scan ne voit pas la plante du pied. Ajoutez une photo de la plante pour la voir en 3D.',
+                  child: Text(
+                      tr('Le scan ne voit pas la plante du pied. Ajoutez une photo de la plante pour la voir en 3D.',
+                          aeb: 'السكان ما يشوفش تحت الساق. زيد تصويرة لتحت الساق باش تشوفها في 3D.',
+                          ar: 'المسح لا يرى باطن القدم. أضف صورة لباطن القدم لتراه ثلاثي الأبعاد.',
+                          en: 'The scan cannot see the sole. Add a photo of the sole to see it in 3D.'),
                       style: K.body)),
             ]),
           ),
@@ -370,12 +459,12 @@ class _ScanPageState extends State<ScanPage> {
             onPressed: () => Navigator.of(context)
                 .pushReplacement(MaterialPageRoute(builder: (_) => PhotoSignPage(side: _side, sole: true))),
             icon: const Icon(Icons.photo_camera_rounded),
-            label: const Text('Photographier la plante'),
+            label: Text(tr('Photographier la plante', aeb: 'صوّر تحت الساق', ar: 'صوّر باطن القدم', en: 'Photograph the sole')),
           ),
           const SizedBox(height: 8),
           OutlinedButton(
             onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => TwinPage(side: _side))),
-            child: const Text('Voir mon pied en 3D'),
+            child: Text(tr('Voir mon pied en 3D', aeb: 'شوف ساقي في 3D', ar: 'اعرض قدمي ثلاثية الأبعاد', en: 'See my foot in 3D')),
           ),
         ],
       ]),

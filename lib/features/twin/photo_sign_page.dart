@@ -9,14 +9,22 @@ import '../../ui/app_theme.dart';
 import '../common.dart';
 import 'twin_page.dart';
 
-const _views = [
-  ('plantar', 'Plante du pied'),
-  ('dorsal', 'Dessus du pied'),
-  ('toes', 'Orteils'),
-  ('medial', 'Bord intérieur'),
-  ('lateral', 'Bord extérieur'),
-  ('posterior', 'Arrière du talon'),
-];
+const _views = ['plantar', 'dorsal', 'toes', 'medial', 'lateral', 'posterior'];
+
+String _viewName(String code) => switch (code) {
+      'plantar' => tr('Plante du pied', aeb: 'تحت الساق', ar: 'باطن القدم', en: 'Sole'),
+      'dorsal' => tr('Dessus du pied', aeb: 'فوق الساق', ar: 'ظهر القدم', en: 'Top of the foot'),
+      'toes' => tr('Orteils', aeb: 'الصوابع', ar: 'الأصابع', en: 'Toes'),
+      'medial' => tr('Bord intérieur', aeb: 'الجنب الداخلي', ar: 'الحافة الداخلية', en: 'Inner edge'),
+      'lateral' => tr('Bord extérieur', aeb: 'الجنب البرّاني', ar: 'الحافة الخارجية', en: 'Outer edge'),
+      _ => tr('Arrière du talon', aeb: 'ورا الكعب', ar: 'خلف الكعب', en: 'Back of the heel'),
+    };
+
+String _noServer() =>
+    tr('Pas de connexion au serveur Khatwa.', aeb: 'ما فمّاش اتصال بسيرفر خطوة.', ar: 'لا يوجد اتصال بخادم خطوة.', en: 'No connection to the Khatwa server.');
+
+String _scanFirst() =>
+    tr('Scannez d’abord ce pied en 3D.', aeb: 'اعمل سكان 3D للساق هذي قبل.', ar: 'امسح هذه القدم ثلاثيًا أولًا.', en: 'Scan this foot in 3D first.');
 // The serious kinds first, "Je ne sais pas" last. Nothing is preselected.
 const _kinds = [
   'wound', 'colour', 'blister', 'redness', 'swelling', 'callus', 'corn', 'heel-cracks', 'fungus', 'nails', 'dry-skin',
@@ -80,14 +88,27 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
         kToast(
             context,
             _view == 'plantar'
-                ? 'Plante non reconnue. Reprenez la photo bien en face, à environ 40 cm, toute la plante dans l’image.'
-                : 'Le pied n’a pas été reconnu. Reprenez la photo de plus près, bien éclairée.',
+                ? tr('Plante non reconnue. Reprenez la photo bien en face, à environ 40 cm, toute la plante dans l’image.',
+                    aeb: 'تحت الساق ما تعرفش. عاود التصويرة من القدّام، على بعد 40 صم تقريب، وتحت الساق الكل في التصويرة.',
+                    ar: 'لم يُتعرّف على باطن القدم. أعد الصورة من الأمام مباشرة، على بعد 40 سم تقريبًا، وباطن القدم كله في الصورة.',
+                    en: 'Sole not recognised. Take the photo again straight on, about 40 cm away, the whole sole in the picture.')
+                : tr('Le pied n’a pas été reconnu. Reprenez la photo de plus près, bien éclairée.',
+                    aeb: 'الساق ما تعرفتش. عاود التصويرة من قريب، مع ضو مليح.',
+                    ar: 'لم يُتعرّف على القدم. أعد الصورة من مسافة أقرب وبإضاءة جيدة.',
+                    en: 'The foot was not recognised. Take the photo again closer, in good light.'),
             error: true);
       }
     } on ServerError catch (e) {
-      if (mounted) kToast(context, e.status == 409 ? 'Scannez d’abord ce pied en 3D.' : 'Photo refusée par le serveur.', error: true);
+      if (mounted) {
+        kToast(
+            context,
+            e.status == 409
+                ? _scanFirst()
+                : tr('Photo refusée par le serveur.', aeb: 'السيرفر رفض التصويرة.', ar: 'رفض الخادم الصورة.', en: 'Photo refused by the server.'),
+            error: true);
+      }
     } catch (_) {
-      if (mounted) kToast(context, 'Pas de connexion au serveur Khatwa.', error: true);
+      if (mounted) kToast(context, _noServer(), error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -121,14 +142,17 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
         kToast(
             context,
             e.status == 409
-                ? 'Scannez d’abord ce pied en 3D.'
+                ? _scanFirst()
                 : e.status == 422
-                    ? 'L’endroit touché n’est pas sur le pied. Touchez le pied sur la photo.'
-                    : 'Enregistrement impossible.',
+                    ? tr('L’endroit touché n’est pas sur le pied. Touchez le pied sur la photo.',
+                        aeb: 'البلاصة اللي لمستها موش على الساق. المس الساق في التصويرة.',
+                        ar: 'المكان الذي لمسته ليس على القدم. المس القدم في الصورة.',
+                        en: 'The place you touched is not on the foot. Touch the foot in the photo.')
+                    : tr('Enregistrement impossible.', aeb: 'ما نجمناش نسجلو.', ar: 'تعذّر الحفظ.', en: 'Could not save.'),
             error: true);
       }
     } catch (_) {
-      if (mounted) kToast(context, 'Pas de connexion au serveur Khatwa.', error: true);
+      if (mounted) kToast(context, _noServer(), error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -137,7 +161,9 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
   @override
   Widget build(BuildContext context) {
     final side = _side;
-    final title = widget.sole ? 'Plante du pied' : 'Noter un signe';
+    final title = widget.sole
+        ? tr('Plante du pied', aeb: 'تحت الساق', ar: 'باطن القدم', en: 'Sole')
+        : tr('Noter un signe', aeb: 'سجّل علامة', ar: 'سجّل علامة', en: 'Note a sign');
     if (side == null) {
       return _scaffold(title, SidePicker(onPick: (s) => setState(() => _side = s)));
     }
@@ -145,15 +171,16 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
     final soleMapped = _view == 'plantar' && _uploaded?['sole'] == true;
     final ready = _kind != null && (back || (_uploaded?['mapped'] == true && _points.isNotEmpty));
     return _scaffold(
-      '${widget.sole ? 'Plante' : 'Signe'} : ${sideFr(side)}',
+      '$title : ${sideName(side)}',
       ListView(padding: const EdgeInsets.all(16), children: [
         if (!widget.sole) ...[
-          Text('Quelle partie du pied ?', style: K.bodyStrong),
+          Text(tr('Quelle partie du pied ?', aeb: 'أما جيهة من الساق؟', ar: 'أي جزء من القدم؟', en: 'Which part of the foot?'),
+              style: K.bodyStrong),
           const SizedBox(height: 8),
           Wrap(spacing: 8, runSpacing: 8, children: [
-            for (final (code, label) in _views)
+            for (final code in _views)
               ChoiceChip(
-                label: Text(label),
+                label: Text(_viewName(code)),
                 selected: _view == code,
                 onSelected: (_) => setState(() {
                   _view = code;
@@ -167,25 +194,35 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
           KCard(
             color: K.primarySoft,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Pour une bonne photo de la plante', style: K.bodyStrong),
+              Text(tr('Pour une bonne photo de la plante', aeb: 'باش تجي تصويرة تحت الساق مليحة', ar: 'لصورة جيدة لباطن القدم', en: 'For a good photo of the sole'),
+                  style: K.bodyStrong),
               const SizedBox(height: 6),
               Text(
-                  'Asseyez-vous, la cheville posée sur l’autre genou. Une autre personne prend la photo bien en face de la plante, '
-                  'à environ 40 cm, toute la plante dans l’image, avec une bonne lumière.',
+                  tr(
+                      'Asseyez-vous, la cheville posée sur l’autre genou. Une autre personne prend la photo bien en face de la plante, '
+                          'à environ 40 cm, toute la plante dans l’image, avec une bonne lumière.',
+                      aeb: 'اقعد، وحط الكعبة على الركبة الأخرى. واحد آخر يصوّر تحت الساق من القدّام، على بعد 40 صم تقريب، تحت الساق الكل في التصويرة، مع ضو مليح.',
+                      ar: 'اجلس وضع الكاحل على الركبة الأخرى. يلتقط شخص آخر الصورة أمام باطن القدم مباشرة، على بعد 40 سم تقريبًا، وباطن القدم كله في الصورة، مع إضاءة جيدة.',
+                      en: 'Sit with the ankle resting on the other knee. Someone else takes the photo straight on to the sole, '
+                          'about 40 cm away, the whole sole in the picture, in good light.'),
                   style: K.body),
             ]),
           ),
         if (back) ...[
           KCard(
             color: K.primarySoft,
-            child: Text('Les photos de l’arrière du talon ne peuvent pas être placées automatiquement. Choisissez l’endroit :',
+            child: Text(
+                tr('Les photos de l’arrière du talon ne peuvent pas être placées automatiquement. Choisissez l’endroit :',
+                    aeb: 'تصاور ورا الكعب ما ينجموش يتحطو وحدهم. اختار البلاصة:',
+                    ar: 'لا يمكن وضع صور خلف الكعب تلقائيًا. اختر المكان:',
+                    en: 'Photos of the back of the heel cannot be placed automatically. Choose the place:'),
                 style: K.body),
           ),
           const SizedBox(height: 8),
           Wrap(spacing: 8, children: [
             for (final code in _backRegions)
               ChoiceChip(
-                  label: Text(regionFr[code] ?? code),
+                  label: Text(regionName(code)),
                   selected: _backRegion == code,
                   onSelected: (_) => setState(() => _backRegion = code)),
           ]),
@@ -196,7 +233,7 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
               child: FilledButton.icon(
                 onPressed: _busy ? null : () => _take(ImageSource.camera),
                 icon: const Icon(Icons.photo_camera_rounded),
-                label: const Text('Photo'),
+                label: Text(tr('Photo', aeb: 'تصويرة', ar: 'صورة', en: 'Photo')),
               ),
             ),
             const SizedBox(width: 12),
@@ -204,7 +241,7 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
               child: OutlinedButton.icon(
                 onPressed: _busy ? null : () => _take(ImageSource.gallery),
                 icon: const Icon(Icons.photo_library_rounded),
-                label: const Text('Galerie'),
+                label: Text(tr('Galerie', aeb: 'الغاليري', ar: 'المعرض', en: 'Gallery')),
               ),
             ),
           ]),
@@ -212,7 +249,10 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
             const SizedBox(height: 12),
             const LinearProgressIndicator(),
             const SizedBox(height: 4),
-            Text(_view == 'plantar' ? 'Placement de la plante sur votre pied 3D…' : 'Lecture de la photo…',
+            Text(
+                _view == 'plantar'
+                    ? tr('Placement de la plante sur votre pied 3D…', aeb: 'قاعدين نحطو تحت الساق على ساقك 3D…', ar: 'جارٍ وضع باطن القدم على قدمك ثلاثية الأبعاد…', en: 'Placing the sole on your 3D foot…')
+                    : tr('Lecture de la photo…', aeb: 'قاعدين نقراو التصويرة…', ar: 'جارٍ قراءة الصورة…', en: 'Reading the photo…'),
                 style: K.small.copyWith(color: K.muted)),
           ],
           if (soleMapped) ...[
@@ -223,40 +263,51 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
                 Row(children: [
                   Icon(Icons.check_circle_rounded, color: K.ok),
                   const SizedBox(width: 10),
-                  Expanded(child: Text('La plante est maintenant sur votre pied en 3D.', style: K.bodyStrong)),
+                  Expanded(
+                      child: Text(
+                          tr('La plante est maintenant sur votre pied en 3D.',
+                              aeb: 'تحت الساق ولّى على ساقك في 3D.', ar: 'أصبح باطن القدم الآن على قدمك ثلاثية الأبعاد.', en: 'The sole is now on your 3D foot.'),
+                          style: K.bodyStrong)),
                 ]),
                 const SizedBox(height: 10),
                 FilledButton(
                   onPressed: () => Navigator.of(context)
                       .pushReplacement(MaterialPageRoute(builder: (_) => TwinPage(side: side, showSole: true))),
-                  child: const Text('Voir ma plante en 3D'),
+                  child: Text(tr('Voir ma plante en 3D', aeb: 'شوف تحت ساقي في 3D', ar: 'اعرض باطن قدمي ثلاثيًا', en: 'See my sole in 3D')),
                 ),
                 if (!_marking)
-                  TextButton(onPressed: () => setState(() => _marking = true), child: const Text('Noter un signe sur cette photo')),
+                  TextButton(
+                      onPressed: () => setState(() => _marking = true),
+                      child: Text(tr('Noter un signe sur cette photo', aeb: 'سجّل علامة على التصويرة هذي', ar: 'سجّل علامة على هذه الصورة', en: 'Note a sign on this photo'))),
               ]),
             ),
           ],
           if (_photo != null && (!widget.sole || _marking || _view != 'plantar')) ...[
             const SizedBox(height: 12),
-            Text('Touchez l’endroit. Plusieurs touches entourent une zone.', style: K.small.copyWith(color: K.muted)),
+            Text(
+                tr('Touchez l’endroit. Plusieurs touches entourent une zone.',
+                    aeb: 'المس البلاصة. برشة لمسات يدوروا على منطقة.', ar: 'المس المكان. عدة لمسات تحيط بمنطقة.', en: 'Touch the place. Several touches outline an area.'),
+                style: K.small.copyWith(color: K.muted)),
             const SizedBox(height: 8),
             _TapImage(bytes: _photo!, imageSize: _imageSize!, points: _points, onTap: (p) => setState(() => _points.add(p))),
             Row(children: [
               TextButton(
                   onPressed: _points.isEmpty ? null : () => setState(() => _points.removeLast()),
-                  child: const Text('Annuler la dernière touche')),
-              TextButton(onPressed: _points.isEmpty ? null : () => setState(_points.clear), child: const Text('Tout effacer')),
+                  child: Text(tr('Annuler la dernière touche', aeb: 'نحّي آخر لمسة', ar: 'تراجع عن آخر لمسة', en: 'Undo the last touch'))),
+              TextButton(
+                  onPressed: _points.isEmpty ? null : () => setState(_points.clear),
+                  child: Text(tr('Tout effacer', aeb: 'افسخ الكل', ar: 'امسح الكل', en: 'Clear all'))),
             ]),
           ],
         ],
         if (back || _marking || !widget.sole) ...[
           const SizedBox(height: 12),
-          Text('Qu’est-ce que c’est ?', style: K.bodyStrong),
+          Text(tr('Qu’est-ce que c’est ?', aeb: 'شنوّة هذا؟', ar: 'ما هذا؟', en: 'What is it?'), style: K.bodyStrong),
           const SizedBox(height: 8),
           Wrap(spacing: 8, runSpacing: 8, children: [
             for (final code in _kinds)
               ChoiceChip(
-                label: Text(kindFr[code] ?? code),
+                label: Text(kindName(code)),
                 selected: _kind == code,
                 onSelected: (_) => setState(() {
                   _kind = code;
@@ -270,12 +321,15 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
             onPressed: _busy || !ready ? null : _save,
             child: _busy && _uploaded != null
                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Placer sur mon pied 3D'),
+                : Text(tr('Placer sur mon pied 3D', aeb: 'حطها على ساقي 3D', ar: 'ضعها على قدمي ثلاثية الأبعاد', en: 'Place it on my 3D foot')),
           ),
           if (_kind == null)
             Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Text('Choisissez ce que c’est, ou « Je ne sais pas ».', style: K.small.copyWith(color: K.muted)),
+              child: Text(
+                  tr('Choisissez ce que c’est, ou « Je ne sais pas ».',
+                      aeb: 'اختار شنوّة، ولّا «ما نعرفش».', ar: 'اختر ما هو، أو «لا أعرف».', en: 'Choose what it is, or “I don’t know”.'),
+                  style: K.small.copyWith(color: K.muted)),
             ),
         ],
         if (_placed != null) ...[
@@ -283,8 +337,8 @@ class _PhotoSignPageState extends State<PhotoSignPage> {
           AdviceCard(
             level: (_advice?['level'] ?? 'none') as String,
             message: (_advice?['message'] ?? '') as String,
-            lead: '${kindFr[_placed!['kind']] ?? _placed!['kind']} noté : ${regionFr[_placed!['region']] ?? _placed!['region']}'
-                '${_placed!['area_mm2'] != null && _placed!['source'] == 'sole_photo' ? ', environ ${(_placed!['area_mm2'] as num).round()} mm²' : ''}.',
+            lead: '${kindName(_placed!['kind'])} ${tr('noté', aeb: 'تسجّل', ar: 'سُجّل', en: 'noted')} : ${regionName(_placed!['region'])}'
+                '${_placed!['area_mm2'] != null && _placed!['source'] == 'sole_photo' ? ', ${tr('environ', aeb: 'تقريب', ar: 'حوالي', en: 'about')} ${(_placed!['area_mm2'] as num).round()} ${tr('mm²', aeb: 'مم²', ar: 'مم²', en: 'mm²')}' : ''}.',
           ),
         ],
         if (kIsWeb) const SizedBox(height: 24),

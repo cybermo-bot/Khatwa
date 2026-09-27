@@ -1,192 +1,432 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import '../data/auth_store.dart';
 import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/foot_twin.dart';
 import '../ui/k_image.dart';
 import '../ui/strings.dart';
+import 'create_account.dart';
 
-/// Language + role. First screen of the app.
-class LandingPage extends StatelessWidget {
+/// First screen: the mark, one promise, who you are, one clear action.
+/// Two columns on a wide screen (the demo laptop), one on a phone.
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  String role = 'patient';
+  bool busy = false;
+
+  void _open(Widget page) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
 
   @override
   Widget build(BuildContext context) {
     final lang = appLanguage.value;
 
+    final actions = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(S.t(lang, 'auth.promise'),
+            textAlign: TextAlign.center, style: K.h1.copyWith(height: 1.3)),
+        const SizedBox(height: 10),
+        Text(S.t(lang, 'app.tagline'),
+            textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
+        const SizedBox(height: 28),
+        Text(S.t(lang, 'auth.iam'), style: K.bodyStrong),
+        const SizedBox(height: 10),
+        RoleChoice(value: role, onChanged: (v) => setState(() => role = v)),
+        const SizedBox(height: 24),
+        FilledButton(
+          onPressed: () => _open(AuthPage(role: role)),
+          child: Text(S.t(lang, 'auth.signin')),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton(
+          onPressed: () => _open(CreateAccountPage(role: role)),
+          child: Text(S.t(lang, 'auth.signup')),
+        ),
+        if (role == 'patient') ...[
+          const SizedBox(height: 6),
+          TextButton.icon(
+            onPressed: busy
+                ? null
+                : () async {
+                    setState(() => busy = true);
+                    await continueAsGuest(context);
+                    if (mounted) setState(() => busy = false);
+                  },
+            icon: const Icon(Icons.person_outline_rounded),
+            label: Text(S.t(lang, 'auth.guest')),
+          ),
+          Text(S.t(lang, 'auth.guestNote'), textAlign: TextAlign.center, style: K.small),
+        ],
+        const SizedBox(height: 22),
+        KNote(text: S.t(lang, 'report.disclaimer'), icon: Icons.info_outline_rounded),
+        if (kIsWeb) KNote(text: S.t(lang, 'demo.noRealData'), icon: Icons.science_outlined),
+      ],
+    );
+
     return Scaffold(
-      backgroundColor: K.paper,
+      backgroundColor: K.ground,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: PopupMenuButton<String>(
-                      onSelected: (value) => appLanguage.value = value,
-                      icon: Icon(Icons.language_rounded, color: K.inkSoft),
-                      itemBuilder: (context) => [
-                        for (final language in S.languages)
-                          PopupMenuItem<String>(
-                              value: language, child: Text(language)),
-                      ],
+        child: LayoutBuilder(builder: (context, box) {
+          final wide = box.maxWidth >= 900;
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 16, 0),
+                child: Row(
+                  children: [
+                    const KhatwaMark(size: 40),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text('Khatwa', style: K.h2, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                    const SizedBox(width: 8),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: box.maxWidth * 0.62),
+                      child: const LanguagePill(),
                     ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                  child: Center(
+                    child: wide
+                        ? ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1040),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Expanded(child: LandingVisual(height: 460)),
+                                const SizedBox(width: 48),
+                                Expanded(child: actions),
+                              ],
+                            ),
+                          )
+                        : ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 460),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                LandingVisual(height: box.maxHeight < 700 ? 190 : 240),
+                                const SizedBox(height: 22),
+                                actions,
+                              ],
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+}
+
+/// The brand icon, with a quiet teal square behind it while the image loads.
+class KhatwaMark extends StatelessWidget {
+  final double size;
+  const KhatwaMark({super.key, this.size = 40});
+
+  @override
+  Widget build(BuildContext context) {
+    final r = size * 0.26;
+    return SizedBox(
+      width: size,
+      height: size,
+      child: KImage('khatwa_logo',
+          radius: r,
+          placeholder: Container(
+            decoration: BoxDecoration(color: K.primary, borderRadius: BorderRadius.circular(r)),
+            child: Icon(Icons.directions_walk_rounded, color: K.onPrimary, size: size * 0.55),
+          )),
+    );
+  }
+}
+
+/// The model foot turning slowly in a soft teal light. Where no 3D view is
+/// possible (tests, desktop) the twin illustration stands in.
+class LandingVisual extends StatelessWidget {
+  final double height;
+  const LandingVisual({super.key, required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(K.r28),
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.1),
+            radius: 0.9,
+            colors: [K.primarySoft, K.ground],
+          ),
+        ),
+        child: FootTwin.supported
+            ? ModelViewer(
+                key: ValueKey('landing-${K.isDark}'),
+                src: modelAsset('assets/models/foot_holo.glb'),
+                alt: 'Khatwa',
+                backgroundColor: Colors.transparent,
+                cameraControls: false,
+                disableZoom: true,
+                interactionPrompt: InteractionPrompt.none,
+                autoRotate: true,
+                autoRotateDelay: 0,
+                rotationPerSecond: '14deg',
+                cameraOrbit: '-150deg 60deg 105%',
+                exposure: 1.1,
+                shadowIntensity: 0,
+                relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; }',
+              )
+            : Center(
+                child: KImage('hero_twin',
+                    fit: BoxFit.contain,
+                    height: height,
+                    radius: K.r28,
+                    placeholder: Icon(Icons.view_in_ar_rounded, size: height * 0.3, color: K.primary)),
+              ),
+      ),
+    );
+  }
+}
+
+/// Patient or health professional: two tiles side by side.
+class RoleChoice extends StatelessWidget {
+  final String value;
+  final ValueChanged<String> onChanged;
+  const RoleChoice({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    Widget tile(String role, String label, IconData icon) {
+      final on = value == role;
+      return Expanded(
+        child: Semantics(
+          selected: on,
+          button: true,
+          label: label,
+          excludeSemantics: true,
+          child: KPressable(
+            onTap: () => onChanged(role),
+            borderRadius: BorderRadius.circular(K.r20),
+            child: AnimatedContainer(
+              duration: KMotion.standard,
+              curve: KMotion.standardCurve,
+              constraints: const BoxConstraints(minHeight: 88),
+              padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+              decoration: BoxDecoration(
+                color: on ? K.primarySoft : K.surface,
+                borderRadius: BorderRadius.circular(K.r20),
+                border: Border.all(color: on ? K.primary : K.control, width: on ? 2 : 1.2),
+              ),
+              // Icon above, the name on the full tile width: long words never
+              // break, even at the largest text size.
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(icon, color: on ? K.primaryStrong : K.inkSoft, size: 26),
+                      const Spacer(),
+                      AnimatedOpacity(
+                        duration: KMotion.quick,
+                        opacity: on ? 1 : 0,
+                        child: Icon(Icons.check_circle_rounded, color: K.primary, size: 20),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  const _Wordmark(),
-                  const SizedBox(height: 14),
-                  Text(
-                    S.t(lang, 'app.tagline'),
-                    textAlign: TextAlign.center,
-                    style: K.body.copyWith(fontSize: 16),
-                  ),
-                  const SizedBox(height: 34),
-                  Text(S.t(lang, 'role.choose'),
-                      textAlign: TextAlign.center, style: K.label),
-                  const SizedBox(height: 14),
-                  _RoleCard(
-                    title: S.t(lang, 'role.patient'),
-                    subtitle: S.t(lang, 'home.todaySub'),
-                    icon: Icons.person_outline_rounded,
-                    accent: K.primary,
-                    accentSoft: K.primarySoft,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (_) => const AuthPage(role: 'patient')),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _RoleCard(
-                    title: S.t(lang, 'role.doctor'),
-                    subtitle: S.t(lang, 'doctor.queue'),
-                    icon: Icons.medical_services_outlined,
-                    accent: K.accent,
-                    accentSoft: K.accentSoft,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (_) => const AuthPage(role: 'doctor')),
-                    ),
-                  ),
-                  const SizedBox(height: 26),
-                  Text(
-                    S.t(lang, 'report.disclaimer'),
-                    textAlign: TextAlign.center,
-                    style: K.small,
-                  ),
+                  Text(label,
+                      style: K.bodyStrong.copyWith(
+                          color: on ? K.primaryStrong : K.ink,
+                          fontWeight: on ? FontWeight.w700 : FontWeight.w500)),
                 ],
               ),
             ),
           ),
         ),
+      );
+    }
+
+    return IntrinsicHeight(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        tile('patient', S.t(lang, 'role.patient'), Icons.person_outline_rounded),
+        const SizedBox(width: 12),
+        tile('doctor', S.t(lang, 'role.doctorShort'), Icons.medical_services_outlined),
+      ],
+    ));
+  }
+}
+
+/// A password field with a show/hide eye.
+class PasswordField extends StatefulWidget {
+  final String label;
+  final TextEditingController controller;
+  final String? hint;
+  const PasswordField({super.key, required this.label, required this.controller, this.hint});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool shown = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    return KField(
+      label: widget.label,
+      controller: widget.controller,
+      hint: widget.hint,
+      obscure: !shown,
+      suffix: IconButton(
+        tooltip: S.t(lang, shown ? 'auth.hide' : 'auth.show'),
+        icon: Icon(shown ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: K.muted),
+        onPressed: () => setState(() => shown = !shown),
       ),
     );
   }
 }
 
-/// The mark: a footprint stepping forward, which is what "khatwa" means.
-/// The trailing print is the step already taken, the solid one is today.
-class _Wordmark extends StatelessWidget {
-  const _Wordmark();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 74,
-          height: 74,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                  color: K.glow.withAlpha(K.isDark ? 90 : 40),
-                  blurRadius: 30,
-                  spreadRadius: -4),
-            ],
-          ),
-          child: KImage('khatwa_logo',
-              radius: 18,
-              placeholder: Container(
-                decoration: BoxDecoration(
-                  color: K.primaryDark,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Icon(Icons.directions_walk_rounded,
-                    color: Colors.white, size: 36),
-              )),
-        ),
-        const SizedBox(height: 16),
-        Text('Khatwa', style: K.display),
-        const SizedBox(height: 2),
-        Container(width: 38, height: 3, color: K.accent),
-      ],
-    );
-  }
-}
-
-class _RoleCard extends StatelessWidget {
+/// The frame of the sign-in and sign-up pages: a light page, a narrow column,
+/// the language always at hand.
+class AuthFrame extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
-  final Color accent;
-  final Color accentSoft;
-  final VoidCallback onTap;
-
-  const _RoleCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.accent,
-    required this.accentSoft,
-    required this.onTap,
-  });
+  final List<Widget> children;
+  const AuthFrame({super.key, required this.title, required this.subtitle, required this.children});
 
   @override
   Widget build(BuildContext context) {
-    return KCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: accentSoft,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: accent),
+    // The language sits above the form rather than in the header, so a long
+    // title keeps the full width at large text sizes.
+    return KPage(
+      title: title,
+      subtitle: subtitle,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 4),
+              const Align(alignment: AlignmentDirectional.centerEnd, child: LanguagePill()),
+              const SizedBox(height: 10),
+              ...children,
+            ],
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: K.h2),
-                const SizedBox(height: 2),
-                Text(subtitle,
-                    style: K.small,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_right_rounded, color: K.muted),
-        ],
+        ),
       ),
     );
   }
 }
 
-/// Sign in and sign up, with real credential checks.
+/// Error line above the main button.
+class AuthErrorLine extends StatelessWidget {
+  final String text;
+  const AuthErrorLine(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 14),
+        child: KBanner(
+          text: text,
+          icon: Icons.error_outline_rounded,
+          color: K.danger,
+          background: K.dangerSoft,
+        ),
+      );
+}
+
+/// Busy spinner or label, for the main button.
+Widget authButtonChild(bool busy, String label) => busy
+    ? SizedBox(
+        width: 22,
+        height: 22,
+        child: CircularProgressIndicator(strokeWidth: 2.4, color: K.onPrimary),
+      )
+    : Text(label);
+
+/// Loads the stores once the data key is in memory, then goes home.
+Future<void> finishSignIn(BuildContext context) async {
+  await CaseStore.instance.unlock();
+  await KhatwaStore.instance.reload();
+  if (!context.mounted) return;
+  Navigator.of(context).popUntil((route) => route.isFirst);
+}
+
+/// Starts a guest session and opens the app.
+Future<void> continueAsGuest(BuildContext context) async {
+  await AuthStore.instance.signInGuest();
+  if (!context.mounted) return;
+  await finishSignIn(context);
+}
+
+/// "Rester connecté": a checkbox with its meaning under it.
+class StaySignedIn extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const StaySignedIn({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: KPressable(
+        onTap: () => onChanged(!value),
+        borderRadius: BorderRadius.circular(K.r14),
+        semanticsLabel: S.t(lang, 'auth.stay'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ExcludeSemantics(
+                child: Checkbox(value: value, onChanged: (v) => onChanged(v ?? false)),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(S.t(lang, 'auth.stay'), style: K.bodyStrong),
+                      const SizedBox(height: 2),
+                      Text(S.t(lang, 'auth.stayHint'), style: K.small),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Sign in: e-mail and password, then the e-mail code unless this device is
+/// trusted. An older account signs in once with its PIN.
 class AuthPage extends StatefulWidget {
   final String role;
 
@@ -197,28 +437,21 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool signUpMode = false;
   bool busy = false;
+  bool askPin = false;
+  late bool stay = AuthStore.instance.stayChoice;
   String? error;
 
-  final name = TextEditingController();
-  final phone = TextEditingController();
+  final identifier = TextEditingController();
   final password = TextEditingController();
-  final confirm = TextEditingController();
-  final speciality = TextEditingController();
-  final facility = TextEditingController();
   final pin = TextEditingController();
 
   bool get isDoctor => widget.role == 'doctor';
 
   @override
   void dispose() {
-    name.dispose();
-    phone.dispose();
+    identifier.dispose();
     password.dispose();
-    confirm.dispose();
-    speciality.dispose();
-    facility.dispose();
     pin.dispose();
     super.dispose();
   }
@@ -231,43 +464,36 @@ class _AuthPageState extends State<AuthPage> {
     });
 
     final store = AuthStore.instance;
-    final result = signUpMode
-        ? await store.signUp(
-            name: name.text,
-            phone: phone.text,
-            password: password.text,
-            confirm: confirm.text,
-            pin: pin.text,
-            role: widget.role,
-            speciality: speciality.text,
-            facility: facility.text,
-          )
-        : await store.signIn(
-            phone: phone.text,
-            password: password.text,
-            pin: pin.text,
-            role: widget.role,
-          );
+    await store.setStayChoice(stay);
+    final result = await store.signIn(
+      identifier: identifier.text,
+      password: password.text,
+      pin: pin.text,
+      role: widget.role,
+      stay: stay,
+    );
 
     if (!mounted) return;
 
     if (result == AuthError.none) {
-      // The data encryption key is now in memory: load and decrypt the store.
-      await CaseStore.instance.unlock();
-      await KhatwaStore.instance.reload();
-      if (!mounted) return;
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      await finishSignIn(context);
+      return;
+    }
+    if (result == AuthError.needCode) {
+      setState(() => busy = false);
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EmailCodePage()));
       return;
     }
 
     var message = S.t(lang, store.errorKey(result));
     if (result == AuthError.locked) {
-      final seconds = store.lockedSeconds(phone.text, widget.role);
+      final seconds = store.lockedSeconds(identifier.text, widget.role);
       message = '$message · $seconds ${S.t(lang, 'auth.lockedFor')}';
     }
 
     setState(() {
       busy = false;
+      if (result == AuthError.needPin) askPin = true;
       error = message;
     });
   }
@@ -276,107 +502,184 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final lang = appLanguage.value;
 
-    return KPage(
-      title: signUpMode ? S.t(lang, 'auth.signup') : S.t(lang, 'auth.signin'),
-      subtitle: isDoctor ? S.t(lang, 'role.doctor') : S.t(lang, 'role.patient'),
-      actions: const [LanguageButton()],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AuthFrame(
+      title: S.t(lang, 'auth.welcomeBack'),
+      subtitle: '${S.t(lang, 'auth.signin')} · ${S.t(lang, isDoctor ? 'role.doctorShort' : 'role.patient')}',
+      children: [
+        Text(S.t(lang, 'auth.signinSub'), style: K.body.copyWith(color: K.inkSoft)),
+        const SizedBox(height: 18),
+        KField(
+          label: S.t(lang, 'auth.identifier'),
+          hint: 'nom@exemple.tn',
+          controller: identifier,
+          keyboard: TextInputType.emailAddress,
+        ),
+        PasswordField(label: S.t(lang, 'auth.password'), controller: password),
+        if (askPin)
+          KField(
+            label: S.t(lang, 'auth.oldPin'),
+            controller: pin,
+            obscure: true,
+            keyboard: TextInputType.number,
+            hint: '••••',
+          ),
+        StaySignedIn(value: stay, onChanged: (v) => setState(() => stay = v)),
+        if (error != null) AuthErrorLine(error!),
+        FilledButton(
+          onPressed: busy ? null : submit,
+          child: authButtonChild(busy, S.t(lang, 'auth.signin')),
+        ),
+        const SizedBox(height: 8),
+        TextButton(
+          onPressed: busy
+              ? null
+              : () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => CreateAccountPage(role: widget.role))),
+          child: Text(S.t(lang, 'auth.none')),
+        ),
+        const SizedBox(height: 18),
+        KNote(text: S.t(lang, 'auth.secure'), icon: Icons.lock_outline_rounded),
+      ],
+    );
+  }
+}
+
+/// The 6-digit code sent by e-mail. Sends it on open; if it cannot be sent,
+/// says so kindly and offers to continue as a guest.
+class EmailCodePage extends StatefulWidget {
+  const EmailCodePage({super.key});
+
+  @override
+  State<EmailCodePage> createState() => _EmailCodePageState();
+}
+
+class _EmailCodePageState extends State<EmailCodePage> {
+  final code = TextEditingController();
+  bool sending = true;
+  bool sent = false;
+  bool busy = false;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _send();
+  }
+
+  @override
+  void dispose() {
+    code.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    setState(() {
+      sending = true;
+      error = null;
+    });
+    final result = await AuthStore.instance.sendCode();
+    if (!mounted) return;
+    setState(() {
+      sending = false;
+      sent = result == AuthError.none;
+      if (!sent) error = S.t(appLanguage.value, AuthStore.instance.errorKey(result));
+    });
+  }
+
+  Future<void> _verify() async {
+    setState(() {
+      busy = true;
+      error = null;
+    });
+    final result = await AuthStore.instance.confirmCode(code.text);
+    if (!mounted) return;
+    if (result == AuthError.none) {
+      await finishSignIn(context);
+      return;
+    }
+    setState(() {
+      busy = false;
+      error = S.t(appLanguage.value, AuthStore.instance.errorKey(result));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    final email = AuthStore.instance.pendingEmail ?? '';
+    final signedIn = AuthStore.instance.isSignedIn;
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) AuthStore.instance.cancelPending();
+      },
+      child: AuthFrame(
+        title: S.t(lang, 'auth.code.title'),
+        subtitle: email,
         children: [
-          const SizedBox(height: 14),
-          KCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (signUpMode)
-                  KField(
-                    label: S.t(lang, 'auth.name'),
-                    controller: name,
-                  ),
-                KField(
-                  label: S.t(lang, 'auth.phone'),
-                  hint: '20 000 000',
-                  controller: phone,
-                  keyboard: TextInputType.phone,
-                ),
-                if (signUpMode && isDoctor) ...[
-                  KField(
-                      label: S.t(lang, 'auth.speciality'),
-                      controller: speciality),
-                  KField(
-                      label: S.t(lang, 'auth.facility'), controller: facility),
-                ],
-                KField(
-                  label: S.t(lang, 'auth.password'),
-                  controller: password,
-                  obscure: true,
-                ),
-                if (signUpMode)
-                  KField(
-                    label: S.t(lang, 'auth.confirm'),
-                    controller: confirm,
-                    obscure: true,
-                  ),
-                KField(
-                  label: S.t(lang, 'auth.pin'),
-                  controller: pin,
-                  obscure: true,
-                  keyboard: TextInputType.number,
-                  hint: '••••',
-                ),
-                if (signUpMode) ...[
-                  Text(S.t(lang, 'auth.pinHint'), style: K.small),
-                  const SizedBox(height: 14),
-                ],
-                if (error != null) ...[
-                  KBanner(
-                    text: error!,
-                    icon: Icons.error_outline_rounded,
-                    color: K.danger,
-                    background: K.dangerSoft,
-                  ),
-                  const SizedBox(height: 14),
-                ],
-                FilledButton(
-                  onPressed: busy ? null : submit,
-                  child: busy
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text(signUpMode
-                          ? S.t(lang, 'auth.signup')
-                          : S.t(lang, 'auth.signin')),
-                ),
-                const SizedBox(height: 6),
-                TextButton(
-                  onPressed: busy
-                      ? null
-                      : () => setState(() {
-                            signUpMode = !signUpMode;
-                            error = null;
-                          }),
-                  child: Text(signUpMode
-                      ? S.t(lang, 'auth.have')
-                      : S.t(lang, 'auth.none')),
-                ),
-              ],
+          if (sending)
+            Row(children: [
+              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.4, color: K.primary)),
+              const SizedBox(width: 12),
+              Expanded(child: Text(S.t(lang, 'auth.code.sending'), style: K.body)),
+            ])
+          else if (sent) ...[
+            Text(S.t(lang, 'auth.code.sent'), style: K.body.copyWith(color: K.inkSoft)),
+            const SizedBox(height: 2),
+            Text(email, textDirection: TextDirection.ltr, style: K.bodyStrong),
+          ],
+          const SizedBox(height: 20),
+          if (sent) ...[
+            Text(S.t(lang, 'auth.code.label'), style: K.bodyStrong),
+            const SizedBox(height: 8),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextField(
+                controller: code,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                textAlign: TextAlign.center,
+                autofillHints: const [AutofillHints.oneTimeCode],
+                style: K.number.copyWith(letterSpacing: 10),
+                decoration: const InputDecoration(counterText: '', hintText: '000000'),
+                onChanged: (v) {
+                  if (v.length == 6 && !busy) _verify();
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          KBanner(
-            text: S.t(lang, 'auth.secure'),
-            icon: Icons.lock_outline_rounded,
-          ),
-          const SizedBox(height: 10),
-          KBanner(
-            text: S.t(lang, 'security.encrypted'),
-            icon: Icons.enhanced_encryption_outlined,
-            color: K.ok,
-            background: K.okSoft,
-          ),
+            const SizedBox(height: 16),
+          ],
+          if (error != null) AuthErrorLine(error!),
+          if (sent)
+            FilledButton(
+              onPressed: busy ? null : _verify,
+              child: authButtonChild(busy, S.t(lang, 'auth.code.verify')),
+            ),
+          if (!sending) ...[
+            const SizedBox(height: 8),
+            TextButton(onPressed: busy ? null : _send, child: Text(S.t(lang, 'auth.code.resend'))),
+          ],
+          if (!sending && !sent) ...[
+            const SizedBox(height: 4),
+            if (signedIn)
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                child: Text(S.t(lang, 'auth.back')),
+              )
+            else
+              OutlinedButton.icon(
+                onPressed: () {
+                  AuthStore.instance.cancelPending();
+                  continueAsGuest(context);
+                },
+                icon: const Icon(Icons.person_outline_rounded),
+                label: Text(S.t(lang, 'auth.guest')),
+              ),
+          ],
+          if (sent) ...[
+            const SizedBox(height: 14),
+            KNote(text: S.t(lang, 'auth.code.spam'), icon: Icons.mail_outline_rounded),
+          ],
         ],
       ),
     );

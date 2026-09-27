@@ -137,7 +137,7 @@ class _PatientViewState extends State<PatientView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                DSectionTitle('Jumeau 3D', trailing: _SideToggle(
+                DSectionTitle(dl('Jumeau 3D', '3D twin'), trailing: _SideToggle(
                   side: side,
                   onChanged: (s) => setState(() {
                     side = s;
@@ -160,7 +160,7 @@ class _PatientViewState extends State<PatientView> {
                 if (ofSide.length > 1) ...[
                   Row(
                     children: [
-                      Text('Visite', style: DText.small(p)),
+                      Text(dl('Visite', 'Visit'), style: DText.small(p)),
                       Expanded(
                         child: Slider(
                           min: 0,
@@ -176,7 +176,9 @@ class _PatientViewState extends State<PatientView> {
                   ),
                 ] else
                   Text(
-                    scan == null ? 'Pas encore de scan pour ce pied : modèle de référence.' : 'Une visite : ${shortDate(scan.createdAt)}',
+                    scan == null
+                        ? dl('Pas encore de scan pour ce pied : modèle de référence.', 'No scan of this foot yet: reference model.')
+                        : dl('Une visite : ${shortDate(scan.createdAt)}', 'One visit: ${shortDate(scan.createdAt)}'),
                     style: DText.small(p),
                   ),
                 const SizedBox(height: 6),
@@ -212,9 +214,9 @@ class _SideToggle extends StatelessWidget {
     return SegmentedButton<String>(
       showSelectedIcon: false,
       style: const ButtonStyle(visualDensity: VisualDensity.compact),
-      segments: const [
-        ButtonSegment(value: 'L', label: Text('Gauche')),
-        ButtonSegment(value: 'R', label: Text('Droit')),
+      segments: [
+        ButtonSegment(value: 'L', label: Text(dl('Gauche', 'Left'))),
+        ButtonSegment(value: 'R', label: Text(dl('Droit', 'Right'))),
       ],
       selected: {side},
       onSelectionChanged: (s) => onChanged(s.first),
@@ -251,14 +253,16 @@ class _Header extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _Fact(Icons.cake_outlined, '${patient.age ?? '?'} ans${patient.sex == null ? '' : ' · ${patient.sex}'}'),
+              _Fact(Icons.cake_outlined, '${patient.age ?? '?'} ${dl('ans', 'years')}${patient.sex == null ? '' : ' · ${patient.sex}'}'),
               _Fact(Icons.bloodtype_outlined, typeLabel(patient.diabetesType)),
-              _Fact(Icons.place_outlined, patient.governorate ?? 'Gouvernorat inconnu'),
+              _Fact(Icons.place_outlined, patient.governorate ?? dl('Gouvernorat inconnu', 'Unknown governorate')),
               _Fact(Icons.fact_check_outlined,
-                  check == null ? 'Pas de contrôle' : 'Dernier contrôle : ${checkLabels[check]}',
+                  check == null ? dl('Pas de contrôle', 'No check') : '${dl('Dernier contrôle', 'Last check')} : ${checkLabels[check]}',
                   color: check == null ? null : p.level(check)),
               _Fact(Icons.event_outlined,
-                  patient.nextVisit == null ? 'Pas de visite prévue' : 'Visite le ${shortDate(patient.nextVisit!)}'),
+                  patient.nextVisit == null
+                      ? dl('Pas de visite prévue', 'No visit planned')
+                      : '${dl('Visite le', 'Visit on')} ${shortDate(patient.nextVisit!)}'),
             ],
           ),
           const SizedBox(height: 14),
@@ -269,7 +273,7 @@ class _Header extends StatelessWidget {
             children: [
               OutlinedButton.icon(
                 icon: const Icon(Icons.event_available_outlined, size: 18),
-                label: const Text('Prochaine visite'),
+                label: Text(dl('Prochaine visite', 'Next visit')),
                 onPressed: () async {
                   final now = DateTime.now();
                   final picked = await showDatePicker(
@@ -279,14 +283,14 @@ class _Header extends StatelessWidget {
                     initialDate: patient.nextVisit != null && patient.nextVisit!.isAfter(now)
                         ? patient.nextVisit!
                         : now.add(const Duration(days: 14)),
-                    helpText: 'Prochaine visite',
+                    helpText: dl('Prochaine visite', 'Next visit'),
                   );
                   if (picked != null) await scope.repository.setNextVisit(patient.id, picked);
                 },
               ),
               FilledButton.icon(
                 icon: const Icon(Icons.ios_share_rounded, size: 18),
-                label: const Text('Exporter FHIR'),
+                label: Text(dl('Exporter FHIR', 'Export FHIR')),
                 onPressed: scope.onExportFhir == null ? null : () => scope.onExportFhir!(context, patient),
               ),
               _Latest<List<Share>>(
@@ -294,7 +298,7 @@ class _Header extends StatelessWidget {
                 builder: (context, snap) {
                   final validated = (snap.data ?? const <Share>[]).any((s) => (s.gazelleReport ?? '').toUpperCase().contains('PASS'));
                   return DTag(
-                    validated ? 'Validé sur IHE Gazelle' : 'Validation IHE Gazelle à venir',
+                    validated ? dl('Validé sur IHE Gazelle', 'Validated on IHE Gazelle') : dl('Validation IHE Gazelle à venir', 'IHE Gazelle validation to come'),
                     icon: validated ? Icons.verified_rounded : Icons.hourglass_empty_rounded,
                     color: validated ? p.ok : p.muted,
                     background: validated ? p.okSoft : p.glass,
@@ -353,7 +357,7 @@ class _OpenAlerts extends StatelessWidget {
         child: Row(children: [
           Icon(Icons.check_circle_outline_rounded, color: p.ok, size: 20),
           const SizedBox(width: 10),
-          Expanded(child: Text('Aucune alerte ouverte.', style: DText.body(p))),
+          Expanded(child: Text(dl('Aucune alerte ouverte.', 'No open alert.'), style: DText.body(p))),
         ]),
       );
     }
@@ -386,7 +390,7 @@ class _OpenAlerts extends StatelessWidget {
                             style: DText.small(p)),
                         if (a.urgent) ...[
                           const SizedBox(height: 4),
-                          Text('Signe urgent : le patient est orienté vers le 190.',
+                          Text(dl('Signe urgent : le patient est orienté vers le 190.', 'Urgent sign: the patient is directed to 190.'),
                               style: DText.small(p).copyWith(color: p.urgent, fontWeight: FontWeight.w600)),
                         ],
                       ],
@@ -395,7 +399,7 @@ class _OpenAlerts extends StatelessWidget {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: () => repo.acknowledgeAlert(a.id),
-                    child: const Text('Acquitter'),
+                    child: Text(dl('Acquitter', 'Acknowledge')),
                   ),
                 ],
               ),
@@ -421,7 +425,7 @@ class _Trends extends StatelessWidget {
         value: scans,
         builder: (context, snap) {
           final all = snap.data ?? const <Scan>[];
-          final (label, unit) = measurementLabels[measure]!;
+          final (label, unit) = measurementLabel(measure);
           List<FlSpot> spots(String s) {
             final list = all.where((x) => x.side == s).toList();
             return [
@@ -436,14 +440,14 @@ class _Trends extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const DSectionTitle('Mesures'),
+              DSectionTitle(dl('Mesures', 'Measurements')),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
                 children: [
                   for (final e in measurementLabels.entries)
                     ChoiceChip(
-                      label: Text(e.value.$1, style: const TextStyle(fontSize: 12)),
+                      label: Text(measurementLabel(e.key).$1, style: const TextStyle(fontSize: 12)),
                       selected: e.key == measure,
                       onSelected: (_) => onMeasure(e.key),
                       visualDensity: VisualDensity.compact,
@@ -456,7 +460,7 @@ class _Trends extends StatelessWidget {
               SizedBox(
                 height: 170,
                 child: values.isEmpty
-                    ? Center(child: Text('Pas encore mesuré.', style: DText.small(p)))
+                    ? Center(child: Text(dl('Pas encore mesuré.', 'Not measured yet.'), style: DText.small(p)))
                     : LineChart(
                         LineChartData(
                           minY: values.reduce((a, b) => a < b ? a : b) - 3,
@@ -502,11 +506,11 @@ class _Trends extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Wrap(spacing: 14, children: [
-                _Legend(color: p.primary, text: 'Pied gauche'),
-                _Legend(color: p.mint, text: 'Pied droit'),
+                _Legend(color: p.primary, text: sideLabel('L')),
+                _Legend(color: p.mint, text: sideLabel('R')),
               ]),
               const SizedBox(height: 8),
-              Text('Recherche, seuils provisoires. Aucune mesure ne pose un diagnostic.',
+              Text(dl('Recherche, seuils provisoires. Aucune mesure ne pose un diagnostic.', 'Research, provisional thresholds. No measurement makes a diagnosis.'),
                   style: DText.small(p).copyWith(fontStyle: FontStyle.italic)),
             ],
           );
@@ -550,9 +554,9 @@ class _SolePhotos extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const DSectionTitle('Photos de la plante'),
+              DSectionTitle(dl('Photos de la plante', 'Sole photos')),
               if (list.isEmpty)
-                Text('Pas encore de photo.', style: DText.small(p))
+                Text(dl('Pas encore de photo.', 'No photo yet.'), style: DText.small(p))
               else
                 SizedBox(
                   height: 132,
@@ -581,7 +585,7 @@ class _SolePhotos extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text('${scan.side == 'L' ? 'G' : 'D'} · ${shortDate(scan.createdAt)}', style: DText.small(p)),
+                            Text('${scan.side == 'L' ? dl('G', 'L') : dl('D', 'R')} · ${shortDate(scan.createdAt)}', style: DText.small(p)),
                           ],
                         ),
                       );
@@ -618,7 +622,7 @@ class _PhotoPlaceholder extends StatelessWidget {
         children: [
           Icon(taken ? Icons.photo_outlined : Icons.hide_image_outlined, color: p.muted),
           const SizedBox(height: 4),
-          Text(taken ? 'Photo' : 'Pas de photo', textAlign: TextAlign.center, style: DText.small(p)),
+          Text(taken ? 'Photo' : dl('Pas de photo', 'No photo'), textAlign: TextAlign.center, style: DText.small(p)),
         ],
       ),
     );
@@ -645,8 +649,9 @@ class _Findings extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DSectionTitle('Lésions et signes', trailing: Text('${list.where((f) => f.isActive).length} actives', style: DText.small(p))),
-              if (list.isEmpty) Text('Rien de signalé.', style: DText.small(p)),
+              DSectionTitle(dl('Lésions et signes', 'Lesions and signs'),
+                  trailing: Text('${list.where((f) => f.isActive).length} ${dl('actives', 'active')}', style: DText.small(p))),
+              if (list.isEmpty) Text(dl('Rien de signalé.', 'Nothing reported.'), style: DText.small(p)),
               for (final f in list)
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
@@ -684,7 +689,7 @@ class _Findings extends StatelessWidget {
                           Icon(Icons.verified_outlined, size: 14, color: p.ok),
                           const SizedBox(width: 4),
                           Flexible(
-                            child: Text('Revu par le clinicien', style: DText.small(p).copyWith(color: p.ok)),
+                            child: Text(dl('Revu par le clinicien', 'Reviewed by the clinician'), style: DText.small(p).copyWith(color: p.ok)),
                           ),
                         ]),
                       ],
@@ -694,11 +699,11 @@ class _Findings extends StatelessWidget {
                           if (f.reviewedBy == null)
                             OutlinedButton(
                               onPressed: () => scope.repository.markFindingReviewed(f.id),
-                              child: const Text('Marquer revu'),
+                              child: Text(dl('Marquer revu', 'Mark reviewed')),
                             ),
                           OutlinedButton(
                             onPressed: () => scope.repository.markFindingHealed(f.id),
-                            child: const Text('Marquer guéri'),
+                            child: Text(dl('Marquer guéri', 'Mark healed')),
                           ),
                         ]),
                       ],
@@ -733,14 +738,14 @@ class _CheckHistory extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DSectionTitle('Contrôles quotidiens', trailing: Text('$done / 30 jours', style: DText.small(p))),
+              DSectionTitle(dl('Contrôles quotidiens', 'Daily checks'), trailing: Text('$done / 30 ${dl('jours', 'days')}', style: DText.small(p))),
               Wrap(
                 spacing: 5,
                 runSpacing: 5,
                 children: [
                   for (final d in days)
                     Tooltip(
-                      message: '${shortDate(d)} : ${byDay[d] == null ? 'pas de contrôle' : checkLabels[byDay[d]!.result]}',
+                      message: '${shortDate(d)} : ${byDay[d] == null ? dl('pas de contrôle', 'no check') : checkLabels[byDay[d]!.result]}',
                       child: Container(
                         width: 20,
                         height: 20,
@@ -754,7 +759,7 @@ class _CheckHistory extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              Text('30 derniers jours, le plus récent à droite.', style: DText.small(p)),
+              Text(dl('30 derniers jours, le plus récent à droite.', 'Last 30 days, the most recent on the right.'), style: DText.small(p)),
             ],
           );
         },
@@ -801,7 +806,7 @@ class _MessagesState extends State<_Messages> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const DSectionTitle('Messages'),
-              if (list.isEmpty) Text('Pas encore de message.', style: DText.small(p)),
+              if (list.isEmpty) Text(dl('Pas encore de message.', 'No message yet.'), style: DText.small(p)),
               for (final m in list)
                 Align(
                   alignment: m.fromDoctor ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
@@ -819,7 +824,7 @@ class _MessagesState extends State<_Messages> {
                       children: [
                         Text(m.body, style: DText.body(p).copyWith(color: p.ink)),
                         const SizedBox(height: 2),
-                        Text('${m.fromDoctor ? 'Vous' : 'Patient'} · ${dateTime(m.createdAt)}', style: DText.small(p)),
+                        Text('${m.fromDoctor ? dl('Vous', 'You') : 'Patient'} · ${dateTime(m.createdAt)}', style: DText.small(p)),
                       ],
                     ),
                   ),
@@ -834,13 +839,13 @@ class _MessagesState extends State<_Messages> {
                       minLines: 1,
                       maxLines: 4,
                       style: DText.body(p).copyWith(color: p.ink),
-                      decoration: const InputDecoration(hintText: 'Répondre', counterText: ''),
+                      decoration: InputDecoration(hintText: dl('Répondre', 'Reply'), counterText: ''),
                       onSubmitted: (_) => unawaited(_send()),
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton.filled(
-                    tooltip: 'Envoyer',
+                    tooltip: dl('Envoyer', 'Send'),
                     onPressed: _send,
                     icon: const Icon(Icons.send_rounded),
                   ),
