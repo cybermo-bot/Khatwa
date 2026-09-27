@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'khatwa_server.dart';
 import 'rule_engine.dart';
 import 'triage.dart';
 
@@ -180,9 +181,7 @@ class AiGateway {
   }) async {
     final rules = RuleEngine.evaluate(answers: answers, profile: profile, lang: lang);
 
-    if (!ApiConfig.hasKey || images.isEmpty) {
-      return rules;
-    }
+    if (images.isEmpty) return rules;
 
     try {
       final raw = await _callGemini(
@@ -279,6 +278,16 @@ class AiGateway {
       'safetySettings': const <Map<String, String>>[],
     });
 
+    // No key on this device (the web, other people's phones): the Khatwa
+    // server sends the same request with its own key.
+    if (!ApiConfig.hasKey) {
+      try {
+        return _textOf(await KhatwaServer().aiGenerate(jsonDecode(body) as Map<String, dynamic>));
+      } catch (_) {
+        return null;
+      }
+    }
+
     for (final model in _models) {
       try {
         final response = await http
@@ -297,29 +306,29 @@ class AiGateway {
           return null;
         }
 
-        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-        if (decoded is! Map) return null;
-
-        final candidates = decoded['candidates'];
-        if (candidates is! List || candidates.isEmpty) return null;
-
-        final content = candidates.first['content'];
-        if (content is! Map) return null;
-
-        final responseParts = content['parts'];
-        if (responseParts is! List || responseParts.isEmpty) return null;
-
-        final buffer = StringBuffer();
-        for (final part in responseParts) {
-          if (part is Map && part['text'] != null) buffer.write(part['text']);
-        }
-        final text = buffer.toString();
-        return text.isEmpty ? null : text;
+        return _textOf(jsonDecode(utf8.decode(response.bodyBytes)));
       } catch (_) {
         continue;
       }
     }
     return null;
+  }
+
+  /// The model's text from a generateContent answer, or null.
+  static String? _textOf(Object? decoded) {
+    if (decoded is! Map) return null;
+    final candidates = decoded['candidates'];
+    if (candidates is! List || candidates.isEmpty) return null;
+    final content = candidates.first['content'];
+    if (content is! Map) return null;
+    final responseParts = content['parts'];
+    if (responseParts is! List || responseParts.isEmpty) return null;
+    final buffer = StringBuffer();
+    for (final part in responseParts) {
+      if (part is Map && part['text'] != null) buffer.write(part['text']);
+    }
+    final text = buffer.toString();
+    return text.isEmpty ? null : text;
   }
 
   /// Tolerates a stray markdown fence or leading prose around the JSON.

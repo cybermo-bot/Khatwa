@@ -142,7 +142,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
 
     final triage = await Navigator.of(context).push<TriageResult>(
       MaterialPageRoute<TriageResult>(
-        builder: (_) => AnalysingPage(work: work, usingAi: ApiConfig.hasKey),
+        builder: (_) => AnalysingPage(work: work, usingAi: true),
       ),
     );
 

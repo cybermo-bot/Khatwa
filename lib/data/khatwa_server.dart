@@ -113,6 +113,17 @@ class KhatwaServer {
     return r.bodyBytes;
   }
 
+  /// The daily check's AI reading through the server's Gemini key (the app's
+  /// own generateContent body). Null when the server or the AI cannot answer.
+  Future<Map<String, dynamic>?> aiGenerate(Map<String, dynamic> body) async {
+    final r = await _http
+        .post(_u('/ai/generate'), headers: {...await _auth(), 'Content-Type': 'application/json'}, body: jsonEncode(body))
+        .timeout(const Duration(seconds: 75));
+    if (r.statusCode != 200) return null;
+    final decoded = jsonDecode(utf8.decode(r.bodyBytes));
+    return decoded is Map<String, dynamic> ? decoded : null;
+  }
+
   Future<Map<String, dynamic>> change(String side) async =>
       _json(await _http.get(_u('/twin/patients/$_p/$side/change'), headers: await _auth()));
 
