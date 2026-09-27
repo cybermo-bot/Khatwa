@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'create_account.dart';
+import '../data/khatwa_store.dart';
 import '../ui/app_theme.dart';
 
 class MedicalInformationPage extends StatefulWidget {
@@ -24,6 +24,17 @@ class _MedicalInformationPageState
   final additionalController = TextEditingController();
 
   String? diabetesType;
+
+  @override
+  void initState() {
+    super.initState();
+    final store = KhatwaStore.instance;
+    const types = {'type1', 'type2', 'gestational', 'other'};
+    if (types.contains(store.diabetesType)) diabetesType = store.diabetesType;
+    medicationsController.text = store.medications;
+    allergiesController.text = store.allergies;
+    diseasesController.text = store.otherConditions;
+  }
 
   final Map<String, Map<String, String>> texts = {
     'English': {
@@ -407,16 +418,19 @@ class _MedicalInformationPageState
                         return;
                       }
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CreateAccountPage(
-                            language:
-                                widget.language,
-                          ),
-                        ),
+                      final extra = [
+                        diseasesController.text.trim(),
+                        if (yearsController.text.trim().isNotEmpty)
+                          '${t['years']}: ${yearsController.text.trim()}',
+                        additionalController.text.trim(),
+                      ].where((s) => s.isNotEmpty).join(' · ');
+                      KhatwaStore.instance.saveMedicalInformation(
+                        diabetesType: diabetesType,
+                        medications: medicationsController.text.trim(),
+                        allergies: allergiesController.text.trim(),
+                        otherConditions: extra,
                       );
+                      Navigator.pop(context);
                     },
 
                     style:

@@ -92,3 +92,60 @@ class LanguageButton extends StatelessWidget {
     );
   }
 }
+
+/// Language switch that names the current language, for the first screens:
+/// someone who cannot read the current language still finds their own.
+class LanguagePill extends StatelessWidget {
+  const LanguagePill({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return PopupMenuButton<String>(
+      tooltip: S.t(appLanguage.value, 'app.language'),
+      onSelected: (value) => appLanguage.value = value,
+      position: PopupMenuPosition.under,
+      itemBuilder: (context) => [
+        for (final language in S.languages)
+          PopupMenuItem<String>(
+            value: language,
+            height: 48,
+            child: Row(
+              children: [
+                if (language == appLanguage.value)
+                  const Icon(Icons.check_rounded, size: 18)
+                else
+                  const SizedBox(width: 18),
+                const SizedBox(width: 10),
+                Text(language, style: const TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+      ],
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 44),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: scheme.outline, width: 1.2),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.translate_rounded, size: 18, color: scheme.primary),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(appLanguage.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: scheme.onSurface)),
+            ),
+            const SizedBox(width: 2),
+            Icon(Icons.expand_more_rounded, size: 18, color: scheme.onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+}

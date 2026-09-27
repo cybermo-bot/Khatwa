@@ -60,6 +60,29 @@ class S {
     'auth.err.exists': ['هذا الرقم مسجل من قبل', 'النمرة هذي مسجلة', 'Ce numéro est déjà enregistré', 'This number is already registered'],
     'auth.err.bad': ['رقم أو كلمة سر خاطئة', 'النمرة ولا كلمة السر غالطة', 'Numéro ou mot de passe incorrect', 'Wrong number or password'],
     'auth.welcome': ['مرحبا', 'أهلا', 'Bonjour', 'Welcome'],
+    'auth.promise': [
+      'نظرة على قدميك كل يوم، وطبيب وراء كل تنبيه',
+      'تشوف ساقيك كل يوم، وطبيب معاك كي يلزم',
+      'Un regard sur vos pieds chaque jour, un soignant derrière chaque alerte',
+      'A look at your feet every day, a health professional behind every alert'
+    ],
+    'auth.iam': ['أنا', 'أنا', 'Je suis', 'I am'],
+    'role.doctorShort': ['طبيب أو ممرض', 'طبيب ولا فرملي', 'Soignant', 'Health professional'],
+    'auth.welcomeBack': ['مرحبا بعودتك', 'مرحبا بيك من جديد', 'Content de vous revoir', 'Welcome back'],
+    'auth.signinSub': [
+      'أدخل معلوماتك لتجد متابعتك.',
+      'دخّل المعلومات متاعك باش تلقى المتابعة متاعك.',
+      'Entrez vos identifiants pour retrouver votre suivi.',
+      'Enter your details to find your follow-up.'
+    ],
+    'auth.signupSub': [
+      'بضع معلومات فقط، ثم نبدأ.',
+      'شوية معلومات برك، ومبعد نبداو.',
+      'Quelques informations, puis on commence.',
+      'A few details, then we start.'
+    ],
+    'auth.show': ['إظهار كلمة السر', 'ورّي كلمة السر', 'Afficher le mot de passe', 'Show password'],
+    'auth.hide': ['إخفاء كلمة السر', 'خبّي كلمة السر', 'Masquer le mot de passe', 'Hide password'],
     'auth.secure': [
       'بياناتك محفوظة على هذا الجهاز، وكلمة السر مشفّرة.',
       'المعلومات متاعك تقعد في التليفون، وكلمة السر مشفّرة.',
