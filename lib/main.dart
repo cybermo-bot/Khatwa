@@ -9,6 +9,7 @@ import 'data/auth_store.dart';
 import 'data/cloud.dart';
 import 'data/case_store.dart';
 import 'data/khatwa_store.dart';
+import 'data/reminders.dart';
 import 'screens/auth_pages.dart';
 import 'screens/doctor_home.dart';
 import 'screens/onboarding.dart';
@@ -29,11 +30,25 @@ Future<void> main() async {
   await ApiConfig.load();
   await KhatwaCloud.instance.init();
   await _demoQuickStart();
+  await Reminders.instance.init();
   await loadLanguage();
   await loadOnboarded();
   await loadTextScale();
   await loadThemeMode();
   await loadSkinTone();
+
+  // Reminders start for each signed-in patient and follow the language.
+  String? remindersFor;
+  void startReminders() {
+    final id = AuthStore.instance.current?.id;
+    if (id == null || id == remindersFor) return;
+    remindersFor = id;
+    unawaited(Reminders.instance.start());
+  }
+
+  AuthStore.instance.addListener(startReminders);
+  startReminders();
+  appLanguage.addListener(() => unawaited(Reminders.instance.sync()));
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
