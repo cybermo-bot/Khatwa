@@ -30,12 +30,10 @@ class LearnTab extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           // Know your feet: the healthy foot is the reference for everything else.
-          Container(
+          GlassCard(
+            glow: true,
+            radius: K.r28,
             padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-            decoration: BoxDecoration(
-              color: K.primarySoft,
-              borderRadius: BorderRadius.circular(K.r28),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

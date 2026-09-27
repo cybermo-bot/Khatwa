@@ -40,7 +40,17 @@ class MeTab extends StatelessWidget {
                   height: 64,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: K.primarySoft, shape: BoxShape.circle),
+                    color: K.primarySoft,
+                    shape: BoxShape.circle,
+                    border:
+                        Border.all(color: K.glow.withAlpha(140), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                          color: K.glow.withAlpha(K.isDark ? 70 : 30),
+                          blurRadius: 24,
+                          spreadRadius: -4),
+                    ],
+                  ),
                   child: Text(
                     _initials(account!.name),
                     style: K.h1.copyWith(color: K.primaryStrong),

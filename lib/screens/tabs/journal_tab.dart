@@ -144,14 +144,9 @@ class _JournalTabState extends State<JournalTab> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 10),
-              Container(
+              GlassCard(
+                radius: K.r28,
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
-                decoration: BoxDecoration(
-                  color: K.surface,
-                  borderRadius: BorderRadius.circular(K.r28),
-                  border: K.isDark ? Border.all(color: K.line) : null,
-                  boxShadow: K.lift,
-                ),
                 child: _MonthGrid(
                   month: _month,
                   canGoNext: _month.isBefore(_thisMonth),
