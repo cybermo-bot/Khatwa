@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
 import '../../data/risk_profile.dart';
+import '../../features/diet/diet_page.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
 import '../../ui/strings.dart';
@@ -157,7 +158,7 @@ class MeTab extends StatelessWidget {
             KGroupRow(
               icon: Icons.restaurant_outlined,
               title: S.t(lang, 'tool.food'),
-              onTap: () => open(FoodPage(language: lang)),
+              onTap: () => open(const DietPage()),
             ),
             KGroupRow(
               icon: Icons.favorite_outline_rounded,

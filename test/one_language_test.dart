@@ -5,6 +5,9 @@ import 'package:diabetic_foot_app/data/auth_store.dart';
 import 'package:diabetic_foot_app/data/case_store.dart';
 import 'package:diabetic_foot_app/data/khatwa_store.dart';
 import 'package:diabetic_foot_app/data/learn_content.dart';
+import 'package:diabetic_foot_app/features/diet/diet_data.dart';
+import 'package:diabetic_foot_app/features/diet/diet_page.dart';
+import 'package:diabetic_foot_app/features/diet/diet_topics.dart';
 import 'package:diabetic_foot_app/features/twin/photo_sign_page.dart';
 import 'package:diabetic_foot_app/features/twin/scan_page.dart';
 import 'package:diabetic_foot_app/features/twin/twin_page.dart';
@@ -33,14 +36,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Latin words allowed in an Arabic-script page: brands, units, standards.
 const allowedLatin = {
   'Khatwa', 'D', 'SAMU', 'IWGDF', 'FHIR', 'IDF', 'DAR', 'mg', 'dL', 'mmol', 'L', 'HbA', 'c',
-  'Future', 'Health', 'Connectathon', 'YouTube', 'USDA', 'INNTA', 'IHE', 'Gazelle', 'kg', 'g', 'cm', 'mm', 'ml', 'mL', 'kcal', 'min', 'h', 'C',
+  'Future', 'Health', 'Connectathon', 'YouTube', 'USDA', 'FoodData', 'Central', 'INNTA', 'IHE', 'Gazelle', 'kg', 'g', 'cm', 'mm', 'ml', 'mL', 'kcal', 'min', 'h', 'C',
 };
 
 /// Arabic-script words allowed in a French or English page: the language
 /// names in the language choice.
 const allowedArabic = {'تونسي', 'العربية', 'خطوة'};
 
-final _latinWord = RegExp(r'[A-Za-zÀ-ÿ]+');
+final _latinWord = RegExp(r'[A-Za-zÀ-ÖØ-öø-ÿ]+');
 final _arabicWord = RegExp(r'[؀-ۿ]+');
 
 List<String> _visibleTexts(WidgetTester tester) => [
@@ -118,6 +121,13 @@ void main() {
     'activity': () => ActivityPage(language: appLanguage.value),
     'food': () => FoodPage(language: appLanguage.value),
     'appointments': () => AppointmentsPage(language: appLanguage.value),
+    'diet': () => const DietPage(),
+    'diet foods': () => const FoodListPage(),
+    'diet plate': () => DietTopicPage(topic: dietTopic('plate')),
+    'diet ramadan': () => DietTopicPage(topic: dietTopic('ramadan')),
+    'diet hypo': () => DietTopicPage(topic: dietTopic('hypo')),
+    'diet feet': () => DietTopicPage(topic: dietTopic('feet')),
+    'diet sheet': () => Scaffold(body: FoodSheet(food: tunisianFoods.first)),
   };
 
   for (final lang in S.languages) {

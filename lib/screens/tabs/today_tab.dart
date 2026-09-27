@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../features/diet/diet_page.dart';
+import '../../features/common.dart';
 import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
 import '../../data/khatwa_store.dart';
@@ -98,6 +100,36 @@ class _TodayTabState extends State<TodayTab> {
                   lang: lang,
                   checkDone: doneToday,
                   onGlucose: () => _open(GlycemiaPage(language: lang)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              KReveal(
+                order: 3,
+                child: KCard(
+                  onTap: () => _open(const DietPage()),
+                  padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(color: K.primarySoft, borderRadius: BorderRadius.circular(K.r12)),
+                        child: Icon(Icons.restaurant_rounded, color: K.primaryStrong),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(tr('Alimentation', aeb: 'الماكلة', ar: 'التغذية', en: 'Food'), style: K.bodyStrong),
+                            Text(tr('Quoi manger, et combien', aeb: 'شنوّة تاكل، وقدّاش', ar: 'ماذا تأكل وكم', en: 'What to eat, and how much'),
+                                style: K.small),
+                          ],
+                        ),
+                      ),
+                      Icon(S.isRtl(lang) ? Icons.chevron_left_rounded : Icons.chevron_right_rounded, color: K.muted),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
