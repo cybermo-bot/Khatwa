@@ -315,7 +315,7 @@ class _Chip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (selected) ...[
-              const Icon(Icons.check_rounded, size: 15, color: K.primaryDark),
+              Icon(Icons.check_rounded, size: 15, color: K.primaryDark),
               const SizedBox(width: 6),
             ],
             Text(

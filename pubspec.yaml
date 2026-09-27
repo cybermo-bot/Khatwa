@@ -37,6 +37,17 @@ dependencies:
   shared_preferences: ^2.3.0
   http: ^1.2.0
   crypto: ^3.0.3
+  # Demo: shared data, 3D twin, voice assistant, doctor dashboard.
+  supabase_flutter: ^2.8.0
+  model_viewer_plus: ^1.10.0
+  fl_chart: ^1.0.0
+  record: ^6.2.1
+  audioplayers: ^6.7.1
+  flutter_tts: ^4.2.5
+  speech_to_text: ^7.4.0
+  path_provider: ^2.1.6
+  http_parser: ^4.1.2
+  qr_flutter: ^4.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -62,6 +73,24 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/models/
+    - assets/images/
+
+  # Readex Pro (SIL OFL 1.1, assets/fonts/OFL.txt): one family for Arabic
+  # and Latin, drawn for readability. Bundled so it works offline.
+  fonts:
+    - family: ReadexPro
+      fonts:
+        - asset: assets/fonts/ReadexPro-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ReadexPro-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ReadexPro-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ReadexPro-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

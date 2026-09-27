@@ -139,7 +139,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   child: Row(
                     children: [
-                      const Icon(Icons.timer_outlined, size: 18, color: K.muted),
+                      Icon(Icons.timer_outlined, size: 18, color: K.muted),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(S.t(lang, 'doctor.delay'), style: K.body),
@@ -181,7 +181,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                 KCard(
                   child: Row(
                     children: [
-                      const Icon(Icons.inbox_outlined, color: K.muted),
+                      Icon(Icons.inbox_outlined, color: K.muted),
                       const SizedBox(width: 12),
                       Expanded(child: Text(S.t(lang, 'doctor.empty'), style: K.body)),
                     ],
@@ -421,7 +421,7 @@ class _DoctorCasePageState extends State<DoctorCasePage> {
                 padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
-                    const Icon(Icons.visibility_off_outlined, color: K.muted, size: 20),
+                    Icon(Icons.visibility_off_outlined, color: K.muted, size: 20),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -454,7 +454,7 @@ class _DoctorCasePageState extends State<DoctorCasePage> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: [
-                        const Icon(Icons.fingerprint_rounded, size: 16, color: K.muted),
+                        Icon(Icons.fingerprint_rounded, size: 16, color: K.muted),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -581,7 +581,7 @@ class _DoctorCasePageState extends State<DoctorCasePage> {
                   ],
                 ),
               ),
-              const Divider(height: 1, color: K.line),
+              Divider(height: 1, color: K.line),
               Expanded(
                 child: Container(
                   color: K.paper,
@@ -589,7 +589,7 @@ class _DoctorCasePageState extends State<DoctorCasePage> {
                     padding: const EdgeInsets.all(14),
                     child: SelectableText(
                       json,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 11.5,
                         height: 1.45,

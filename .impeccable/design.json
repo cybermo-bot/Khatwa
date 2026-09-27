@@ -1,0 +1,1020 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T09:57:23+00:00",
+  "title": "Design System: Khatwa",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Morning Ground",
+        "canonical": "#F2F4F5",
+        "oklch": "oklch(96.6% 0.003 228.8)",
+        "tonalRamp": [
+          "#0A0B0C",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818383",
+          "#A3A5A6",
+          "#C7C9CA",
+          "#EDEFF0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "surface-muted": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "#E8EDEF",
+        "oklch": "oklch(94.3% 0.006 223.5)",
+        "tonalRamp": [
+          "#090C0D",
+          "#222627",
+          "#3F4344",
+          "#5E6264",
+          "#7F8385",
+          "#A1A6A8",
+          "#C5CACC",
+          "#EAEFF1"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Ink",
+        "canonical": "#14232A",
+        "oklch": "oklch(24.6% 0.024 229.0)",
+        "tonalRamp": [
+          "#020D13",
+          "#18272F",
+          "#35454C",
+          "#53646C",
+          "#74858E",
+          "#96A8B1",
+          "#BACDD6",
+          "#DFF2FC"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#3F5058",
+        "oklch": "oklch(42.0% 0.025 228.2)",
+        "tonalRamp": [
+          "#010D13",
+          "#18282F",
+          "#34454D",
+          "#53646D",
+          "#73868E",
+          "#95A9B2",
+          "#B9CDD6",
+          "#DEF2FC"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#5F6F76",
+        "oklch": "oklch(53.1% 0.022 226.0)",
+        "tonalRamp": [
+          "#020D12",
+          "#19272D",
+          "#36454B",
+          "#54646B",
+          "#75858D",
+          "#97A8B0",
+          "#BBCCD4",
+          "#E0F2FA"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#DDE4E7",
+        "oklch": "oklch(91.4% 0.009 225.1)",
+        "tonalRamp": [
+          "#080C0E",
+          "#212628",
+          "#3D4345",
+          "#5C6265",
+          "#7D8386",
+          "#A0A6A9",
+          "#C4CACD",
+          "#E9F0F3"
+        ]
+      },
+      "control": {
+        "role": "neutral",
+        "displayName": "Control Edge",
+        "canonical": "#76878E",
+        "oklch": "oklch(61.2% 0.022 224.5)",
+        "tonalRamp": [
+          "#020D12",
+          "#19282D",
+          "#35454B",
+          "#54646B",
+          "#75868D",
+          "#97A8B0",
+          "#BACDD4",
+          "#DFF2FA"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Petrol",
+        "canonical": "#0E5A66",
+        "oklch": "oklch(43.1% 0.070 211.3)",
+        "tonalRamp": [
+          "#000E12",
+          "#002B32",
+          "#004B56",
+          "#276C78",
+          "#4B8E9A",
+          "#6EB1BE",
+          "#92D6E3",
+          "#CFF7FF"
+        ]
+      },
+      "primary-strong": {
+        "role": "primary",
+        "displayName": "Harbour Petrol",
+        "canonical": "#0A434D",
+        "oklch": "oklch(35.3% 0.057 212.7)",
+        "tonalRamp": [
+          "#000E12",
+          "#002B33",
+          "#144A54",
+          "#376A74",
+          "#588C97",
+          "#7BAFBA",
+          "#9ED4DF",
+          "#D0F6FF"
+        ]
+      },
+      "primary-soft": {
+        "role": "primary",
+        "displayName": "Tide Wash",
+        "canonical": "#DDECEE",
+        "oklch": "oklch(93.2% 0.016 206.4)",
+        "tonalRamp": [
+          "#040D0F",
+          "#1C2729",
+          "#384546",
+          "#576466",
+          "#788587",
+          "#9AA8AA",
+          "#BECCCE",
+          "#E3F2F4"
+        ]
+      },
+      "on-primary": {
+        "role": "primary",
+        "displayName": "On Petrol",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "accent": {
+        "role": "tertiary",
+        "displayName": "Clinician Plum",
+        "canonical": "#7A4A88",
+        "oklch": "oklch(48.9% 0.110 318.3)",
+        "tonalRamp": [
+          "#180020",
+          "#3A0A46",
+          "#5A2B67",
+          "#7B4B89",
+          "#9E6CAD",
+          "#C28FD2",
+          "#E8B2F8",
+          "#F9E7FF"
+        ]
+      },
+      "accent-soft": {
+        "role": "tertiary",
+        "displayName": "Plum Wash",
+        "canonical": "#F2EAF5",
+        "oklch": "oklch(94.6% 0.017 316.9)",
+        "tonalRamp": [
+          "#0E0910",
+          "#28232B",
+          "#463F48",
+          "#655E68",
+          "#877F89",
+          "#A9A2AC",
+          "#CEC6D1",
+          "#F3EBF6"
+        ]
+      },
+      "ok": {
+        "role": "triage",
+        "displayName": "Leaf (triage green)",
+        "canonical": "#3A7D1F",
+        "oklch": "oklch(52.6% 0.144 138.4)",
+        "tonalRamp": [
+          "#011000",
+          "#0B2E00",
+          "#1B4F00",
+          "#307311",
+          "#52963A",
+          "#75BA5E",
+          "#99DF82",
+          "#CEFFBF"
+        ]
+      },
+      "ok-soft": {
+        "role": "triage",
+        "displayName": "Leaf Wash",
+        "canonical": "#E6F2DC",
+        "oklch": "oklch(94.6% 0.032 130.6)",
+        "tonalRamp": [
+          "#070E02",
+          "#202818",
+          "#3C4634",
+          "#5B6552",
+          "#7C8773",
+          "#9EA995",
+          "#C2CEB8",
+          "#E7F3DD"
+        ]
+      },
+      "warn": {
+        "role": "triage",
+        "displayName": "Amber (triage)",
+        "canonical": "#9A5E00",
+        "oklch": "oklch(53.7% 0.118 67.5)",
+        "tonalRamp": [
+          "#160700",
+          "#381E00",
+          "#5F3800",
+          "#895301",
+          "#B17325",
+          "#D6964D",
+          "#FCBA71",
+          "#FFEBD7"
+        ]
+      },
+      "warn-soft": {
+        "role": "triage",
+        "displayName": "Amber Wash",
+        "canonical": "#FBEDD5",
+        "oklch": "oklch(95.1% 0.035 81.3)",
+        "tonalRamp": [
+          "#120900",
+          "#2E2310",
+          "#4C402C",
+          "#6B5F4B",
+          "#8D816B",
+          "#B0A38D",
+          "#D5C7B0",
+          "#FBEDD5"
+        ]
+      },
+      "danger": {
+        "role": "triage",
+        "displayName": "Signal Red (triage)",
+        "canonical": "#C0352B",
+        "oklch": "oklch(53.9% 0.177 28.6)",
+        "tonalRamp": [
+          "#200000",
+          "#4E0000",
+          "#810002",
+          "#B0231C",
+          "#D84C40",
+          "#FF7364",
+          "#FEB3A8",
+          "#FEE9E6"
+        ]
+      },
+      "danger-soft": {
+        "role": "triage",
+        "displayName": "Red Wash",
+        "canonical": "#FBE7E4",
+        "oklch": "oklch(94.3% 0.022 27.8)",
+        "tonalRamp": [
+          "#130806",
+          "#2F211F",
+          "#4D3E3B",
+          "#6D5D5A",
+          "#8F7E7B",
+          "#B3A09D",
+          "#D7C4C1",
+          "#FDE9E6"
+        ]
+      },
+      "shadow": {
+        "role": "neutral",
+        "displayName": "Lift Shadow Base",
+        "canonical": "#14323A",
+        "oklch": "oklch(29.8% 0.038 217.6)",
+        "tonalRamp": [
+          "#000E14",
+          "#0B2A31",
+          "#294750",
+          "#486770",
+          "#698892",
+          "#8BABB5",
+          "#AED0DA",
+          "#D4F5FF"
+        ]
+      },
+      "night-ground": {
+        "role": "neutral",
+        "displayName": "Night Morning Ground",
+        "canonical": "#0C1417",
+        "oklch": "oklch(18.5% 0.014 223.0)",
+        "tonalRamp": [
+          "#050C0F",
+          "#1E272A",
+          "#3B4447",
+          "#596367",
+          "#7A8488",
+          "#9CA7AB",
+          "#C0CBD0",
+          "#E5F1F5"
+        ]
+      },
+      "night-surface": {
+        "role": "neutral",
+        "displayName": "Night Surface White",
+        "canonical": "#132126",
+        "oklch": "oklch(23.7% 0.022 222.4)",
+        "tonalRamp": [
+          "#020D12",
+          "#19282D",
+          "#36454A",
+          "#54646A",
+          "#75868C",
+          "#97A8AF",
+          "#BBCDD3",
+          "#E0F2F9"
+        ]
+      },
+      "night-surface-muted": {
+        "role": "neutral",
+        "displayName": "Night Mist",
+        "canonical": "#1A2B31",
+        "oklch": "oklch(27.7% 0.025 222.1)",
+        "tonalRamp": [
+          "#010D13",
+          "#17282E",
+          "#33454C",
+          "#52656C",
+          "#73868D",
+          "#95A9B0",
+          "#B8CDD5",
+          "#DDF3FB"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Deep Ink",
+        "canonical": "#E9F0F1",
+        "oklch": "oklch(95.0% 0.008 207.1)",
+        "tonalRamp": [
+          "#080C0D",
+          "#212627",
+          "#3E4344",
+          "#5C6263",
+          "#7D8485",
+          "#A0A6A7",
+          "#C4CBCC",
+          "#E9F0F1"
+        ]
+      },
+      "night-ink-soft": {
+        "role": "neutral",
+        "displayName": "Night Slate Ink",
+        "canonical": "#B3C2C6",
+        "oklch": "oklch(80.4% 0.017 215.5)",
+        "tonalRamp": [
+          "#040D10",
+          "#1B272A",
+          "#384548",
+          "#566467",
+          "#778589",
+          "#99A8AC",
+          "#BDCCD0",
+          "#E2F2F6"
+        ]
+      },
+      "night-muted": {
+        "role": "neutral",
+        "displayName": "Night Muted Slate",
+        "canonical": "#8CA0A5",
+        "oklch": "oklch(69.2% 0.024 214.5)",
+        "tonalRamp": [
+          "#010E11",
+          "#17282C",
+          "#34454A",
+          "#52656A",
+          "#73868B",
+          "#95A9AE",
+          "#B9CDD3",
+          "#DEF3F8"
+        ]
+      },
+      "night-line": {
+        "role": "neutral",
+        "displayName": "Night Hairline",
+        "canonical": "#22363C",
+        "oklch": "oklch(31.9% 0.028 218.6)",
+        "tonalRamp": [
+          "#000E13",
+          "#15282E",
+          "#31464C",
+          "#50656C",
+          "#70878E",
+          "#93AAB1",
+          "#B6CED5",
+          "#DBF3FB"
+        ]
+      },
+      "night-control": {
+        "role": "neutral",
+        "displayName": "Night Control Edge",
+        "canonical": "#5E7880",
+        "oklch": "oklch(55.5% 0.033 218.5)",
+        "tonalRamp": [
+          "#000E14",
+          "#112930",
+          "#2E464E",
+          "#4D666E",
+          "#6D8790",
+          "#8FAAB3",
+          "#B3CFD8",
+          "#D7F4FD"
+        ]
+      },
+      "night-primary": {
+        "role": "primary",
+        "displayName": "Night Deep Petrol",
+        "canonical": "#6FC3CE",
+        "oklch": "oklch(76.8% 0.083 206.5)",
+        "tonalRamp": [
+          "#000E11",
+          "#002B30",
+          "#004B53",
+          "#066E79",
+          "#3A909B",
+          "#60B4BF",
+          "#85D9E4",
+          "#C9F9FF"
+        ]
+      },
+      "night-primary-strong": {
+        "role": "primary",
+        "displayName": "Night Harbour Petrol",
+        "canonical": "#9ADBE3",
+        "oklch": "oklch(85.1% 0.066 205.6)",
+        "tonalRamp": [
+          "#000E11",
+          "#002B30",
+          "#014B53",
+          "#2B6C73",
+          "#4E8E96",
+          "#71B1B9",
+          "#95D6DE",
+          "#C8F9FF"
+        ]
+      },
+      "night-primary-soft": {
+        "role": "primary",
+        "displayName": "Night Tide Wash",
+        "canonical": "#173B42",
+        "oklch": "oklch(32.9% 0.043 212.2)",
+        "tonalRamp": [
+          "#000E12",
+          "#042A31",
+          "#25484F",
+          "#44686F",
+          "#658A91",
+          "#87ADB5",
+          "#AAD1D9",
+          "#D0F6FF"
+        ]
+      },
+      "night-on-primary": {
+        "role": "primary",
+        "displayName": "Night On Petrol",
+        "canonical": "#062A30",
+        "oklch": "oklch(26.3% 0.041 211.0)",
+        "tonalRamp": [
+          "#000E12",
+          "#062A30",
+          "#26484E",
+          "#45686E",
+          "#668990",
+          "#88ACB4",
+          "#ACD1D8",
+          "#D0F7FE"
+        ]
+      },
+      "night-accent": {
+        "role": "tertiary",
+        "displayName": "Night Clinician Plum",
+        "canonical": "#D2A6E0",
+        "oklch": "oklch(78.4% 0.094 317.9)",
+        "tonalRamp": [
+          "#180020",
+          "#371142",
+          "#563062",
+          "#774F84",
+          "#9A70A7",
+          "#BE93CB",
+          "#E3B6F1",
+          "#F9E8FE"
+        ]
+      },
+      "night-accent-soft": {
+        "role": "tertiary",
+        "displayName": "Night Plum Wash",
+        "canonical": "#2F2437",
+        "oklch": "oklch(28.2% 0.037 310.5)",
+        "tonalRamp": [
+          "#100617",
+          "#2B2033",
+          "#483D51",
+          "#685C71",
+          "#897C93",
+          "#AC9FB7",
+          "#D1C3DC",
+          "#F5E9FF"
+        ]
+      },
+      "night-ok": {
+        "role": "triage",
+        "displayName": "Night Leaf (triage green)",
+        "canonical": "#8BD06A",
+        "oklch": "oklch(78.9% 0.152 136.4)",
+        "tonalRamp": [
+          "#021000",
+          "#0F2D00",
+          "#214F00",
+          "#347300",
+          "#54962F",
+          "#76BA55",
+          "#9AE079",
+          "#CFFFBB"
+        ]
+      },
+      "night-ok-soft": {
+        "role": "triage",
+        "displayName": "Night Leaf Wash",
+        "canonical": "#1C2E14",
+        "oklch": "oklch(27.8% 0.051 136.7)",
+        "tonalRamp": [
+          "#021000",
+          "#192B11",
+          "#35482D",
+          "#54684B",
+          "#748A6C",
+          "#97AD8E",
+          "#BAD1B1",
+          "#DFF7D6"
+        ]
+      },
+      "night-warn": {
+        "role": "triage",
+        "displayName": "Night Amber (triage)",
+        "canonical": "#EAB55A",
+        "oklch": "oklch(80.4% 0.124 78.9)",
+        "tonalRamp": [
+          "#130900",
+          "#342100",
+          "#583C00",
+          "#805900",
+          "#AA7807",
+          "#CF9B3E",
+          "#F5BF65",
+          "#FFECCE"
+        ]
+      },
+      "night-warn-soft": {
+        "role": "triage",
+        "displayName": "Night Amber Wash",
+        "canonical": "#33280F",
+        "oklch": "oklch(28.3% 0.042 85.7)",
+        "tonalRamp": [
+          "#120A00",
+          "#2E230A",
+          "#4C4027",
+          "#6C6046",
+          "#8E8166",
+          "#B1A487",
+          "#D6C8AB",
+          "#FBEDCF"
+        ]
+      },
+      "night-danger": {
+        "role": "triage",
+        "displayName": "Night Signal Red (triage)",
+        "canonical": "#F2857B",
+        "oklch": "oklch(73.4% 0.135 26.3)",
+        "tonalRamp": [
+          "#200000",
+          "#4D0003",
+          "#7A1616",
+          "#A03B36",
+          "#C65E56",
+          "#EE8177",
+          "#FEB3AB",
+          "#FFE9E6"
+        ]
+      },
+      "night-danger-soft": {
+        "role": "triage",
+        "displayName": "Night Red Wash",
+        "canonical": "#3A1C1A",
+        "oklch": "oklch(26.8% 0.048 24.7)",
+        "tonalRamp": [
+          "#1B0303",
+          "#391B19",
+          "#593835",
+          "#7A5754",
+          "#9D7874",
+          "#C19A96",
+          "#E7BEBA",
+          "#FEE9E7"
+        ]
+      },
+      "skin-fair": {
+        "role": "illustration",
+        "displayName": "Fair Skin",
+        "canonical": "#F0CBAE",
+        "tonalRamp": [
+          "#D1A07F",
+          "#F0CBAE",
+          "#F8D5C2",
+          "#F8DECA",
+          "#FBEADF"
+        ],
+        "note": "Illustration only. Ramp is the shipped SkinTone set in order: shade, base, pad or light, light or pad, nail."
+      },
+      "skin-medium": {
+        "role": "illustration",
+        "displayName": "Medium Skin",
+        "canonical": "#E2AE88",
+        "tonalRamp": [
+          "#BF855F",
+          "#E2AE88",
+          "#F2C2A6",
+          "#F0C9A8",
+          "#F7DDCD"
+        ],
+        "note": "Illustration only. Ramp is the shipped SkinTone set in order: shade, base, pad or light, light or pad, nail."
+      },
+      "skin-deep": {
+        "role": "illustration",
+        "displayName": "Deep Skin",
+        "canonical": "#9C6644",
+        "tonalRamp": [
+          "#74472C",
+          "#9C6644",
+          "#B57C57",
+          "#B98163",
+          "#D7B19A"
+        ],
+        "note": "Illustration only. Ramp is the shipped SkinTone set in order: shade, base, pad or light, light or pad, nail."
+      },
+      "marker-on-skin": {
+        "role": "illustration",
+        "displayName": "Marker Petrol",
+        "canonical": "#0B4F5A",
+        "oklch": "oklch(39.4% 0.065 211.7)",
+        "tonalRamp": [
+          "#000E12",
+          "#002B32",
+          "#034B56",
+          "#2F6B76",
+          "#518D99",
+          "#74B0BC",
+          "#98D5E2",
+          "#D1F6FE"
+        ]
+      },
+      "urgent-on-skin": {
+        "role": "illustration",
+        "displayName": "Marker Red",
+        "canonical": "#A8231B",
+        "oklch": "oklch(47.8% 0.170 28.8)",
+        "tonalRamp": [
+          "#210000",
+          "#4E0000",
+          "#810001",
+          "#AD2920",
+          "#D55042",
+          "#FE7565",
+          "#FFB3A8",
+          "#FFE9E5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Large numbers only (latest glucose), tabular figures."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles and hero panel titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section labels, card titles, article summaries."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text in ink-soft."
+      },
+      "body-strong": {
+        "displayName": "Body strong",
+        "purpose": "Row titles, field labels, tile titles, links."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Subtitles, dates, notes, hints; muted only on ground or surface."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Photo numbers, nav labels, choice tile names, counts."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Filled buttons."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lift",
+        "value": "0 8px 24px rgba(20,50,58,0.055), 0 1px 3px rgba(20,50,58,0.04)",
+        "purpose": "The only shadow: raised white surfaces in day. None at night (1px night-line border instead). Not yet verified on a device."
+      }
+    ],
+    "motion": [
+      {
+        "name": "quick",
+        "value": "140ms",
+        "purpose": "Press down."
+      },
+      {
+        "name": "standard",
+        "value": "280ms",
+        "purpose": "State changes, header edge, nav indicator, tick fill, press release."
+      },
+      {
+        "name": "gentle",
+        "value": "460ms",
+        "purpose": "KReveal entrance: rise 14px and fade in, 60ms stagger by order."
+      },
+      {
+        "name": "breath",
+        "value": "4200ms",
+        "purpose": "Defined but unused. Breathing zone markers ship at 2200ms (Today) and 2000ms (articles). Drift."
+      },
+      {
+        "name": "emphasized",
+        "value": "cubic-bezier(0.05, 0.7, 0.1, 1.0)",
+        "purpose": "Entrances."
+      },
+      {
+        "name": "standard-curve",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "State changes."
+      },
+      {
+        "name": "exit",
+        "value": "cubic-bezier(0.3, 0, 0.8, 0.15)",
+        "purpose": "Exits."
+      },
+      {
+        "name": "press-scale",
+        "value": "scale(0.975)",
+        "purpose": "KPressable press; springs back with ease out back."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "MediaQuery.disableAnimations",
+        "purpose": "Every animation becomes an instant change."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "content-max",
+        "value": "720px"
+      },
+      {
+        "name": "sign-grid-three-columns",
+        "value": "560px"
+      }
+    ],
+    "verification": {
+      "reviewCaptures": ".impeccable/review/round4",
+      "renders": 160,
+      "renderer": "Flutter test renderer",
+      "disposition": "ship",
+      "owed": "Android device capture for motion and shadows."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width petrol action, 56 tall; one per surface.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg>Start today's check</button>",
+      "css": ".ds-btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border:none;border-radius:18px;background:#0E5A66;color:#FFFFFF;font-family:'Readex Pro',sans-serif;font-size:17px;font-weight:600;cursor:pointer;transition:transform 140ms cubic-bezier(0.2,0,0,1),background 280ms} .ds-btn-primary:hover{background:#0A434D} .ds-btn-primary:active{transform:scale(0.975)} .ds-btn-primary:focus-visible{outline:2px solid #0E5A66;outline-offset:3px} .ds-btn-primary:disabled{background:#E8EDEF;color:#5F6F76}"
+    },
+    {
+      "name": "Tonal Button",
+      "kind": "button",
+      "refersTo": "button-tonal",
+      "description": "Secondary action on tide wash, for example see today's result.",
+      "html": "<button class=\"ds-btn-tonal\">See today's result</button>",
+      "css": ".ds-btn-tonal{width:100%;height:56px;border:none;border-radius:18px;background:#DDECEE;color:#0A434D;font-family:'Readex Pro',sans-serif;font-size:17px;font-weight:600;cursor:pointer;transition:transform 140ms} .ds-btn-tonal:active{transform:scale(0.975)} .ds-btn-tonal:focus-visible{outline:2px solid #0E5A66;outline-offset:3px}"
+    },
+    {
+      "name": "Outlined Button",
+      "kind": "button",
+      "refersTo": "button-outlined",
+      "description": "Quiet secondary action on white. Shown with the control border the Control Edge Rule requires; the shipped theme still draws it in line (drift).",
+      "html": "<button class=\"ds-btn-outlined\">Test the key</button>",
+      "css": ".ds-btn-outlined{width:100%;height:56px;border:1.2px solid #76878E;border-radius:18px;background:#FFFFFF;color:#14232A;font-family:'Readex Pro',sans-serif;font-size:16px;font-weight:500;cursor:pointer} .ds-btn-outlined:hover{background:#F2F4F5} .ds-btn-outlined:focus-visible{outline:2px solid #0E5A66;outline-offset:3px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Labelled text field with a control-edge border and a 2px petrol focus border.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Note</span><input class=\"ds-field-input\" placeholder=\"Write a note\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:8px;font-family:'Readex Pro',sans-serif;} .ds-field-label{padding-inline-start:4px;font-size:17px;font-weight:500;color:#14232A} .ds-field-input{padding:16px;border:1.2px solid #76878E;border-radius:16px;background:#FFFFFF;color:#14232A;font:inherit;font-size:17px} .ds-field-input::placeholder{color:#5F6F76;font-size:16px} .ds-field-input:focus-visible{outline:none;border:2px solid #0E5A66;padding:15.2px}"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "nav-bar",
+      "description": "Five destinations, labels always shown, text scale capped at 1.0 (three shown here).",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-on\" tabindex=\"0\"><span class=\"ds-nav-ind\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><circle cx=\"12\" cy=\"14\" r=\"5\"/><rect x=\"2\" y=\"18\" width=\"20\" height=\"2\" rx=\"1\"/></svg></span>Today</a><a class=\"ds-nav-item\" tabindex=\"0\"><span class=\"ds-nav-ind\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></span>Check</a><a class=\"ds-nav-item\" tabindex=\"0\"><span class=\"ds-nav-ind\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/></svg></span>Journal</a></nav>",
+      "css": ".ds-nav{display:flex;height:74px;background:#FFFFFF;border-top:1px solid #DDE4E7;font-family:'Readex Pro',sans-serif;} .ds-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13.5px;font-weight:500;color:#5F6F76;cursor:pointer} .ds-nav-ind{display:flex;align-items:center;justify-content:center;width:64px;height:32px;border-radius:999px;transition:background 280ms cubic-bezier(0.2,0,0,1)} .ds-nav-item.is-on{color:#0A434D;font-weight:600} .ds-nav-item.is-on .ds-nav-ind{background:#DDECEE} .ds-nav-item:hover .ds-nav-ind{background:#F2F4F5} .ds-nav-item:focus-visible{outline:2px solid #0E5A66}"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Small pill for check frequency and streaks. Never triage-coloured unless it states a level.",
+      "html": "<span class=\"ds-tag\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z\"/></svg>Check every day</span>",
+      "css": ".ds-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:#E8EDEF;color:#3F5058;font-family:'Readex Pro',sans-serif;font-size:13px;font-weight:500}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White surface, 24 corners, the single lift shadow in day; pressable when it opens something.",
+      "html": "<div class=\"ds-card\" tabindex=\"0\"><div class=\"ds-card-title\">Wash your feet</div><p class=\"ds-card-body\">Lukewarm water. Test it with your elbow first.</p><span class=\"ds-card-link\">Read more</span></div>",
+      "css": ".ds-card{padding:18px;border-radius:24px;background:#FFFFFF;box-shadow:0 8px 24px rgba(20,50,58,0.055),0 1px 3px rgba(20,50,58,0.04);font-family:'Readex Pro',sans-serif;cursor:pointer;transition:transform 140ms cubic-bezier(0.2,0,0,1)} .ds-card:active{transform:scale(0.975)} .ds-card:focus-visible{outline:2px solid #0E5A66;outline-offset:2px} .ds-card-title{font-size:19px;font-weight:600;line-height:1.3;color:#14232A} .ds-card-body{margin:4px 0 10px;font-size:17px;line-height:1.5;color:#3F5058} .ds-card-link{font-size:17px;font-weight:500;color:#0E5A66}"
+    },
+    {
+      "name": "Group Row",
+      "kind": "custom",
+      "refersTo": "group-row",
+      "description": "Grouped list row: icon well, title, subtitle, one trailing affordance.",
+      "html": "<div class=\"ds-group\"><div class=\"ds-row\" tabindex=\"0\"><span class=\"ds-row-well\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 8v4l3 2\"/></svg></span><span class=\"ds-row-text\"><b>Sensation check</b><small>10 points on each foot</small></span><svg class=\"ds-row-chev\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 6l6 6-6 6\"/></svg></div></div>",
+      "css": ".ds-group{border-radius:24px;background:#FFFFFF;box-shadow:0 8px 24px rgba(20,50,58,0.055),0 1px 3px rgba(20,50,58,0.04);overflow:hidden;font-family:'Readex Pro',sans-serif;} .ds-row{display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 12px 10px 16px;cursor:pointer} .ds-row:hover{background:#F2F4F5} .ds-row:focus-visible{outline:2px solid #0E5A66;outline-offset:-2px} .ds-row-well{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:rgba(14,90,102,0.10);color:#0E5A66} .ds-row-text{flex:1;display:flex;flex-direction:column} .ds-row-text b{font-size:17px;font-weight:500;color:#14232A} .ds-row-text small{font-size:14.5px;color:#5F6F76} .ds-row-chev{color:#5F6F76}"
+    },
+    {
+      "name": "Choice Tile",
+      "kind": "custom",
+      "refersTo": "choice-tile",
+      "description": "Settings choice: picture above, full-width name below; selected is tide wash with a 2px primary border.",
+      "html": "<div class=\"ds-choices\"><button class=\"ds-choice\"><span class=\"ds-choice-pic\" style=\"font-size:17px\">Aa</span>Normal</button><button class=\"ds-choice is-on\"><span class=\"ds-choice-pic\" style=\"font-size:22px\">Aa</span>Large</button><button class=\"ds-choice\"><span class=\"ds-choice-pic\" style=\"font-size:27px\">Aa</span>Very large</button></div>",
+      "css": ".ds-choices{display:flex;gap:10px} .ds-choice{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:108px;padding:12px 6px;border:1px solid #76878E;border-radius:24px;background:#FFFFFF;color:#14232A;font-family:'Readex Pro',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:background 280ms,transform 140ms} .ds-choice:active{transform:scale(0.975)} .ds-choice:focus-visible{outline:2px solid #0E5A66;outline-offset:2px} .ds-choice-pic{display:flex;align-items:center;height:64px;font-weight:600;line-height:1} .ds-choice.is-on{border:2px solid #0E5A66;background:#DDECEE;color:#0A434D;font-weight:700}"
+    },
+    {
+      "name": "Check Hero Panel",
+      "kind": "custom",
+      "refersTo": "hero-panel",
+      "description": "Today's check on the tide wash: title, four photo positions (skin always full colour), one full-width action.",
+      "html": "<section class=\"ds-hero\"><h2>Today's check</h2><p>Four photos, a few minutes.</p><div class=\"ds-hero-feet\"><span class=\"ds-foot is-next\">1</span><span class=\"ds-foot\">2</span><span class=\"ds-foot\">3</span><span class=\"ds-foot\">4</span></div><button class=\"ds-hero-btn\">Start</button></section>",
+      "css": ".ds-hero{padding:22px;border-radius:28px;background:#DDECEE;color:#0A434D;font-family:'Readex Pro',sans-serif;} .ds-hero h2{margin:0 0 6px;font-size:26px;font-weight:600;line-height:1.2} .ds-hero p{margin:0 0 18px;font-size:17px;line-height:1.5} .ds-hero-feet{display:flex;gap:6px;margin-bottom:16px} .ds-foot{flex:1;display:flex;align-items:flex-end;justify-content:center;height:96px;padding-bottom:4px;border:2px solid transparent;border-radius:16px;background:radial-gradient(ellipse 22% 38% at 50% 42%,#E2AE88 98%,transparent 100%);font-size:13.5px;font-weight:500;color:#3F5058} .ds-foot.is-next{border-color:#0E5A66;font-weight:700;color:#0A434D} .ds-hero-btn{width:100%;height:56px;border:none;border-radius:18px;background:#0E5A66;color:#FFFFFF;font:inherit;font-size:17px;font-weight:600;cursor:pointer;transition:transform 140ms} .ds-hero-btn:active{transform:scale(0.975)} .ds-hero-btn:focus-visible{outline:2px solid #0E5A66;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Petrol and Skin",
+    "overview": "A calm foot care companion in the category standard of good health apps, executed at full craft: a cool morning ground, white surfaces, deep ink, and one petrol blue that means \"act here\". The one thing that is Khatwa's own is the patient's feet, drawn in code in the skin tone the patient chose, carrying every task and every warning sign at the place on the foot where it happens. Skin colour lives only inside those drawings; the interface never borrows it.\n\nThe world has no real-world theme or metaphor, by the user's choice (seed 4f115a82, category standard, 26 September 2026). The craft bar is Headspace and Calm with Oura, light first, with Apple Health clarity. Density is low: one idea per surface, large type (body at 17), 48 px minimum touch targets, 56 px buttons, and three text sizes that every layout must survive. Four languages (Tunisian derja by default, Arabic, French, English) with full right-to-left layout for Arabic and derja.\n\nNight is not an inverted day. It is a deep petrol dark with the same roles lifted, flat, with hairline borders where day uses a shadow.",
+    "keyCharacteristics": [
+      "One petrol action colour; green, amber and red are reserved for triage.",
+      "Feet drawn in skin tone are the identity and the main illustration system.",
+      "Soft, rounded surfaces on a pale ground, one low shadow in day, tone and hairlines at night.",
+      "Readex Pro alone, sentence case everywhere, no tracked labels.",
+      "Motion is soft and short, and all of it goes still when the phone asks for less motion."
+    ],
+    "rules": [
+      {
+        "name": "The Triage Colour Rule",
+        "body": "Green, amber and red only ever mean a triage level. Nothing decorative, no status that is not a level, and no success toast borrows them as a hue. If a new screen needs \"done\" or \"ok\", use petrol.",
+        "section": "colors"
+      },
+      {
+        "name": "The Control Edge Rule",
+        "body": "A control's border uses `K.control`, never `K.line`. The hairline is for separation; anything the patient must find at a glance needs 3:1 against both surface and ground.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tinted Panel Rule",
+        "body": "Small text on a tinted panel (tide wash, triage soft panels) uses `inkSoft`, the panel's strong tone, or ink. Never `muted`: it falls to 4.3:1 on the tide wash and 4.4:1 on the red panel.",
+        "section": "colors"
+      },
+      {
+        "name": "The Skin Stays in the Feet Rule",
+        "body": "Skin tones never appear in interface chrome, and interface colours never tint skin.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Section headings are set like titles in sentence case. There are no tracked, uppercase labels or eyebrows above headings anywhere in the build, and none should be added.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Counts, dates, glucose values and calendar days use tabular figures so they do not jitter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Nav Scale Cap Rule",
+        "body": "The navigation bar clamps its own text scale to 1.0 so five labels fit on a narrow phone in every language. Page content always keeps the patient's full text size (1.0, 1.15 or 1.3). Nothing else caps text scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Full Width Label Rule",
+        "body": "A tile's name gets the full tile width under its picture, never a column squeezed beside an icon, so it never breaks mid-word at the largest text size.",
+        "section": "layout"
+      },
+      {
+        "name": "The One Trailing Affordance Rule",
+        "body": "A row carries at most one trailing element: a chevron when the whole row opens something, or one text button, or one value. Never a chevron and a button together.",
+        "section": "layout"
+      },
+      {
+        "name": "The One Lift Rule",
+        "body": "There is one shadow in the system. No second elevation step, no coloured shadows, no hard offset shadows. A surface with its own colour gets no shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Full Skin Rule",
+        "body": "Illustrations never fade or wash out skin. A faded foot reads as discoloured skin, which is itself a warning sign. Show state with rings, badges and labels.",
+        "section": "components"
+      },
+      {
+        "name": "The Drawn Not Photographed Rule",
+        "body": "No invented patient data anywhere: no sample names, scores, readings, photos, streaks or results in the UI or in demo states. Empty states say so plainly. Teaching drawings are the only depiction of a foot until the team has consented photos.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do build every new screen on `KPage`, `KCard`, `KGroup`, `KGroupRow`, `KField`, `KBanner`, `KNote`, `KTag` and `KPressable`, and read colours from `K`, never hex literals.",
+      "Do use petrol for every action and every \"done\"; keep one filled primary button per surface.",
+      "Do carry triage level with colour, icon and words together (`LevelDot` plus the level headline).",
+      "Do border controls with `K.control`, and give focus a 2 px primary border.",
+      "Do use `inkSoft` or stronger for small text on tinted panels.",
+      "Do keep touch targets at 48 px or more and primary buttons at 56 px.",
+      "Do test every new layout at text scale 1.3, in Arabic right to left, and in night mode.",
+      "Do give tile labels the full tile width and let tiles in a row share one height.",
+      "Do keep skin at full colour in every drawing, and show state with rings, badges and labels.",
+      "Do gate every animation on `KMotion.reduced`."
+    ],
+    "donts": [
+      "Don't use green, amber or red for anything that is not a triage level, including success toasts, API status, legends and destructive actions.",
+      "Don't invent patient data, sample values, streaks, scores or photos, even in empty or demo states.",
+      "Don't put more than one trailing affordance on a row.",
+      "Don't border a control with `K.line`.",
+      "Don't set `muted` small text on the tide wash or on triage soft panels.",
+      "Don't cap text scale anywhere except the navigation bar (capped at 1.0).",
+      "Don't fade, tint or lower the opacity of skin in illustrations.",
+      "Don't add tracked uppercase labels or eyebrows above headings, a second shadow, or a second typeface.",
+      "Don't mirror the feet for right-to-left languages.",
+      "Don't reintroduce `cardTheme`, `appBarTheme`, `inputDecorationTheme`, `withOpacity` or `withValues` in the theme (SDK drift)."
+    ]
+  }
+}

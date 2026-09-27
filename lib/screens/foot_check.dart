@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -346,7 +345,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (filled) ...[
-                      const Icon(Icons.check_circle_rounded, size: 13, color: K.ok),
+                      Icon(Icons.check_circle_rounded, size: 13, color: K.ok),
                       const SizedBox(width: 5),
                     ],
                     Flexible(
@@ -392,7 +391,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
             Container(width: 40, height: 4, color: K.line),
             const SizedBox(height: 10),
             ListTile(
-              leading: const Icon(Icons.center_focus_strong_rounded, color: K.primary),
+              leading: Icon(Icons.center_focus_strong_rounded, color: K.primary),
               title: Text(S.t(lang, 'capture.open'), style: K.bodyStrong),
               onTap: () {
                 Navigator.of(sheetContext).pop();
@@ -400,7 +399,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library_outlined, color: K.primary),
+              leading: Icon(Icons.photo_library_outlined, color: K.primary),
               title: Text(S.t(lang, 'check.gallery'), style: K.bodyStrong),
               onTap: () {
                 Navigator.of(sheetContext).pop();
@@ -409,7 +408,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
             ),
             if (shots.containsKey(guideStep.key))
               ListTile(
-                leading: const Icon(Icons.delete_outline_rounded, color: K.danger),
+                leading: Icon(Icons.delete_outline_rounded, color: K.danger),
                 title: Text(S.t(lang, 'capture.remove'),
                     style: K.bodyStrong.copyWith(color: K.danger)),
                 onTap: () {
@@ -453,7 +452,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
                 },
               ),
               if (i != questionKeys.length - 1)
-                const Divider(height: 22, color: K.line),
+                Divider(height: 22, color: K.line),
             ],
           ],
         ),

@@ -60,11 +60,21 @@ class CaseImage {
 
 class AiGateway {
   /// Models are tried in order, so the demo survives a model being retired.
+  /// All four are on the Gemini API free tier (checked 26 Sep 2026). Free-tier
+  /// content may be used by Google to improve its products, so never send
+  /// names or ID numbers; production should use the paid tier.
   static const List<String> _models = [
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
+    'gemini-3.8-flash',
+    'gemini-3.7-flash',
+    'gemini-3.5-flash',
+    'gemini-3.5-flash-lite',
   ];
+
+  /// The key goes in a header, never in the URL (URLs end up in logs).
+  static Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': ApiConfig.key,
+      };
 
   static const String _endpointBase =
       'https://generativelanguage.googleapis.com/v1beta/models';
@@ -252,10 +262,13 @@ class AiGateway {
       'contents': [
         {'role': 'user', 'parts': parts}
       ],
+      // Gemini 3 models think before answering and the thinking counts
+      // against maxOutputTokens: keep it low and leave room for the JSON.
       'generationConfig': {
         'temperature': 0.2,
-        'maxOutputTokens': 1400,
+        'maxOutputTokens': 4096,
         'responseMimeType': 'application/json',
+        'thinkingConfig': {'thinkingLevel': 'low'},
       },
       'safetySettings': const <Map<String, String>>[],
     });
@@ -264,8 +277,8 @@ class AiGateway {
       try {
         final response = await http
             .post(
-              Uri.parse('$_endpointBase/$model:generateContent?key=${ApiConfig.key}'),
-              headers: const {'Content-Type': 'application/json'},
+              Uri.parse('$_endpointBase/$model:generateContent'),
+              headers: _headers,
               body: body,
             )
             .timeout(const Duration(seconds: 45));
@@ -333,8 +346,8 @@ class AiGateway {
       final response = await http
           .post(
             Uri.parse(
-                '$_endpointBase/${_models.first}:generateContent?key=${ApiConfig.key}'),
-            headers: const {'Content-Type': 'application/json'},
+                '$_endpointBase/${_models.first}:generateContent'),
+            headers: _headers,
             body: jsonEncode({
               'contents': [
                 {
@@ -401,11 +414,15 @@ class AiGateway {
       try {
         final response = await http
             .post(
-              Uri.parse('$_endpointBase/$model:generateContent?key=${ApiConfig.key}'),
-              headers: const {'Content-Type': 'application/json'},
+              Uri.parse('$_endpointBase/$model:generateContent'),
+              headers: _headers,
               body: jsonEncode({
                 'contents': contents,
-                'generationConfig': {'temperature': 0.4, 'maxOutputTokens': 700},
+                'generationConfig': {
+                  'temperature': 0.4,
+                  'maxOutputTokens': 1024,
+                  'thinkingConfig': {'thinkingLevel': 'low'},
+                },
               }),
             )
             .timeout(const Duration(seconds: 40));

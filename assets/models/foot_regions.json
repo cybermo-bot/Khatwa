@@ -1,0 +1,148 @@
+{
+ "units": "metres, y up, sole on y=0 (glTF frame of foot_model.glb, left foot)",
+ "regions": {
+  "hallux": {
+   "position": [
+    0.1137,
+    0.0412,
+    0.0019
+   ],
+   "normal": [
+    -0.105,
+    0.716,
+    -0.69
+   ],
+   "vertex": 40278
+  },
+  "lesser_toes": {
+   "position": [
+    0.1092,
+    0.0375,
+    -0.0239
+   ],
+   "normal": [
+    0.424,
+    0.9,
+    -0.105
+   ],
+   "vertex": 38444
+  },
+  "interdigital": {
+   "position": [
+    0.1042,
+    0.0218,
+    -0.029
+   ],
+   "normal": [
+    -0.041,
+    -0.998,
+    0.046
+   ],
+   "vertex": 37101
+  },
+  "forefoot_plantar": {
+   "position": [
+    0.0658,
+    0.0058,
+    -0.0179
+   ],
+   "normal": [
+    0.226,
+    -0.958,
+    0.176
+   ],
+   "vertex": 12563
+  },
+  "midfoot_plantar": {
+   "position": [
+    -0.0011,
+    0.0088,
+    -0.012
+   ],
+   "normal": [
+    -0.005,
+    -0.869,
+    0.496
+   ],
+   "vertex": 29752
+  },
+  "heel_plantar": {
+   "position": [
+    -0.0756,
+    0.0004,
+    0.0078
+   ],
+   "normal": [
+    0.108,
+    -0.993,
+    -0.041
+   ],
+   "vertex": 41936
+  },
+  "heel_posterior": {
+   "position": [
+    -0.1172,
+    0.0418,
+    0.016
+   ],
+   "normal": [
+    -0.986,
+    0.162,
+    0.025
+   ],
+   "vertex": 7468
+  },
+  "dorsum": {
+   "position": [
+    -0.0067,
+    0.0814,
+    -0.0174
+   ],
+   "normal": [
+    0.253,
+    0.549,
+    -0.796
+   ],
+   "vertex": 31071
+  },
+  "medial_side": {
+   "position": [
+    0.0025,
+    0.0363,
+    0.0277
+   ],
+   "normal": [
+    -0.041,
+    -0.607,
+    0.794
+   ],
+   "vertex": 24121
+  },
+  "lateral_side": {
+   "position": [
+    0.0319,
+    0.0323,
+    -0.0415
+   ],
+   "normal": [
+    -0.094,
+    0.592,
+    -0.8
+   ],
+   "vertex": 36070
+  },
+  "ankle": {
+   "position": [
+    -0.0791,
+    0.1403,
+    0.009
+   ],
+   "normal": [
+    -0.371,
+    0.925,
+    -0.078
+   ],
+   "vertex": 43049
+  }
+ }
+}

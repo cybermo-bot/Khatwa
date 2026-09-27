@@ -32,7 +32,7 @@ class LandingPage extends StatelessWidget {
                     alignment: AlignmentDirectional.centerEnd,
                     child: PopupMenuButton<String>(
                       onSelected: (value) => appLanguage.value = value,
-                      icon: const Icon(Icons.language_rounded, color: K.inkSoft),
+                      icon: Icon(Icons.language_rounded, color: K.inkSoft),
                       itemBuilder: (context) => [
                         for (final language in S.languages)
                           PopupMenuItem<String>(value: language, child: Text(language)),
@@ -102,23 +102,23 @@ class _Wordmark extends StatelessWidget {
           height: 74,
           decoration: BoxDecoration(
             color: K.primaryDark,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
               Positioned(
-                left: 13,
-                top: 26,
+                left: 10,
+                top: 28,
                 child: Transform.rotate(
                   angle: -0.20,
                   child: SizedBox(
-                    width: 19,
-                    height: 27,
+                    width: 22,
+                    height: 28,
                     child: CustomPaint(
                       painter: FootBadgePainter(
                         side: FootSide.left,
-                        color: Color(0x4DFFFFFF),
+                        color: const Color(0x60FFFFFF),
                         filled: true,
                       ),
                     ),
@@ -126,12 +126,12 @@ class _Wordmark extends StatelessWidget {
                 ),
               ),
               Positioned(
-                right: 12,
-                top: 14,
+                right: 10,
+                top: 12,
                 child: Transform.rotate(
                   angle: -0.20,
                   child: SizedBox(
-                    width: 25,
+                    width: 28,
                     height: 36,
                     child: CustomPaint(
                       painter: FootBadgePainter(
@@ -147,7 +147,7 @@ class _Wordmark extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        const Text('Khatwa', style: K.display),
+        Text('Khatwa', style: K.display),
         const SizedBox(height: 2),
         Container(width: 38, height: 3, color: K.accent),
       ],
@@ -199,7 +199,7 @@ class _RoleCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: K.muted),
+          Icon(Icons.chevron_right_rounded, color: K.muted),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -59,9 +58,22 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
   bool _torch = false;
   String? _cameraError;
 
+  // The outline is the person's to move. Feet differ, phones are held at
+  // different distances, and we do not detect the foot: a trained model would
+  // be needed for that. So instead of pretending, we let them fit the guide.
+  FootFrame _frame = const FootFrame();
+  bool _adjusting = false;
+  FootFrame _frameAtGestureStart = const FootFrame();
+  Offset _focalAtGestureStart = Offset.zero;
+  Timer? _adjustTimer;
+
   String get lang => appLanguage.value;
 
   GuideStep get step => widget.steps[_index];
+
+  /// True once the person has moved or resized the outline away from default.
+  bool get _moved =>
+      _adjusting || _frame.scale != 1 || _frame.shift != Offset.zero;
 
   @override
   void initState() {
@@ -76,9 +88,51 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
 
   @override
   void dispose() {
+    _adjustTimer?.cancel();
     _pulse.dispose();
     _camera?.dispose();
     super.dispose();
+  }
+
+  // ---- fitting the outline ----
+
+  void _onAdjustStart(ScaleStartDetails details) {
+    _adjustTimer?.cancel();
+    _frameAtGestureStart = _frame;
+    _focalAtGestureStart = details.focalPoint;
+    setState(() => _adjusting = true);
+  }
+
+  void _onAdjustUpdate(ScaleUpdateDetails details) {
+    if (_locked || _busy) return;
+    final moved = details.focalPoint - _focalAtGestureStart;
+    var scale = _frameAtGestureStart.scale * details.scale;
+    if (scale < 0.62) scale = 0.62;
+    if (scale > 1.45) scale = 1.45;
+    setState(() {
+      _frame = _frameAtGestureStart.copyWith(
+        scale: scale,
+        shift: _frameAtGestureStart.shift + moved,
+      );
+    });
+  }
+
+  void _onAdjustEnd(ScaleEndDetails details) {
+    HapticFeedback.selectionClick();
+    // Keep the handles visible for a beat, then let the view go clean again.
+    _adjustTimer?.cancel();
+    _adjustTimer = Timer(const Duration(milliseconds: 1200), () {
+      if (mounted) setState(() => _adjusting = false);
+    });
+  }
+
+  void _resetFrame() {
+    _adjustTimer?.cancel();
+    HapticFeedback.selectionClick();
+    setState(() {
+      _frame = const FootFrame();
+      _adjusting = false;
+    });
   }
 
   Future<void> _startCamera() async {
@@ -205,20 +259,29 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
     final doneCount = captured.where((value) => value).length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B1A1E),
+      backgroundColor: const Color(0xFF0A1420),
       body: Stack(
         fit: StackFit.expand,
         children: [
           _preview(),
           if (_camera != null && _camera!.value.isInitialized)
-            AnimatedBuilder(
-              animation: _pulse,
-              builder: (context, _) => CustomPaint(
-                painter: FootGuidePainter(
-                  side: step.side,
-                  view: step.view,
-                  pulse: _holding ? 1 : _pulse.value,
-                  locked: _locked,
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onScaleStart: _onAdjustStart,
+              onScaleUpdate: _onAdjustUpdate,
+              onScaleEnd: _onAdjustEnd,
+              onDoubleTap: _resetFrame,
+              child: AnimatedBuilder(
+                animation: _pulse,
+                builder: (context, _) => CustomPaint(
+                  painter: FootGuidePainter(
+                    side: step.side,
+                    view: step.view,
+                    pulse: _holding ? 1 : _pulse.value,
+                    locked: _locked,
+                    frame: _frame,
+                    adjusting: _adjusting,
+                  ),
                 ),
               ),
             ),
@@ -252,7 +315,7 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
     }
 
     return Container(
-      color: const Color(0xFF0B1A1E),
+      color: const Color(0xFF0A1420),
       alignment: Alignment.center,
       child: Padding(
         padding: const EdgeInsets.all(28),
@@ -309,6 +372,12 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                   ),
                 ),
               ),
+              if (_moved)
+                IconButton(
+                  onPressed: _resetFrame,
+                  tooltip: S.t(lang, 'capture.reset'),
+                  icon: const Icon(Icons.restart_alt_rounded, color: Colors.white),
+                ),
               IconButton(
                 onPressed: _camera == null ? null : _toggleTorch,
                 icon: Icon(
@@ -352,7 +421,7 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
         margin: const EdgeInsets.symmetric(horizontal: 26),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xCC0B1A1E),
+          color: const Color(0xCC0A1420),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: Colors.white24),
         ),
@@ -370,7 +439,7 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
             ),
             const SizedBox(height: 2),
             Text(
-              S.t(lang, 'capture.tip'),
+              _moved ? S.t(lang, 'capture.adjust') : S.t(lang, 'capture.tip'),
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.3),
             ),
@@ -489,7 +558,7 @@ class _StepChip extends StatelessWidget {
                     painter: FootBadgePainter(side: step.side, color: color),
                   ),
                   if (done)
-                    const Positioned(
+                    Positioned(
                       right: 4,
                       bottom: 4,
                       child: Icon(Icons.check_circle_rounded, color: K.ok, size: 14),

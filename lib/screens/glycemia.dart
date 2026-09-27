@@ -334,7 +334,7 @@ class _GlycemiaPageState extends State<GlycemiaPage> {
             ),
           ),
           if ('${reading['note'] ?? ''}'.isNotEmpty)
-            const Icon(Icons.sticky_note_2_outlined, size: 17, color: K.muted),
+            Icon(Icons.sticky_note_2_outlined, size: 17, color: K.muted),
         ],
       ),
     );

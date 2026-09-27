@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+
+import '../../data/auth_store.dart';
+import '../../data/case_store.dart';
+import '../../data/risk_profile.dart';
+import '../../ui/app_state.dart';
+import '../../ui/app_theme.dart';
+import '../../ui/strings.dart';
+import '../ai_chatbot.dart';
+import '../feature_pages.dart';
+import '../glycemia.dart';
+import '../medical_information.dart';
+import '../risk_profile_page.dart';
+import '../settings_page.dart';
+import '../wellbeing.dart';
+
+class MeTab extends StatelessWidget {
+  const MeTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    final account = AuthStore.instance.current;
+    final profile = RiskProfile.latest();
+    void open(Widget page) =>
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+
+    return KPage(
+      title: S.t(lang, 'tab.me'),
+      showBack: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 10),
+          if ((account?.name ?? '').trim().isNotEmpty)
+            Row(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: K.primarySoft, shape: BoxShape.circle),
+                  child: Text(
+                    _initials(account!.name),
+                    style: K.h1.copyWith(color: K.primaryStrong),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(account.name, style: K.h1),
+                      const SizedBox(height: 2),
+                      Text(
+                        _maskedPhone(account.phone),
+                        style: K.small.copyWith(
+                            fontFeatures: const [FontFeature.tabularFigures()]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 28),
+          KSectionLabel(S.t(lang, 'me.health')),
+          KGroup(children: [
+            KGroupRow(
+              icon: Icons.shield_outlined,
+              title: profile == null
+                  ? S.t(lang, 'risk.cta')
+                  : S.t(lang, profile.labelKey),
+              subtitle: profile == null
+                  ? S.t(lang, 'risk.subtitle')
+                  : S.t(lang, profile.frequencyKey),
+              onTap: () => open(RiskProfilePage(language: lang)),
+            ),
+            KGroupRow(
+              icon: Icons.folder_shared_outlined,
+              title: S.t(lang, 'me.record'),
+              onTap: () => open(MedicalInformationPage(language: lang)),
+            ),
+            KGroupRow(
+              icon: Icons.water_drop_outlined,
+              title: S.t(lang, 'tool.glycemia'),
+              onTap: () => open(GlycemiaPage(language: lang)),
+            ),
+          ]),
+          const SizedBox(height: 26),
+          KSectionLabel(S.t(lang, 'me.team')),
+          KGroup(children: [
+            KGroupRow(
+              icon: Icons.event_outlined,
+              title: S.t(lang, 'tool.appointments'),
+              onTap: () => open(AppointmentsPage(language: lang)),
+            ),
+            KGroupRow(
+              icon: Icons.forum_outlined,
+              title: S.t(lang, 'tool.chat'),
+              onTap: () => open(AiChatbotPage(language: lang)),
+            ),
+          ]),
+          const SizedBox(height: 26),
+          KSectionLabel(S.t(lang, 'me.more')),
+          KGroup(children: [
+            KGroupRow(
+              icon: Icons.directions_walk_rounded,
+              title: S.t(lang, 'tool.activity'),
+              onTap: () => open(ActivityPage(language: lang)),
+            ),
+            KGroupRow(
+              icon: Icons.restaurant_outlined,
+              title: S.t(lang, 'tool.food'),
+              onTap: () => open(FoodPage(language: lang)),
+            ),
+            KGroupRow(
+              icon: Icons.favorite_outline_rounded,
+              title: S.t(lang, 'tool.wellbeing'),
+              onTap: () => open(WellbeingPage(language: lang)),
+            ),
+          ]),
+          const SizedBox(height: 26),
+          KSectionLabel(S.t(lang, 'me.app')),
+          KGroup(children: [
+            KGroupRow(
+              icon: Icons.tune_rounded,
+              title: S.t(lang, 'settings.title'),
+              subtitle:
+                  '${S.t(lang, 'settings.textSize')}, ${S.t(lang, 'settings.theme')}',
+              onTap: () => open(const SettingsPage()),
+            ),
+          ]),
+          const SizedBox(height: 26),
+          KSectionLabel(S.t(lang, 'me.privacy')),
+          KNote(
+            text: AuthStore.instance.encryptionActive
+                ? S.t(lang, 'security.encrypted')
+                : S.t(lang, 'security.notEncrypted'),
+            icon: AuthStore.instance.encryptionActive
+                ? Icons.lock_outline_rounded
+                : Icons.lock_open_rounded,
+          ),
+          KNote(text: S.t(lang, 'security.idle'), icon: Icons.timer_outlined),
+          KNote(
+              text: S.t(lang, 'report.disclaimer'),
+              icon: Icons.shield_outlined),
+          const SizedBox(height: 22),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(foregroundColor: K.danger),
+            onPressed: () async {
+              CaseStore.instance.lock();
+              await AuthStore.instance.signOut();
+              if (context.mounted) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            },
+            icon: const Icon(Icons.logout_rounded),
+            label: Text(S.t(lang, 'auth.logout')),
+          ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+
+  String _initials(String name) {
+    final parts =
+        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '';
+    final first = parts.first.characters.first;
+    final second = parts.length > 1 ? parts.last.characters.first : '';
+    return (first + second).toUpperCase();
+  }
+
+  String _maskedPhone(String phone) {
+    if (phone.length < 4) return phone;
+    return '${'•' * (phone.length - 2)}${phone.substring(phone.length - 2)}';
+  }
+}
