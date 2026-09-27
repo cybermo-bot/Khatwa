@@ -297,7 +297,7 @@ class GlassPanel extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color.alphaBlend((tint ?? Colors.transparent).withValues(alpha: 0.9), p.glass),
+                Color.alphaBlend(tint ?? Colors.transparent, p.glass),
                 p.glass.withValues(alpha: p.glass.a * (p.isDark ? 0.55 : 0.9)),
               ],
             ),
