@@ -1465,7 +1465,7 @@ class KFrostedNavBar extends StatelessWidget {
                                       const SizedBox(height: 3),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
+                                            horizontal: 9),
                                         child: FittedBox(
                                           fit: BoxFit.scaleDown,
                                           child: Text(
