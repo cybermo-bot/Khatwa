@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'patient_dashboard.dart';
+import '../ui/app_theme.dart';
 
 class CreateAccountPage extends StatefulWidget {
   final String language;
@@ -161,9 +162,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.check_circle_outline,
-                  color: Color(0xFF167D8D),
+                  color: K.primary,
                   size: 70,
                 ),
 
@@ -171,9 +172,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                 Text(
                   t['yourId']!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
-                    color: Colors.black54,
+                    color: K.muted,
                   ),
                 ),
 
@@ -185,7 +186,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE7F5F5),
+                    color: K.primarySoft,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
@@ -193,19 +194,19 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     children: [
                       Text(
                         patientId,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF167D8D),
+                          color: K.primary,
                         ),
                       ),
                       IconButton(
                         onPressed: () {
                           showMessage(t['idCopied']!);
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.copy_outlined,
-                          color: Color(0xFF167D8D),
+                          color: K.primary,
                         ),
                       ),
                     ],
@@ -217,9 +218,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 Text(
                   t['saveId']!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black54,
+                    color: K.muted,
                   ),
                 ),
               ],
@@ -242,8 +243,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF167D8D),
-                  foregroundColor: Colors.white,
+                  backgroundColor: K.primary,
+                  foregroundColor: K.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -281,11 +282,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: K.surface,
+        border: Border.all(color: K.glassBorder),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(13),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -319,15 +321,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
               ),
               filled: true,
-              fillColor: const Color(0xFFF7FAFA),
+              fillColor: K.surfaceMuted,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
-                  color: Color(0xFF167D8D),
+                borderSide: BorderSide(
+                  color: K.primary,
                   width: 2,
                 ),
               ),
@@ -345,13 +347,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: active
-            ? const Color(0xFF167D8D)
-            : Colors.grey.shade300,
+            ? K.primary
+            : K.line,
       ),
       child: active
-          ? const Icon(
+          ? Icon(
               Icons.check,
-              color: Colors.white,
+              color: K.onPrimary,
               size: 17,
             )
           : null,
@@ -362,7 +364,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Expanded(
       child: Container(
         height: 3,
-        color: Colors.grey.shade300,
+        color: K.line,
       ),
     );
   }
@@ -379,7 +381,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       textDirection:
           isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF2FAFA),
+        backgroundColor: K.ground,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -411,12 +413,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     width: 90,
                     height: 90,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF167D8D),
+                      color: K.primary,
                       borderRadius: BorderRadius.circular(28),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.lock_outline,
-                      color: Colors.white,
+                      color: K.onPrimary,
                       size: 45,
                     ),
                   ),
@@ -428,10 +430,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   child: Text(
                     t['title']!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF123B43),
+                      color: K.ink,
                     ),
                   ),
                 ),
@@ -442,10 +444,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   child: Text(
                     t['subtitle']!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF167D8D),
+                      color: K.primary,
                     ),
                   ),
                 ),
@@ -455,9 +457,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 Text(
                   t['description']!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black54,
+                    color: K.muted,
                     height: 1.5,
                   ),
                 ),
@@ -494,18 +496,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline,
-                      color: Color(0xFF167D8D),
+                      color: K.primary,
                       size: 18,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         t['requirements']!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Colors.black54,
+                          color: K.muted,
                         ),
                       ),
                     ),
@@ -522,8 +524,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       createAccount();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF167D8D),
-                      foregroundColor: Colors.white,
+                      backgroundColor: K.primary,
+                      foregroundColor: K.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
