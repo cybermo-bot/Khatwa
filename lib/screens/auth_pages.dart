@@ -22,6 +22,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   String role = 'patient';
+  bool busy = false;
 
   void _open(Widget page) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
@@ -52,6 +53,21 @@ class _LandingPageState extends State<LandingPage> {
           onPressed: () => _open(CreateAccountPage(role: role)),
           child: Text(S.t(lang, 'auth.signup')),
         ),
+        if (role == 'patient') ...[
+          const SizedBox(height: 6),
+          TextButton.icon(
+            onPressed: busy
+                ? null
+                : () async {
+                    setState(() => busy = true);
+                    await continueAsGuest(context);
+                    if (mounted) setState(() => busy = false);
+                  },
+            icon: const Icon(Icons.person_outline_rounded),
+            label: Text(S.t(lang, 'auth.guest')),
+          ),
+          Text(S.t(lang, 'auth.guestNote'), textAlign: TextAlign.center, style: K.small),
+        ],
         const SizedBox(height: 22),
         KNote(text: S.t(lang, 'report.disclaimer'), icon: Icons.info_outline_rounded),
       ],
@@ -339,7 +355,60 @@ Future<void> finishSignIn(BuildContext context) async {
   Navigator.of(context).popUntil((route) => route.isFirst);
 }
 
-/// Sign in, with real credential checks.
+/// Starts a guest session and opens the app.
+Future<void> continueAsGuest(BuildContext context) async {
+  await AuthStore.instance.signInGuest();
+  if (!context.mounted) return;
+  await finishSignIn(context);
+}
+
+/// "Rester connecté": a checkbox with its meaning under it.
+class StaySignedIn extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const StaySignedIn({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: KPressable(
+        onTap: () => onChanged(!value),
+        borderRadius: BorderRadius.circular(K.r14),
+        semanticsLabel: S.t(lang, 'auth.stay'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ExcludeSemantics(
+                child: Checkbox(value: value, onChanged: (v) => onChanged(v ?? false)),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(S.t(lang, 'auth.stay'), style: K.bodyStrong),
+                      const SizedBox(height: 2),
+                      Text(S.t(lang, 'auth.stayHint'), style: K.small),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Sign in: e-mail and password, then the e-mail code unless this device is
+/// trusted. An older account signs in once with its PIN.
 class AuthPage extends StatefulWidget {
   final String role;
 
@@ -351,9 +420,11 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   bool busy = false;
+  bool askPin = false;
+  late bool stay = AuthStore.instance.stayChoice;
   String? error;
 
-  final phone = TextEditingController();
+  final identifier = TextEditingController();
   final password = TextEditingController();
   final pin = TextEditingController();
 
@@ -361,7 +432,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   void dispose() {
-    phone.dispose();
+    identifier.dispose();
     password.dispose();
     pin.dispose();
     super.dispose();
@@ -375,11 +446,13 @@ class _AuthPageState extends State<AuthPage> {
     });
 
     final store = AuthStore.instance;
+    await store.setStayChoice(stay);
     final result = await store.signIn(
-      phone: phone.text,
+      identifier: identifier.text,
       password: password.text,
       pin: pin.text,
       role: widget.role,
+      stay: stay,
     );
 
     if (!mounted) return;
@@ -388,15 +461,21 @@ class _AuthPageState extends State<AuthPage> {
       await finishSignIn(context);
       return;
     }
+    if (result == AuthError.needCode) {
+      setState(() => busy = false);
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EmailCodePage()));
+      return;
+    }
 
     var message = S.t(lang, store.errorKey(result));
     if (result == AuthError.locked) {
-      final seconds = store.lockedSeconds(phone.text, widget.role);
+      final seconds = store.lockedSeconds(identifier.text, widget.role);
       message = '$message · $seconds ${S.t(lang, 'auth.lockedFor')}';
     }
 
     setState(() {
       busy = false;
+      if (result == AuthError.needPin) askPin = true;
       error = message;
     });
   }
@@ -412,19 +491,21 @@ class _AuthPageState extends State<AuthPage> {
         Text(S.t(lang, 'auth.signinSub'), style: K.body.copyWith(color: K.inkSoft)),
         const SizedBox(height: 18),
         KField(
-          label: S.t(lang, 'auth.phone'),
-          hint: '20 000 000',
-          controller: phone,
-          keyboard: TextInputType.phone,
+          label: S.t(lang, 'auth.identifier'),
+          hint: 'nom@exemple.tn',
+          controller: identifier,
+          keyboard: TextInputType.emailAddress,
         ),
         PasswordField(label: S.t(lang, 'auth.password'), controller: password),
-        KField(
-          label: S.t(lang, 'auth.pin'),
-          controller: pin,
-          obscure: true,
-          keyboard: TextInputType.number,
-          hint: '••••',
-        ),
+        if (askPin)
+          KField(
+            label: S.t(lang, 'auth.oldPin'),
+            controller: pin,
+            obscure: true,
+            keyboard: TextInputType.number,
+            hint: '••••',
+          ),
+        StaySignedIn(value: stay, onChanged: (v) => setState(() => stay = v)),
         if (error != null) AuthErrorLine(error!),
         FilledButton(
           onPressed: busy ? null : submit,
@@ -441,6 +522,148 @@ class _AuthPageState extends State<AuthPage> {
         const SizedBox(height: 18),
         KNote(text: S.t(lang, 'auth.secure'), icon: Icons.lock_outline_rounded),
       ],
+    );
+  }
+}
+
+/// The 6-digit code sent by e-mail. Sends it on open; if it cannot be sent,
+/// says so kindly and offers to continue as a guest.
+class EmailCodePage extends StatefulWidget {
+  const EmailCodePage({super.key});
+
+  @override
+  State<EmailCodePage> createState() => _EmailCodePageState();
+}
+
+class _EmailCodePageState extends State<EmailCodePage> {
+  final code = TextEditingController();
+  bool sending = true;
+  bool sent = false;
+  bool busy = false;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _send();
+  }
+
+  @override
+  void dispose() {
+    code.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    setState(() {
+      sending = true;
+      error = null;
+    });
+    final result = await AuthStore.instance.sendCode();
+    if (!mounted) return;
+    setState(() {
+      sending = false;
+      sent = result == AuthError.none;
+      if (!sent) error = S.t(appLanguage.value, AuthStore.instance.errorKey(result));
+    });
+  }
+
+  Future<void> _verify() async {
+    setState(() {
+      busy = true;
+      error = null;
+    });
+    final result = await AuthStore.instance.confirmCode(code.text);
+    if (!mounted) return;
+    if (result == AuthError.none) {
+      await finishSignIn(context);
+      return;
+    }
+    setState(() {
+      busy = false;
+      error = S.t(appLanguage.value, AuthStore.instance.errorKey(result));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = appLanguage.value;
+    final email = AuthStore.instance.pendingEmail ?? '';
+    final signedIn = AuthStore.instance.isSignedIn;
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) AuthStore.instance.cancelPending();
+      },
+      child: AuthFrame(
+        title: S.t(lang, 'auth.code.title'),
+        subtitle: email,
+        children: [
+          if (sending)
+            Row(children: [
+              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.4, color: K.primary)),
+              const SizedBox(width: 12),
+              Expanded(child: Text(S.t(lang, 'auth.code.sending'), style: K.body)),
+            ])
+          else if (sent) ...[
+            Text(S.t(lang, 'auth.code.sent'), style: K.body.copyWith(color: K.inkSoft)),
+            const SizedBox(height: 2),
+            Text(email, textDirection: TextDirection.ltr, style: K.bodyStrong),
+          ],
+          const SizedBox(height: 20),
+          if (sent) ...[
+            Text(S.t(lang, 'auth.code.label'), style: K.bodyStrong),
+            const SizedBox(height: 8),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextField(
+                controller: code,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                textAlign: TextAlign.center,
+                autofillHints: const [AutofillHints.oneTimeCode],
+                style: K.number.copyWith(letterSpacing: 10),
+                decoration: const InputDecoration(counterText: '', hintText: '000000'),
+                onChanged: (v) {
+                  if (v.length == 6 && !busy) _verify();
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          if (error != null) AuthErrorLine(error!),
+          if (sent)
+            FilledButton(
+              onPressed: busy ? null : _verify,
+              child: authButtonChild(busy, S.t(lang, 'auth.code.verify')),
+            ),
+          if (!sending) ...[
+            const SizedBox(height: 8),
+            TextButton(onPressed: busy ? null : _send, child: Text(S.t(lang, 'auth.code.resend'))),
+          ],
+          if (!sending && !sent) ...[
+            const SizedBox(height: 4),
+            if (signedIn)
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                child: Text(S.t(lang, 'auth.back')),
+              )
+            else
+              OutlinedButton.icon(
+                onPressed: () {
+                  AuthStore.instance.cancelPending();
+                  continueAsGuest(context);
+                },
+                icon: const Icon(Icons.person_outline_rounded),
+                label: Text(S.t(lang, 'auth.guest')),
+              ),
+          ],
+          if (sent) ...[
+            const SizedBox(height: 14),
+            KNote(text: S.t(lang, 'auth.code.spam'), icon: Icons.mail_outline_rounded),
+          ],
+        ],
+      ),
     );
   }
 }

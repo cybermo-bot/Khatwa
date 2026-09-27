@@ -52,7 +52,7 @@ class _TodayTabState extends State<TodayTab> {
         final todayCase = doneToday ? last : null;
         final streak = CaseStore.instance.streak(patientId);
         final now = DateTime.now();
-        final name = _firstName(account?.name ?? '');
+        final name = (account?.guest ?? false) ? '' : _firstName(account?.name ?? '');
         final tip = tipFor(now);
 
         return KPage(

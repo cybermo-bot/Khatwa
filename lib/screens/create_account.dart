@@ -6,7 +6,9 @@ import '../ui/app_theme.dart';
 import '../ui/strings.dart';
 import 'auth_pages.dart';
 
-/// Sign up: a patient or a health professional account on this device.
+/// Sign up: name, e-mail and password, the phone number optional; the e-mail
+/// is confirmed with a 6-digit code. Opened from the Me tab by a guest, it
+/// turns the guest into a real account and keeps their data.
 class CreateAccountPage extends StatefulWidget {
   final String role;
 
@@ -18,21 +20,23 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
   bool busy = false;
+  late bool stay = AuthStore.instance.stayChoice;
   String? error;
 
   final name = TextEditingController();
+  final email = TextEditingController();
   final phone = TextEditingController();
   final password = TextEditingController();
   final confirm = TextEditingController();
   final speciality = TextEditingController();
   final facility = TextEditingController();
-  final pin = TextEditingController();
 
   bool get isDoctor => widget.role == 'doctor';
+  bool get upgrading => AuthStore.instance.isGuest;
 
   @override
   void dispose() {
-    for (final c in [name, phone, password, confirm, speciality, facility, pin]) {
+    for (final c in [name, email, phone, password, confirm, speciality, facility]) {
       c.dispose();
     }
     super.dispose();
@@ -46,20 +50,23 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     });
 
     final store = AuthStore.instance;
-    final result = await store.signUp(
+    await store.setStayChoice(stay);
+    final result = await store.beginSignUp(
       name: name.text,
+      email: email.text,
       phone: phone.text,
       password: password.text,
       confirm: confirm.text,
-      pin: pin.text,
       role: widget.role,
       speciality: speciality.text,
       facility: facility.text,
+      stay: stay,
     );
 
     if (!mounted) return;
     if (result == AuthError.none) {
-      await finishSignIn(context);
+      setState(() => busy = false);
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EmailCodePage()));
       return;
     }
     setState(() {
@@ -73,14 +80,21 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     final lang = appLanguage.value;
 
     return AuthFrame(
-      title: S.t(lang, 'auth.signup'),
+      title: S.t(lang, upgrading ? 'auth.guestUpgrade' : 'auth.signup'),
       subtitle: S.t(lang, isDoctor ? 'role.doctorShort' : 'role.patient'),
       children: [
-        Text(S.t(lang, 'auth.signupSub'), style: K.body.copyWith(color: K.inkSoft)),
+        Text(S.t(lang, upgrading ? 'auth.guestUpgradeSub' : 'auth.signupSub'),
+            style: K.body.copyWith(color: K.inkSoft)),
         const SizedBox(height: 18),
         KField(label: S.t(lang, 'auth.name'), controller: name),
         KField(
-          label: S.t(lang, 'auth.phone'),
+          label: S.t(lang, 'auth.email'),
+          hint: 'nom@exemple.tn',
+          controller: email,
+          keyboard: TextInputType.emailAddress,
+        ),
+        KField(
+          label: S.t(lang, 'auth.phoneOptional'),
           hint: '20 000 000',
           controller: phone,
           keyboard: TextInputType.phone,
@@ -91,30 +105,22 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         ],
         PasswordField(label: S.t(lang, 'auth.password'), controller: password),
         PasswordField(label: S.t(lang, 'auth.confirm'), controller: confirm),
-        KField(
-          label: S.t(lang, 'auth.pin'),
-          controller: pin,
-          obscure: true,
-          keyboard: TextInputType.number,
-          hint: '••••',
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Text(S.t(lang, 'auth.pinHint'), style: K.small),
-        ),
+        StaySignedIn(value: stay, onChanged: (v) => setState(() => stay = v)),
         if (error != null) AuthErrorLine(error!),
         FilledButton(
           onPressed: busy ? null : submit,
-          child: authButtonChild(busy, S.t(lang, 'auth.signup')),
+          child: authButtonChild(busy, S.t(lang, upgrading ? 'auth.guestUpgrade' : 'auth.signup')),
         ),
-        const SizedBox(height: 8),
-        TextButton(
-          onPressed: busy
-              ? null
-              : () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => AuthPage(role: widget.role))),
-          child: Text(S.t(lang, 'auth.have')),
-        ),
+        if (!upgrading) ...[
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: busy
+                ? null
+                : () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => AuthPage(role: widget.role))),
+            child: Text(S.t(lang, 'auth.have')),
+          ),
+        ],
         const SizedBox(height: 18),
         KNote(text: S.t(lang, 'security.encrypted'), icon: Icons.enhanced_encryption_outlined),
       ],

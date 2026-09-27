@@ -55,11 +55,92 @@ class S {
     'auth.logout': ['خروج', 'خروج', 'Déconnexion', 'Sign out'],
     'auth.err.fields': ['عمّر كل الخانات', 'لازم تعمّر الكل', 'Veuillez remplir tous les champs', 'Please fill in all fields'],
     'auth.err.phone': ['رقم الهاتف غير صحيح', 'النمرة موش صحيحة', 'Numéro invalide (8 chiffres)', 'Invalid phone number (8 digits)'],
-    'auth.err.short': ['كلمة السر قصيرة (6 على الأقل)', 'كلمة السر قصيرة برشة', 'Mot de passe trop court (6 min.)', 'Password too short (6 min.)'],
+    'auth.err.short': ['كلمة السر قصيرة (8 أحرف على الأقل)', 'كلمة السر قصيرة برشة (8 حروف على الأقل)', 'Mot de passe trop court (8 caractères min.)', 'Password too short (8 characters min.)'],
     'auth.err.match': ['كلمتا السر غير متطابقتين', 'الكلمتين موش كيف كيف', 'Les mots de passe ne correspondent pas', 'Passwords do not match'],
     'auth.err.exists': ['هذا الرقم مسجل من قبل', 'النمرة هذي مسجلة', 'Ce numéro est déjà enregistré', 'This number is already registered'],
-    'auth.err.bad': ['رقم أو كلمة سر خاطئة', 'النمرة ولا كلمة السر غالطة', 'Numéro ou mot de passe incorrect', 'Wrong number or password'],
+    'auth.err.bad': ['البريد أو كلمة السر خاطئة', 'الإيمايل ولا كلمة السر غالطين', 'E-mail ou mot de passe incorrect', 'Wrong e-mail or password'],
     'auth.welcome': ['مرحبا', 'أهلا', 'Bonjour', 'Welcome'],
+    'auth.email': ['البريد الإلكتروني', 'الإيمايل', 'E-mail', 'E-mail'],
+    'auth.identifier': [
+      'البريد الإلكتروني (أو رقم الهاتف لحساب قديم)',
+      'الإيمايل (ولا النمرة لحساب قديم)',
+      'E-mail (ou numéro pour un ancien compte)',
+      'E-mail (or phone number for an older account)'
+    ],
+    'auth.phoneOptional': ['رقم الهاتف (اختياري)', 'نمرة التليفون (موش لازم)', 'Numéro de téléphone (facultatif)', 'Phone number (optional)'],
+    'auth.stay': ['البقاء متصلا', 'خليني داخل', 'Rester connecté', 'Stay signed in'],
+    'auth.stayHint': [
+      'على هذا الجهاز فقط: لا قفل بعد 10 دقائق، ولا رمز بالبريد لمدة 30 يوما.',
+      'في التليفون هذا برك: ما يتسكرش بعد 10 دقايق، وما يلزمكش كود بالإيمايل 30 يوم.',
+      'Sur cet appareil seulement : pas de verrouillage après 10 minutes, pas de code par e-mail pendant 30 jours.',
+      'On this device only: no lock after 10 minutes, no e-mail code for 30 days.'
+    ],
+    'auth.err.email': ['البريد الإلكتروني غير صحيح', 'الإيمايل موش صحيح', 'Adresse e-mail invalide', 'Invalid e-mail address'],
+    'auth.err.emailExists': [
+      'هذا البريد مسجل من قبل على هذا الجهاز',
+      'الإيمايل هذا مسجّل من قبل في التليفون',
+      'Cet e-mail a déjà un compte sur cet appareil',
+      'This e-mail already has an account on this device'
+    ],
+    'auth.err.needPin': [
+      'أدخل رمزك السري القديم، مرة أخيرة فقط.',
+      'دخّل الكود السري القديم متاعك، آخر مرة برك.',
+      'Entrez votre ancien code PIN, une dernière fois seulement.',
+      'Enter your old PIN, one last time only.'
+    ],
+    'auth.oldPin': ['الرمز السري القديم', 'الكود السري القديم', 'Ancien code PIN', 'Old PIN'],
+    'auth.err.codeSend': [
+      'لم نتمكن من إرسال الرمز الآن (إرسالات كثيرة أو لا يوجد اتصال). حاول بعد قليل، أو واصل كضيف.',
+      'ما نجمناش نبعثو الكود توّا (برشة إرسالات ولا ما فماش كونكسيون). عاود بعد شوية، ولا كمّل كضيف.',
+      'Nous n’avons pas pu envoyer le code pour le moment (trop d’envois ou pas de connexion). Réessayez dans un moment, ou continuez en invité.',
+      'We could not send the code right now (too many e-mails or no connection). Try again in a moment, or continue as a guest.'
+    ],
+    'auth.err.code': [
+      'الرمز غير صحيح أو انتهت صلاحيته',
+      'الكود غالط ولا وفى وقتو',
+      'Code incorrect ou expiré',
+      'Wrong or expired code'
+    ],
+    'auth.code.title': ['رمز التحقق', 'كود التأكيد', 'Code de vérification', 'Verification code'],
+    'auth.code.sent': [
+      'أرسلنا رمزا من 6 أرقام إلى',
+      'بعثنالك كود فيه 6 أرقام لـ',
+      'Nous avons envoyé un code à 6 chiffres à',
+      'We sent a 6-digit code to'
+    ],
+    'auth.code.sending': ['جار إرسال الرمز…', 'قاعدين نبعثو في الكود…', 'Envoi du code…', 'Sending the code…'],
+    'auth.code.label': ['الرمز (6 أرقام)', 'الكود (6 أرقام)', 'Code à 6 chiffres', '6-digit code'],
+    'auth.code.verify': ['تحقق', 'تأكّد', 'Vérifier', 'Verify'],
+    'auth.code.resend': ['إعادة إرسال الرمز', 'عاود ابعث الكود', 'Renvoyer le code', 'Send the code again'],
+    'auth.code.spam': [
+      'لم يصلك؟ تحقق من البريد غير المرغوب فيه.',
+      'ما وصلكش؟ شوف في البريد المزعج.',
+      'Rien reçu ? Regardez dans les courriers indésirables.',
+      'Nothing received? Check your spam folder.'
+    ],
+    'auth.guest': ['المتابعة كضيف', 'كمّل كضيف', 'Continuer en invité', 'Continue as a guest'],
+    'auth.guestNote': [
+      'بدون إدخال أي معلومات. يمكنك إنشاء حسابك لاحقا.',
+      'بلا ما تكتب حتى شي. تنجم تعمل حسابك من بعد.',
+      'Aucune donnée à saisir. Vous pourrez créer votre compte plus tard.',
+      'Nothing to type. You can create your account later.'
+    ],
+    'auth.guestName': ['ضيف', 'ضيف', 'Invité', 'Guest'],
+    'auth.guestBadge': ['حساب ضيف', 'حساب ضيف', 'Compte invité', 'Guest account'],
+    'auth.guestUpgrade': ['إنشاء حسابي', 'اعمل حسابي', 'Créer mon compte', 'Create my account'],
+    'auth.guestUpgradeSub': [
+      'احتفظ بمتابعتك: أضف بريدا إلكترونيا وكلمة سر.',
+      'حافظ على المتابعة متاعك: زيد إيمايل وكلمة سر.',
+      'Gardez votre suivi : ajoutez un e-mail et un mot de passe.',
+      'Keep your follow-up: add an e-mail and a password.'
+    ],
+    'auth.guestLeave': [
+      'عند الخروج، تُحذف بيانات الضيف من هذا الجهاز. هل تريد الخروج؟',
+      'كي تخرج، المعلومات متاع الضيف تتفسخ من التليفون. تحب تخرج؟',
+      'En vous déconnectant, les données de l’invité seront effacées de cet appareil. Vous déconnecter ?',
+      'Signing out erases the guest data from this device. Sign out?'
+    ],
+    'auth.back': ['رجوع', 'ارجع', 'Retour', 'Back'],
     'auth.promise': [
       'نظرة على قدميك كل يوم، وطبيب وراء كل تنبيه',
       'تشوف ساقيك كل يوم، وطبيب معاك كي يلزم',
@@ -500,10 +581,10 @@ class S {
     ],
     'security.title': ['الأمان', 'الأمان', 'Sécurité', 'Security'],
     'security.encrypted': [
-      'البيانات مشفّرة على هذا الجهاز، والمفتاح يُفتح برمزك السري',
-      'المعلومات مشفّرة في التليفون، والمفتاح يتحل بالكود متاعك',
-      'Données chiffrées sur cet appareil, clé déverrouillée par votre code PIN',
-      'Data encrypted on this device, key unlocked by your PIN'
+      'البيانات مشفّرة على هذا الجهاز، والمفتاح يُفتح بكلمة السر',
+      'المعلومات مشفّرة في التليفون، والمفتاح يتحل بكلمة السر متاعك',
+      'Données chiffrées sur cet appareil, clé déverrouillée par votre mot de passe',
+      'Data encrypted on this device, key unlocked by your password'
     ],
     'security.notEncrypted': [
       'التشفير غير مفعّل لهذا الحساب',

@@ -51,7 +51,9 @@ class KhatwaCloud extends ChangeNotifier {
     final user = db.auth.currentUser;
     if (user == null || user.isAnonymous) return;
     try {
-      _doctor = await db.from('doctors').select('user_id').eq('user_id', user.id).maybeSingle() != null;
+      final row = await db.from('doctors').select().eq('user_id', user.id).maybeSingle();
+      _doctor = row != null;
+      doctorName = row?['display_name'] as String?;
     } catch (_) {}
   }
 
@@ -110,16 +112,77 @@ class KhatwaCloud extends ChangeNotifier {
   Future<String?> signInDoctor(String email, String password) async {
     if (!ready) return 'Pas de connexion au serveur de données.';
     try {
-      await db.auth.signInWithPassword(email: email.trim(), password: password);
+      await db.auth
+          .signInWithPassword(email: email.trim(), password: password)
+          .timeout(const Duration(seconds: 20));
       final row = await db.from('doctors').select().eq('user_id', db.auth.currentUser!.id).maybeSingle();
       _doctor = row != null;
+      doctorName = row?['display_name'] as String?;
+      resetPatient();
+      if (!_doctor) await db.auth.signOut();
       notifyListeners();
       return _doctor ? null : 'Ce compte n’est pas un compte médecin.';
     } on AuthException catch (e) {
       return e.message;
-    } catch (e) {
+    } catch (_) {
       return 'Connexion impossible.';
     }
+  }
+
+  /// The doctor's display name in the shared data, once signed in there.
+  String? doctorName;
+
+  /// Sends a 6-digit sign-in code by e-mail (Supabase Auth). False when it
+  /// could not be sent: no network, or the mail quota of the hour is used.
+  Future<bool> sendEmailCode(String email) async {
+    if (!ready) return false;
+    try {
+      await db.auth.signInWithOtp(email: email.trim().toLowerCase(), shouldCreateUser: true)
+          .timeout(const Duration(seconds: 20));
+      return true;
+    } catch (e) {
+      lastError = '$e';
+      return false;
+    }
+  }
+
+  /// Checks the code. On success this device is signed in to the shared data
+  /// as that e-mail's user, so the patient record is looked up again.
+  Future<bool> verifyEmailCode(String email, String code) async {
+    if (!ready) return false;
+    try {
+      final res = await db.auth
+          .verifyOTP(email: email.trim().toLowerCase(), token: code.trim(), type: OtpType.email)
+          .timeout(const Duration(seconds: 20));
+      if (res.session == null) return false;
+      resetPatient();
+      await _restoreDoctor();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      lastError = '$e';
+      return false;
+    }
+  }
+
+  /// Forgets the cached patient record (the signed in user changed).
+  void resetPatient() {
+    patientId = null;
+    patientRef = null;
+    pseudonym = null;
+  }
+
+  /// Leaves the shared data (on sign out), so the next person on this device
+  /// never works under the previous account.
+  Future<void> signOut() async {
+    resetPatient();
+    _doctor = false;
+    doctorName = null;
+    if (!ready) return;
+    try {
+      await db.auth.signOut();
+    } catch (_) {}
+    notifyListeners();
   }
 
   // ---------------------------------------------------------------- twin

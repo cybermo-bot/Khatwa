@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +19,12 @@ import 'ui/strings.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await KhatwaStore.instance.init();
+  // The account first: a kept session ("Rester connecté", or a guest) brings
+  // its data key back, so the stores open already decrypted.
   await AuthStore.instance.init();
+  await KhatwaStore.instance.init();
   await CaseStore.instance.init();
+  if (AuthStore.instance.isSignedIn) await CaseStore.instance.unlock();
   await ApiConfig.load();
   await KhatwaCloud.instance.init();
   await _demoQuickStart();
@@ -37,19 +39,16 @@ Future<void> main() async {
 
 /// The audience opens the web app from a QR code (`?demo`): a guest patient
 /// account is made on the spot, so the 3D twin and the voice assistant are one
-/// tap away. Guest accounts hold no real data and are wiped after the event.
+/// tap away. Guest accounts hold no real data. `?medecin` opens the doctor
+/// dashboard on the demo laptop (it then signs in to the shared data).
 Future<void> _demoQuickStart() async {
   final q = Uri.base.queryParameters;
   final doctor = q.containsKey('medecin');
   if (!kIsWeb || !(q.containsKey('demo') || doctor) || AuthStore.instance.isSignedIn) return;
-  final r = Random.secure();
-  final phone = '9${List.generate(7, (_) => r.nextInt(10)).join()}';
-  final password = List.generate(16, (_) => 'abcdefghjkmnpqrstuvwxyz23456789'[r.nextInt(31)]).join();
-  // `?medecin` opens the doctor dashboard on the demo laptop (it then signs in to the shared data).
-  final result = await AuthStore.instance.signUp(
-      name: doctor ? 'Dr Démo' : 'Invité', phone: phone, password: password, confirm: password, pin: '2468',
-      role: doctor ? 'doctor' : 'patient');
-  if (result == AuthError.none && !doctor) unawaited(KhatwaCloud.instance.ensurePatient());
+  await AuthStore.instance.signInGuest(role: doctor ? 'doctor' : 'patient');
+  await CaseStore.instance.unlock();
+  await KhatwaStore.instance.reload();
+  if (!doctor) unawaited(KhatwaCloud.instance.ensurePatient());
 }
 
 class KhatwaApp extends StatefulWidget {

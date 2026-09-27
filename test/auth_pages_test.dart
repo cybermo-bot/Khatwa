@@ -77,4 +77,29 @@ void main() {
     expect(find.textContaining('Soignant'), findsWidgets);
     expect(find.byType(AuthPage), findsOneWidget);
   });
+
+  testWidgets('continuer en invité signs a guest in from the landing page', (tester) async {
+    appLanguage.value = 'Français';
+    tester.view.physicalSize = const Size(400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app('Français', const LandingPage()));
+    await tester.tap(find.text('Continuer en invité'));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.pumpAndSettle();
+    expect(AuthStore.instance.isGuest, isTrue);
+    await AuthStore.instance.signOut();
+  });
+
+  testWidgets('the guest choice is only offered to patients', (tester) async {
+    appLanguage.value = 'Français';
+    tester.view.physicalSize = const Size(400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app('Français', const LandingPage()));
+    expect(find.text('Continuer en invité'), findsOneWidget);
+    await tester.tap(find.text('Soignant'));
+    await tester.pumpAndSettle();
+    expect(find.text('Continuer en invité'), findsNothing);
+  });
 }

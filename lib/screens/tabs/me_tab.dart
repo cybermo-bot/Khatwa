@@ -12,6 +12,7 @@ import '../glycemia.dart';
 import '../medical_information.dart';
 import '../risk_profile_page.dart';
 import '../settings_page.dart';
+import '../create_account.dart';
 import '../wellbeing.dart';
 
 class MeTab extends StatelessWidget {
@@ -21,6 +22,8 @@ class MeTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final lang = appLanguage.value;
     final account = AuthStore.instance.current;
+    final guest = account?.guest ?? false;
+    final displayName = guest ? S.t(lang, 'auth.guestName') : (account?.name ?? '');
     final profile = RiskProfile.latest();
     void open(Widget page) =>
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
@@ -32,7 +35,7 @@ class MeTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 10),
-          if ((account?.name ?? '').trim().isNotEmpty)
+          if (displayName.trim().isNotEmpty)
             Row(
               children: [
                 Container(
@@ -52,7 +55,7 @@ class MeTab extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    _initials(account!.name),
+                    _initials(displayName),
                     style: K.h1.copyWith(color: K.primaryStrong),
                   ),
                 ),
@@ -61,18 +64,50 @@ class MeTab extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(account.name, style: K.h1),
-                      const SizedBox(height: 2),
-                      Text(
-                        _maskedPhone(account.phone),
-                        style: K.small.copyWith(
-                            fontFeatures: const [FontFeature.tabularFigures()]),
-                      ),
+                      Text(displayName, style: K.h1),
+                      const SizedBox(height: 4),
+                      if (guest)
+                        KTag(S.t(lang, 'auth.guestBadge'), icon: Icons.person_outline_rounded)
+                      else
+                        Text(
+                          account!.email.isNotEmpty ? _maskedEmail(account.email) : _maskedPhone(account.phone),
+                          textDirection: TextDirection.ltr,
+                          style: K.small.copyWith(
+                              fontFeatures: const [FontFeature.tabularFigures()]),
+                        ),
                     ],
                   ),
                 ),
               ],
             ),
+          if (guest) ...[
+            const SizedBox(height: 18),
+            KCard(
+              color: K.primarySoft,
+              onTap: () => open(const CreateAccountPage(role: 'patient')),
+              child: Row(
+                children: [
+                  Icon(Icons.person_add_alt_1_rounded, color: K.primaryStrong),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(S.t(lang, 'auth.guestUpgrade'),
+                            style: K.bodyStrong.copyWith(color: K.primaryStrong)),
+                        const SizedBox(height: 2),
+                        Text(S.t(lang, 'auth.guestUpgradeSub'),
+                            style: K.small.copyWith(color: K.primaryStrong)),
+                      ],
+                    ),
+                  ),
+                  Icon(Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded, color: K.primaryStrong),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 28),
           KSectionLabel(S.t(lang, 'me.health')),
           KGroup(children: [
@@ -151,7 +186,8 @@ class MeTab extends StatelessWidget {
                 ? Icons.lock_outline_rounded
                 : Icons.lock_open_rounded,
           ),
-          KNote(text: S.t(lang, 'security.idle'), icon: Icons.timer_outlined),
+          if (!AuthStore.instance.staySignedIn)
+            KNote(text: S.t(lang, 'security.idle'), icon: Icons.timer_outlined),
           KNote(
               text: S.t(lang, 'report.disclaimer'),
               icon: Icons.shield_outlined),
@@ -159,6 +195,23 @@ class MeTab extends StatelessWidget {
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(foregroundColor: K.danger),
             onPressed: () async {
+              if (guest) {
+                final leave = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    content: Text(S.t(lang, 'auth.guestLeave'), style: K.body),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          child: Text(S.t(lang, 'common.cancel'))),
+                      TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          child: Text(S.t(lang, 'auth.logout'))),
+                    ],
+                  ),
+                );
+                if (leave != true) return;
+              }
               CaseStore.instance.lock();
               await AuthStore.instance.signOut();
               if (context.mounted) {
@@ -181,6 +234,12 @@ class MeTab extends StatelessWidget {
     final first = parts.first.characters.first;
     final second = parts.length > 1 ? parts.last.characters.first : '';
     return (first + second).toUpperCase();
+  }
+
+  String _maskedEmail(String email) {
+    final at = email.indexOf('@');
+    if (at < 2) return email;
+    return '${email.substring(0, 2)}${'•' * (at - 2)}${email.substring(at)}';
   }
 
   String _maskedPhone(String phone) {
