@@ -1,11 +1,14 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Khatwa design system.
+/// Khatwa design system, v3 "clinical futuristic".
 ///
-/// Petrol and skin: a cool morning ground, white surfaces, deep ink and one
-/// petrol blue for action. Skin tones live only in the foot illustrations.
-/// Night is a deep petrol dark with the same roles, lifted.
+/// Dark by default: a deep navy ground lit by two soft teal lights, frosted
+/// glass surfaces with a one pixel light edge, soft white and mint text, and
+/// one bright teal for action and glow. The v2 light theme stays as an
+/// option with the same roles.
 /// Green, amber and red only ever mean a triage level; nothing decorative
 /// borrows them. Everything the app draws goes through these tokens.
 class KPalette {
@@ -16,6 +19,7 @@ class KPalette {
   final Color inkSoft;
   final Color muted;
   final Color line;
+
   /// Border of a control the patient must find (tick circle, field, chip):
   /// at least 3:1 against surface and ground.
   final Color control;
@@ -32,6 +36,16 @@ class KPalette {
   final Color danger;
   final Color dangerSoft;
   final Color shadow;
+
+  /// v3: fill of a frosted glass surface (translucent), its one pixel edge,
+  /// the teal used for glows and lights, the mint of secondary emphasis, and
+  /// the two background lights.
+  final Color glass;
+  final Color glassBorder;
+  final Color glow;
+  final Color mint;
+  final Color lightA;
+  final Color lightB;
 
   const KPalette({
     required this.ground,
@@ -55,6 +69,12 @@ class KPalette {
     required this.danger,
     required this.dangerSoft,
     required this.shadow,
+    required this.glass,
+    required this.glassBorder,
+    required this.glow,
+    required this.mint,
+    required this.lightA,
+    required this.lightB,
   });
 
   static const light = KPalette(
@@ -79,30 +99,42 @@ class KPalette {
     danger: Color(0xFFC0352B),
     dangerSoft: Color(0xFFFBE7E4),
     shadow: Color(0xFF14323A),
+    glass: Color(0xC7FFFFFF),
+    glassBorder: Color(0xFFDDE4E7),
+    glow: Color(0xFF0E5A66),
+    mint: Color(0xFF1F7A6E),
+    lightA: Color(0x2E19C3B5),
+    lightB: Color(0x1F0E5A66),
   );
 
   static const dark = KPalette(
-    ground: Color(0xFF0C1417),
-    surface: Color(0xFF132126),
-    surfaceMuted: Color(0xFF1A2B31),
-    ink: Color(0xFFE9F0F1),
-    inkSoft: Color(0xFFB3C2C6),
-    muted: Color(0xFF8CA0A5),
-    line: Color(0xFF22363C),
-    control: Color(0xFF5E7880),
-    primary: Color(0xFF6FC3CE),
-    primaryStrong: Color(0xFF9ADBE3),
-    primarySoft: Color(0xFF173B42),
-    onPrimary: Color(0xFF062A30),
-    accent: Color(0xFFD2A6E0),
-    accentSoft: Color(0xFF2F2437),
-    ok: Color(0xFF8BD06A),
-    okSoft: Color(0xFF1C2E14),
-    warn: Color(0xFFEAB55A),
+    ground: Color(0xFF07131A),
+    surface: Color(0xFF0D2029),
+    surfaceMuted: Color(0xFF132C37),
+    ink: Color(0xFFEAF6F3),
+    inkSoft: Color(0xFFBCD2D0),
+    muted: Color(0xFF93ADB0),
+    line: Color(0xFF1E3B46),
+    control: Color(0xFF62868E),
+    primary: Color(0xFF19C3B5),
+    primaryStrong: Color(0xFF8CEBDD),
+    primarySoft: Color(0xFF0F3A3E),
+    onPrimary: Color(0xFF03211F),
+    accent: Color(0xFFCBA8E8),
+    accentSoft: Color(0xFF261F36),
+    ok: Color(0xFF8BD68A),
+    okSoft: Color(0xFF15301C),
+    warn: Color(0xFFF0B85C),
     warnSoft: Color(0xFF33280F),
-    danger: Color(0xFFF2857B),
-    dangerSoft: Color(0xFF3A1C1A),
+    danger: Color(0xFFFF7D72),
+    dangerSoft: Color(0xFF3D1716),
     shadow: Color(0xFF000000),
+    glass: Color(0x9E0F2430),
+    glassBorder: Color(0x24E6FFFB),
+    glow: Color(0xFF19C3B5),
+    mint: Color(0xFF8CEBDD),
+    lightA: Color(0x4019C3B5),
+    lightB: Color(0x330E5A66),
   );
 }
 
@@ -140,6 +172,45 @@ class K {
   static Color get warnSoft => _p.warnSoft;
   static Color get danger => _p.danger;
   static Color get dangerSoft => _p.dangerSoft;
+  static Color get glass => _p.glass;
+  static Color get glassBorder => _p.glassBorder;
+  static Color get glow => _p.glow;
+  static Color get mint => _p.mint;
+  static Color get lightA => _p.lightA;
+  static Color get lightB => _p.lightB;
+
+  /// The v3 glass surface: translucent fill, a faint top light, a one pixel
+  /// light edge. [tint] replaces the fill for tinted cards.
+  static BoxDecoration glassDecoration({
+    double radius = r24,
+    Color? tint,
+    Color? border,
+  }) =>
+      BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        color: tint ?? glass,
+        gradient: tint != null
+            ? null
+            : LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.alphaBlend(
+                      Colors.white.withAlpha(_dark ? 12 : 40), glass),
+                  glass,
+                ],
+              ),
+        border: Border.all(
+            color: border ?? glassBorder, width: border != null ? 1.4 : 1),
+        boxShadow: _dark
+            ? [
+                BoxShadow(
+                    color: Colors.black.withAlpha(60),
+                    blurRadius: 30,
+                    offset: const Offset(0, 14)),
+              ]
+            : lift,
+      );
 
   // Earlier names, kept so every screen keeps compiling during the redesign.
   static Color get paper => _p.ground;
@@ -166,6 +237,7 @@ class K {
   static const r14 = 16.0;
   static const r20 = 24.0;
   static const r28 = 28.0;
+  static const r24 = 24.0;
 
   // ---- type ----
   static const family = 'ReadexPro';
@@ -204,6 +276,15 @@ class K {
       height: 1.3,
       fontWeight: FontWeight.w500,
       color: muted);
+
+  /// Large clear numbers with tabular figures, for measures and counts.
+  static TextStyle get number => TextStyle(
+      fontFamily: family,
+      fontSize: 34,
+      height: 1.05,
+      fontWeight: FontWeight.w600,
+      color: ink,
+      fontFeatures: const [ui.FontFeature.tabularFigures()]);
 
   static ThemeData theme() {
     // Every Material 3 role is set, so stock components (chips, sheets,
@@ -248,7 +329,12 @@ class K {
     );
 
     final buttonShape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20));
+    OutlineInputBorder inputBorder(Color color, [double width = 1.2]) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(r14),
+          borderSide: BorderSide(color: color, width: width),
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -291,9 +377,9 @@ class K {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: ink,
-          backgroundColor: surface,
+          backgroundColor: _dark ? glass : surface,
           minimumSize: const Size.fromHeight(56),
-          side: BorderSide(color: control, width: 1.2),
+          side: BorderSide(color: _dark ? glassBorder : control, width: 1.2),
           shape: buttonShape,
           textStyle: const TextStyle(
               fontFamily: family, fontSize: 16, fontWeight: FontWeight.w500),
@@ -314,6 +400,80 @@ class K {
         ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: primary),
+      chipTheme: ChipThemeData(
+        backgroundColor: _dark ? glass : surface,
+        selectedColor: primarySoft,
+        side: BorderSide(color: _dark ? glassBorder : line),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+        labelStyle: TextStyle(
+            fontFamily: family,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: ink),
+        checkmarkColor: primaryStrong,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: _dark ? glass : surface,
+        hintStyle: TextStyle(fontFamily: family, color: muted, fontSize: 16),
+        labelStyle: TextStyle(fontFamily: family, color: inkSoft),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        enabledBorder: inputBorder(_dark ? glassBorder : control),
+        border: inputBorder(_dark ? glassBorder : control),
+        focusedBorder: inputBorder(primary, 2),
+        errorBorder: inputBorder(danger),
+        focusedErrorBorder: inputBorder(danger, 2),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          backgroundColor: _dark ? glass : surface,
+          selectedBackgroundColor: primarySoft,
+          selectedForegroundColor: primaryStrong,
+          foregroundColor: inkSoft,
+          side: BorderSide(color: _dark ? glassBorder : line),
+          textStyle: const TextStyle(
+              fontFamily: family, fontSize: 15, fontWeight: FontWeight.w500),
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) =>
+            states.contains(WidgetState.selected) ? onPrimary : control),
+        trackColor: WidgetStateProperty.resolveWith((states) =>
+            states.contains(WidgetState.selected) ? primary : surfaceMuted),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+      ),
+      cardTheme: CardThemeData(
+        color: surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(r24),
+          side: BorderSide(color: _dark ? glassBorder : line),
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(r28))),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(r28),
+          side: BorderSide(color: _dark ? glassBorder : Colors.transparent),
+        ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: ink,
+        elevation: 0,
+        titleTextStyle: h2,
+      ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: _dark ? surfaceMuted : ink,
         contentTextStyle: TextStyle(
@@ -349,7 +509,7 @@ class K {
 class KMotion {
   static const quick = Duration(milliseconds: 140);
   static const standard = Duration(milliseconds: 280);
-  static const gentle = Duration(milliseconds: 460);
+  static const gentle = Duration(milliseconds: 300);
   static const breath = Duration(milliseconds: 4200);
 
   static const emphasized = Cubic(0.05, 0.7, 0.1, 1.0);
@@ -410,62 +570,61 @@ class _KPageState extends State<KPage> {
       child: Scaffold(
         backgroundColor: background,
         floatingActionButton: widget.fab,
-        body: SafeArea(
-          bottom: widget.bottom == null,
-          child: Column(
-            children: [
-              _Header(
-                title: widget.title,
-                subtitle: widget.subtitle,
-                actions: widget.actions,
-                showBack: widget.showBack,
-                background: background,
-                separated: _scrolled,
-              ),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification.depth == 0) {
-                      final scrolled = notification.metrics.pixels > 2;
-                      if (scrolled != _scrolled) {
-                        setState(() => _scrolled = scrolled);
-                      }
-                    }
-                    return false;
-                  },
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 720),
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 36),
-                        child: widget.child,
-                      ),
-                    ),
-                  ),
+        body: KBackdrop(
+          color: background,
+          child: SafeArea(
+            bottom: widget.bottom == null,
+            child: Column(
+              children: [
+                _Header(
+                  title: widget.title,
+                  subtitle: widget.subtitle,
+                  actions: widget.actions,
+                  showBack: widget.showBack,
+                  background: Colors.transparent,
+                  separated: _scrolled,
                 ),
-              ),
-              if (widget.bottom != null)
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: K.surface,
-                    border: Border(top: BorderSide(color: K.line)),
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 720),
-                          child: widget.bottom,
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification.depth == 0) {
+                        final scrolled = notification.metrics.pixels > 2;
+                        if (scrolled != _scrolled) {
+                          setState(() => _scrolled = scrolled);
+                        }
+                      }
+                      return false;
+                    },
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 720),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 36),
+                          child: widget.child,
                         ),
                       ),
                     ),
                   ),
                 ),
-            ],
+                if (widget.bottom != null)
+                  KFrosted(
+                    border: Border(top: BorderSide(color: K.glassBorder)),
+                    child: SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 720),
+                            child: widget.bottom,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -498,9 +657,11 @@ class _Header extends StatelessWidget {
       curve: KMotion.standardCurve,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: background,
+        color:
+            separated ? K.ground.withAlpha(K.isDark ? 200 : 220) : background,
         border: Border(
-          bottom: BorderSide(color: separated ? K.line : background),
+          bottom:
+              BorderSide(color: separated ? K.glassBorder : Colors.transparent),
         ),
       ),
       padding: EdgeInsetsDirectional.fromSTEB(canPop ? 6 : 20, 8, 10, 12),
@@ -669,17 +830,10 @@ class KCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = Container(
-      width: double.infinity,
+    final body = GlassCard(
       padding: padding,
-      decoration: BoxDecoration(
-        color: color ?? K.surface,
-        borderRadius: BorderRadius.circular(K.r20),
-        border: borderColor != null
-            ? Border.all(color: borderColor!, width: 1.4)
-            : (K.isDark ? Border.all(color: K.line) : null),
-        boxShadow: color == null ? K.lift : const [],
-      ),
+      tint: color,
+      borderColor: borderColor,
       child: child,
     );
     if (onTap == null) return body;
@@ -718,18 +872,12 @@ class KGroup extends StatelessWidget {
       if (i != children.length - 1) {
         rows.add(Padding(
           padding: const EdgeInsetsDirectional.only(start: 68),
-          child: Divider(height: 1, thickness: 1, color: K.line),
+          child: Divider(height: 1, thickness: 1, color: K.glassBorder),
         ));
       }
     }
-    return Container(
-      decoration: BoxDecoration(
-        color: K.surface,
-        borderRadius: BorderRadius.circular(K.r20),
-        border: K.isDark ? Border.all(color: K.line) : null,
-        boxShadow: K.lift,
-      ),
-      clipBehavior: Clip.antiAlias,
+    return GlassCard(
+      padding: EdgeInsets.zero,
       child: Column(children: rows),
     );
   }
@@ -959,8 +1107,11 @@ class KTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: background ?? K.surfaceMuted,
+        color: background ?? (K.isDark ? K.glass : K.surfaceMuted),
         borderRadius: BorderRadius.circular(999),
+        border: background == null && K.isDark
+            ? Border.all(color: K.glassBorder)
+            : null,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1003,4 +1154,316 @@ void kToast(BuildContext context, String message, {bool error = false}) {
       margin: const EdgeInsets.all(16),
     ),
   );
+}
+
+/// The v3 background: the ground colour lit by two soft radial teal lights,
+/// one high on the start side, one low on the end side. Purely decorative.
+class KBackdrop extends StatelessWidget {
+  final Widget child;
+  final Color? color;
+
+  const KBackdrop({super.key, required this.child, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(color: color ?? K.ground),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(-0.9, -0.95),
+                    radius: 1.1,
+                    colors: [K.lightA, K.lightA.withAlpha(0)],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(1.0, 0.75),
+                    radius: 1.0,
+                    colors: [K.lightB, K.lightB.withAlpha(0)],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(child: BackdropGroup(child: child)),
+        ],
+      ),
+    );
+  }
+}
+
+/// A frosted strip: blurs what scrolls behind it. Used by the bottom bar of a
+/// page and by the navigation bar.
+class KFrosted extends StatelessWidget {
+  final Widget child;
+  final BoxBorder? border;
+
+  const KFrosted({super.key, required this.child, this.border});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: BackdropFilter.grouped(
+        filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color:
+                K.isDark ? K.ground.withAlpha(170) : K.surface.withAlpha(215),
+            border: border,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Frosted glass card: background blur, translucent fill, one pixel light
+/// edge and a faint inner light at the top. Rounded 24 px.
+class GlassCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final double radius;
+  final Color? tint;
+  final Color? borderColor;
+  final bool blur;
+  final VoidCallback? onTap;
+
+  /// Adds a soft teal glow around the card, for the one thing on a screen
+  /// that matters most.
+  final bool glow;
+
+  const GlassCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(18),
+    this.radius = K.r24,
+    this.tint,
+    this.borderColor,
+    this.blur = true,
+    this.onTap,
+    this.glow = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final r = BorderRadius.circular(radius);
+    final decoration =
+        K.glassDecoration(radius: radius, tint: tint, border: borderColor);
+    Widget body = AnimatedContainer(
+      duration: KMotion.standard,
+      width: double.infinity,
+      padding: padding,
+      decoration: decoration.copyWith(
+        boxShadow: const [],
+      ),
+      child: child,
+    );
+    if (blur && tint == null) {
+      body = ClipRRect(
+        borderRadius: r,
+        child: BackdropFilter.grouped(
+          filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: body,
+        ),
+      );
+    }
+    body = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: r,
+        boxShadow: [
+          ...?decoration.boxShadow,
+          if (glow)
+            BoxShadow(
+                color: K.glow.withAlpha(K.isDark ? 70 : 40),
+                blurRadius: 36,
+                spreadRadius: -6),
+        ],
+      ),
+      child: body,
+    );
+    if (onTap == null) return body;
+    return KPressable(onTap: onTap, borderRadius: r, child: body);
+  }
+}
+
+/// One tile of a [KBento] grid: [span] columns wide (1 or 2).
+class KBentoTile {
+  final Widget child;
+  final int span;
+  const KBentoTile(this.child, {this.span = 1});
+}
+
+/// A bento grid for dashboards: two columns on a phone, four from 700 px.
+/// Tiles of span 2 take a half row on a wide screen and a full row on a
+/// phone. Tiles in a row share the tallest height.
+class KBento extends StatelessWidget {
+  final List<KBentoTile> tiles;
+  final double gap;
+
+  const KBento({super.key, required this.tiles, this.gap = 12});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final columns = constraints.maxWidth >= 700 ? 4 : 2;
+      final rows = <List<KBentoTile>>[];
+      var current = <KBentoTile>[];
+      var used = 0;
+      for (final tile in tiles) {
+        final span = tile.span.clamp(1, columns);
+        if (used + span > columns) {
+          rows.add(current);
+          current = [];
+          used = 0;
+        }
+        current.add(tile);
+        used += span;
+      }
+      if (current.isNotEmpty) rows.add(current);
+      return Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) SizedBox(height: gap),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var j = 0; j < rows[i].length; j++) ...[
+                    if (j > 0) SizedBox(width: gap),
+                    Expanded(
+                      flex: rows[i][j].span.clamp(1, columns),
+                      child: rows[i][j].child,
+                    ),
+                  ],
+                  // Keeps an unfinished last row on the grid.
+                  if (rows[i].fold<int>(
+                          0, (a, t) => a + t.span.clamp(1, columns)) <
+                      columns) ...[
+                    SizedBox(width: gap),
+                    Spacer(
+                        flex: columns -
+                            rows[i].fold<int>(
+                                0, (a, t) => a + t.span.clamp(1, columns))),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      );
+    });
+  }
+}
+
+/// A number tile for bento grids: a big tabular number, a label, an icon.
+class KStat extends StatelessWidget {
+  final String value;
+  final String label;
+  final IconData icon;
+  final Color? color;
+
+  const KStat(
+      {super.key,
+      required this.value,
+      required this.label,
+      required this.icon,
+      this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? K.primary;
+    return GlassCard(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20, color: c),
+          const SizedBox(height: 10),
+          Text(value, style: K.number.copyWith(fontSize: 28)),
+          const SizedBox(height: 2),
+          Text(label, style: K.small),
+        ],
+      ),
+    );
+  }
+}
+
+/// The frosted navigation bar of the patient app. Five labels must fit on a
+/// narrow phone at every text size, so the bar caps its own text scale.
+class KFrostedNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+  final List<NavigationDestination> destinations;
+
+  const KFrostedNavBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onSelected,
+    required this.destinations,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.0),
+      ),
+      child: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          indicatorColor: K.primarySoft,
+          indicatorShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(K.r14)),
+          height: 74,
+          labelTextStyle: WidgetStateProperty.resolveWith(
+            (states) => TextStyle(
+              fontFamily: K.family,
+              fontSize: 13.5,
+              fontWeight: states.contains(WidgetState.selected)
+                  ? FontWeight.w600
+                  : FontWeight.w500,
+              color: states.contains(WidgetState.selected)
+                  ? K.primaryStrong
+                  : K.muted,
+            ),
+          ),
+          iconTheme: WidgetStateProperty.resolveWith(
+            (states) => IconThemeData(
+              size: 25,
+              color: states.contains(WidgetState.selected)
+                  ? K.primaryStrong
+                  : K.muted,
+            ),
+          ),
+        ),
+        child: KFrosted(
+          border: Border(top: BorderSide(color: K.glassBorder)),
+          child: NavigationBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onSelected,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            animationDuration: KMotion.standard,
+            destinations: destinations,
+          ),
+        ),
+      ),
+    );
+  }
 }
