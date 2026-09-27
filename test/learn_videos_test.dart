@@ -33,17 +33,28 @@ void main() {
     expect(find.text('placeholder'), findsOneWidget);
   });
 
-  testWidgets('a verified video shows its thumbnail, title and the external note', (tester) async {
-    appLanguage.value = 'Français';
-    const v = LearnVideo('abcdefghijk', 'en', title: 'Daily foot check', channel: 'Test', verified: true);
+  Future<void> show(WidgetTester tester, LearnVideo v) async {
     await tester.pumpWidget(MaterialApp(
         theme: K.theme(),
-        home: const Scaffold(
-            body: SingleChildScrollView(child: ArticleVideo(articleId: 'x', placeholder: Text('placeholder'), video: v)))));
+        home: Scaffold(
+            body: SingleChildScrollView(child: ArticleVideo(articleId: 'x', placeholder: const Text('placeholder'), video: v)))));
     await tester.pump();
+  }
+
+  testWidgets('a verified video in the page language shows its title and the external note', (tester) async {
+    appLanguage.value = 'Français';
+    await show(tester, const LearnVideo('abcdefghijk', 'fr', title: 'Le soin des pieds', channel: 'Test', verified: true));
     expect(find.text('placeholder'), findsNothing);
-    expect(find.text('Daily foot check'), findsOneWidget);
-    expect(find.text('Vidéo externe, choisie par l’équipe Khatwa · vidéo en anglais'), findsOneWidget);
+    expect(find.text('Le soin des pieds'), findsOneWidget);
+    expect(find.text('Vidéo externe, choisie par l’équipe Khatwa'), findsOneWidget);
     expect(find.text('Ouvrir sur YouTube'), findsOneWidget);
+  });
+
+  testWidgets('a video in another language shows its language, not its title', (tester) async {
+    appLanguage.value = 'Français';
+    await show(tester, const LearnVideo('abcdefghijk', 'en', title: 'Daily foot check', channel: 'Test', verified: true));
+    expect(find.text('Daily foot check'), findsNothing);
+    expect(find.text('Vidéo en anglais'), findsOneWidget);
+    expect(find.text('Vidéo externe, choisie par l’équipe Khatwa'), findsOneWidget);
   });
 }

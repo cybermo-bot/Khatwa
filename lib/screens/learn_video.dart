@@ -60,10 +60,13 @@ class _ArticleVideoState extends State<ArticleVideo> {
     if (v == null) return widget.placeholder;
     final other = v.lang != (langCode() == 'aeb' ? 'ar' : langCode());
     final langNote = switch (v.lang) {
-      'fr' => tr('vidéo en français', aeb: 'فيديو بالفرنسية', ar: 'فيديو بالفرنسية', en: 'video in French'),
-      'en' => tr('vidéo en anglais', aeb: 'فيديو بالإنقليزية', ar: 'فيديو بالإنجليزية', en: 'video in English'),
-      _ => tr('vidéo en arabe', aeb: 'فيديو بالعربية', ar: 'فيديو بالعربية', en: 'video in Arabic'),
+      'fr' => tr('Vidéo en français', aeb: 'فيديو بالفرنسية', ar: 'فيديو بالفرنسية', en: 'Video in French'),
+      'en' => tr('Vidéo en anglais', aeb: 'فيديو بالإنقليزية', ar: 'فيديو بالإنجليزية', en: 'Video in English'),
+      _ => tr('Vidéo en arabe', aeb: 'فيديو بالعربية', ar: 'فيديو بالعربية', en: 'Video in Arabic'),
     };
+    // One language per page: a title in another language is not shown, the
+    // language of the video stands in for it.
+    final heading = other ? langNote : v.title;
     final player = _player;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,7 +79,7 @@ class _ArticleVideoState extends State<ArticleVideo> {
                 ? YoutubePlayer(controller: player, aspectRatio: 16 / 9)
                 : Semantics(
                     button: true,
-                    label: '${tr('Lire la vidéo', aeb: 'شغّل الفيديو', ar: 'تشغيل الفيديو', en: 'Play the video')}: ${v.title}',
+                    label: '${tr('Lire la vidéo', aeb: 'شغّل الفيديو', ar: 'تشغيل الفيديو', en: 'Play the video')}: $heading',
                     child: InkWell(
                       onTap: () => _play(v),
                       child: Stack(fit: StackFit.expand, children: [
@@ -103,14 +106,11 @@ class _ArticleVideoState extends State<ArticleVideo> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(v.title, textDirection: dirOf(v.title), style: K.bodyStrong, maxLines: 2, overflow: TextOverflow.ellipsis),
+        Text(heading, textDirection: dirOf(heading), style: K.bodyStrong, maxLines: 2, overflow: TextOverflow.ellipsis),
         const SizedBox(height: 2),
         Text(
-          [
-            tr('Vidéo externe, choisie par l’équipe Khatwa',
-                aeb: 'فيديو من برّا، اختارو فريق خطوة', ar: 'فيديو خارجي اختاره فريق خطوة', en: 'External video, chosen by the Khatwa team'),
-            if (other) langNote,
-          ].join(' · '),
+          tr('Vidéo externe, choisie par l’équipe Khatwa',
+              aeb: 'فيديو من برّا، اختارو فريق خطوة', ar: 'فيديو خارجي اختاره فريق خطوة', en: 'External video, chosen by the Khatwa team'),
           style: K.small,
         ),
         Align(

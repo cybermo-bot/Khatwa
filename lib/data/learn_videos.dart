@@ -5,9 +5,8 @@
 /// answered 200, so it exists and can be embedded. `dart run tool/verify_videos.dart`
 /// checks every id, writes the real title and channel here and sets the flag.
 ///
-/// The candidates below were found by web search on 27 September 2026 from a
-/// session that could not reach YouTube, so none is verified yet and the
-/// Learn pages keep the "video in preparation" slot until the script runs.
+/// All eight were checked on 27 September 2026; six are shown, two are kept
+/// hidden because their channel is not a health body.
 /// Order of preference: Arabic or Tunisian speakers, then French (Fédération
 /// Française des Diabétiques, Assurance Maladie, HAS, hospitals), then English
 /// (NHS, Diabetes UK, IWGDF, ADA, Mayo Clinic). No advertising, no miracle cures.
@@ -28,20 +27,20 @@ class LearnVideo {
   String get watchUrl => 'https://www.youtube.com/watch?v=$id';
 }
 
-// Candidates, by the article they fit. Titles and channels as the search
-// showed them; "?" means the channel is still to be confirmed.
-const _dailyCheckEn = LearnVideo('jC9hXPURsQA', 'en',
-    title: 'How to perform a daily diabetes foot check | #PuttingFeetFirst | Diabetes UK', channel: 'Diabetes UK');
-const _dailyCheckAr = LearnVideo('GwFs0Oyv1hc', 'ar', title: 'فحص القدم يومياً ضروري لمرضى السكري', channel: '?');
-const _careAr = LearnVideo('f5r7vIUnA2E', 'ar', title: 'العناية بالقدم السكرية', channel: '?');
-const _careFr = LearnVideo('tnnDL7njfjg', 'fr', title: 'Le soin des pieds', channel: '?');
+// By the article they fit. Titles and channels from YouTube's oEmbed answer
+// (tool/verify_videos.dart, run 27/09/2026). Re-running the tool marks every
+// answering video verified again, so re-apply the two "kept hidden" notes.
+const _dailyCheckEn = LearnVideo('jC9hXPURsQA', 'en', title: 'How to perform a daily diabetes foot check | #PuttingFeetFirst​ | Diabetes UK', channel: 'Diabetes UK', verified: true);
+// Exists and embeds, but the channel is not a health body: kept hidden.
+const _dailyCheckAr = LearnVideo('GwFs0Oyv1hc', 'ar', title: 'فحص القدم يومياً ضروري لمرضى السكري', channel: 'لمعلوماتك', verified: false);
+const _careAr = LearnVideo('f5r7vIUnA2E', 'ar', title: 'العناية بالقدم السكرية', channel: 'جمعية أصدقاء مرضى السكري الخيرية بجدة', verified: true);
+const _careFr = LearnVideo('tnnDL7njfjg', 'fr', title: 'Le soin des pieds', channel: 'Diabète Québec', verified: true);
 const _preventionFr =
-    LearnVideo('Emf3JnugSjw', 'fr', title: 'Le pied du diabétique, prévention et soins', channel: '?');
-const _fiveStepsEn = LearnVideo('SulNOSMMNLY', 'en',
-    title: 'Mayo Clinic Minute: 5 steps to diabetic foot care', channel: 'Mayo Clinic');
-const _woundFr = LearnVideo('av5kVBQ2WdE', 'fr',
-    title: 'Petite plaie, grand danger : Ensemble pour soigner le pied diabétique', channel: '?');
-const _nailsEn = LearnVideo('MBM_mjUHQL0', 'en', title: 'Guide to Cutting Your Toenails - Foot Care', channel: '?');
+    LearnVideo('Emf3JnugSjw', 'fr', title: 'Le pied du diabétique, prévention et soins', channel: 'Fréquence Médicale', verified: true);
+const _fiveStepsEn = LearnVideo('SulNOSMMNLY', 'en', title: 'Mayo Clinic Minute: 5 steps to diabetic foot care', channel: 'Mayo Clinic', verified: true);
+const _woundFr = LearnVideo('av5kVBQ2WdE', 'fr', title: 'Petite plaie, grand danger : Ensemble pour soigner le pied diabétique', channel: 'Spitalzentrum Biel (SZB) / Centre hospitalier Bienne (CHB)', verified: true);
+// Exists and embeds, but the channel is not a health body: kept hidden.
+const _nailsEn = LearnVideo('MBM_mjUHQL0', 'en', title: 'Guide to Cutting Your Toenails - Foot Care', channel: 'HealthView24', verified: false);
 
 /// Videos of each article, best language first.
 const learnVideos = <String, List<LearnVideo>>{
