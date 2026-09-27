@@ -4,7 +4,6 @@ import '../data/ai_gateway.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
 import '../ui/foot_art.dart';
-import '../ui/foot_shapes.dart';
 import '../ui/strings.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -131,17 +130,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     selected: current == tone.name,
                     label: S.t(lang, 'settings.skin.${tone.name}'),
                     onTap: () => saveSkinTone(tone.name),
-                    top: SizedBox(
-                      height: 64,
-                      width: 36,
-                      child: CustomPaint(
-                        painter: FootArtPainter(
-                          side: FootSide.right,
-                          view: FootView.top,
-                          tone: tone,
-                          ground: current == tone.name
-                              ? K.primarySoft
-                              : K.surface,
+                    top: Container(
+                      height: 48,
+                      width: 48,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          center: const Alignment(-0.3, -0.4),
+                          colors: [tone.light, tone.base, tone.shade],
+                          stops: const [0, 0.6, 1],
+                        ),
+                        border: Border.all(
+                          color:
+                              current == tone.name ? K.primary : K.glassBorder,
+                          width: current == tone.name ? 2 : 1,
                         ),
                       ),
                     ),

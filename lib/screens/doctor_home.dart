@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/auth_store.dart';
+import '../data/cloud.dart';
+import '../doctor/data/supabase_repository.dart';
+import '../doctor/screens/doctor_dashboard.dart';
 import '../data/case_store.dart';
 import '../data/fhir_export.dart';
 import '../data/triage.dart';
@@ -13,16 +16,121 @@ import 'patient_home.dart';
 import 'report_view.dart';
 import 'settings_page.dart';
 
-class DoctorHomePage extends StatefulWidget {
+/// Doctor home: the dashboard v2 (triage, patient view, public health).
+/// The cases sent from this device stay reachable from "Dossiers reçus".
+class DoctorHomePage extends StatelessWidget {
   final String language;
 
   const DoctorHomePage({super.key, required this.language});
 
   @override
-  State<DoctorHomePage> createState() => _DoctorHomePageState();
+  Widget build(BuildContext context) {
+    final account = AuthStore.instance.current;
+    final lang = appLanguage.value;
+    return AnimatedBuilder(
+      animation: KhatwaCloud.instance,
+      builder: (context, _) {
+        final live = KhatwaCloud.instance.isDoctor;
+        return DoctorDashboard(
+      // Live Supabase data once the doctor is signed in there; synthetic demo data before.
+      key: ValueKey(live),
+      repository: live ? SupabaseDoctorRepository() : null,
+      subtitle: live
+          ? 'Données partagées en direct'
+          : account == null
+              ? null
+              : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
+      actions: [
+        if (!live)
+          IconButton(
+            tooltip: 'Connecter aux données des patients',
+            icon: const Icon(Icons.cloud_sync_outlined, size: 21),
+            onPressed: () => _connect(context),
+          ),
+        IconButton(
+          tooltip: 'Dossiers reçus',
+          icon: const Icon(Icons.inbox_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const DoctorCaseQueuePage()),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'tool.chat'),
+          icon: const Icon(Icons.forum_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => AiChatbotPage(language: lang, role: 'doctor'),
+            ),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'settings.title'),
+          icon: const Icon(Icons.settings_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SettingsPage()),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'auth.logout'),
+          icon: const Icon(Icons.logout_rounded, size: 20),
+          onPressed: () async {
+            CaseStore.instance.lock();
+            await AuthStore.instance.signOut();
+            if (context.mounted) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+        ),
+      ],
+    );
+      },
+    );
+  }
+
+  /// Doctor sign-in to the shared data (the team gives the email and password).
+  Future<void> _connect(BuildContext context) async {
+    final email = TextEditingController();
+    final password = TextEditingController();
+    String? error;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: const Text('Données des patients'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            TextField(controller: email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'E-mail')),
+            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: 'Mot de passe')),
+            if (error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(error!, style: TextStyle(color: K.danger))),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Annuler')),
+            FilledButton(
+              onPressed: () async {
+                final e = await KhatwaCloud.instance.signInDoctor(email.text, password.text);
+                if (e == null) {
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                } else {
+                  setState(() => error = e);
+                }
+              },
+              child: const Text('Se connecter'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _DoctorHomePageState extends State<DoctorHomePage> {
+/// The queue of cases submitted from this device (the first doctor screen).
+class DoctorCaseQueuePage extends StatefulWidget {
+  const DoctorCaseQueuePage({super.key});
+
+  @override
+  State<DoctorCaseQueuePage> createState() => _DoctorCaseQueuePageState();
+}
+
+class _DoctorCaseQueuePageState extends State<DoctorCaseQueuePage> {
   String filter = 'all'; // all | new | reviewed
 
   String get lang => appLanguage.value;
@@ -68,37 +176,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
           subtitle: account == null
               ? null
               : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
-          showBack: false,
-          actions: [
-            const LanguageButton(),
-            IconButton(
-              tooltip: S.t(lang, 'tool.chat'),
-              icon: const Icon(Icons.forum_outlined, size: 21),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => AiChatbotPage(language: lang, role: 'doctor'),
-                ),
-              ),
-            ),
-            IconButton(
-              tooltip: S.t(lang, 'settings.title'),
-              icon: const Icon(Icons.settings_outlined, size: 21),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsPage()),
-              ),
-            ),
-            IconButton(
-              tooltip: S.t(lang, 'auth.logout'),
-              icon: const Icon(Icons.logout_rounded, size: 20),
-              onPressed: () async {
-                CaseStore.instance.lock();
-                await AuthStore.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              },
-            ),
-          ],
+          actions: const [LanguageButton()],
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

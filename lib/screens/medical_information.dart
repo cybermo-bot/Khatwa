@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create_account.dart';
+import '../ui/app_theme.dart';
 
 class MedicalInformationPage extends StatefulWidget {
   final String language;
@@ -167,10 +168,10 @@ class _MedicalInformationPageState
           isRTL ? TextDirection.rtl : TextDirection.ltr,
 
       child: Scaffold(
-        backgroundColor: const Color(0xFFF2FAFA),
+        backgroundColor: K.ground,
 
         appBar: AppBar(
-          backgroundColor: const Color(0xFFF2FAFA),
+          backgroundColor: K.ground,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -212,10 +213,10 @@ class _MedicalInformationPageState
 
                 Text(
                   t['title']!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 29,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF123B43),
+                    color: K.ink,
                   ),
                 ),
 
@@ -223,10 +224,10 @@ class _MedicalInformationPageState
 
                 Text(
                   t['subtitle']!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF167D8D),
+                    color: K.primary,
                   ),
                 ),
 
@@ -234,9 +235,9 @@ class _MedicalInformationPageState
 
                 Text(
                   t['description']!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black54,
+                    color: K.muted,
                     height: 1.5,
                   ),
                 ),
@@ -260,7 +261,7 @@ class _MedicalInformationPageState
                       const SizedBox(height: 10),
 
                       DropdownButtonFormField<String>(
-                        value: diabetesType,
+                        initialValue: diabetesType,
 
                         decoration: InputDecoration(
                           hintText: t['select'],
@@ -365,9 +366,9 @@ class _MedicalInformationPageState
 
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.lock_outline,
-                      color: Color(0xFF167D8D),
+                      color: K.primary,
                       size: 19,
                     ),
 
@@ -376,9 +377,9 @@ class _MedicalInformationPageState
                     Expanded(
                       child: Text(
                         t['private']!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Colors.black54,
+                          color: K.muted,
                         ),
                       ),
                     ),
@@ -421,9 +422,9 @@ class _MedicalInformationPageState
                     style:
                         ElevatedButton.styleFrom(
                       backgroundColor:
-                          const Color(0xFF167D8D),
+                          K.primary,
                       foregroundColor:
-                          Colors.white,
+                          K.onPrimary,
 
                       shape:
                           RoundedRectangleBorder(
@@ -456,14 +457,15 @@ class _MedicalInformationPageState
       padding: const EdgeInsets.all(20),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: K.surface,
+        border: Border.all(color: K.glassBorder),
         borderRadius:
             BorderRadius.circular(20),
 
         boxShadow: [
           BoxShadow(
             color:
-                Colors.black.withOpacity(0.05),
+                Colors.black.withAlpha(13),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -510,7 +512,7 @@ class _MedicalInformationPageState
 
               filled: true,
               fillColor:
-                  const Color(0xFFF7FAFA),
+                  K.surfaceMuted,
 
               border: OutlineInputBorder(
                 borderRadius:
@@ -523,8 +525,8 @@ class _MedicalInformationPageState
                     BorderRadius.circular(15),
 
                 borderSide:
-                    const BorderSide(
-                  color: Color(0xFF167D8D),
+                    BorderSide(
+                  color: K.primary,
                   width: 2,
                 ),
               ),
@@ -543,14 +545,14 @@ class _MedicalInformationPageState
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: active
-            ? const Color(0xFF167D8D)
-            : Colors.grey.shade300,
+            ? K.primary
+            : K.line,
       ),
 
       child: active
-          ? const Icon(
+          ? Icon(
               Icons.check,
-              color: Colors.white,
+              color: K.onPrimary,
               size: 17,
             )
           : null,
@@ -561,7 +563,7 @@ class _MedicalInformationPageState
     return Expanded(
       child: Container(
         height: 3,
-        color: Colors.grey.shade300,
+        color: K.line,
       ),
     );
   }

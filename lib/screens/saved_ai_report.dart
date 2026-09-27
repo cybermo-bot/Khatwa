@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../data/ai_engine.dart';
 import '../data/khatwa_store.dart';
+import '../ui/app_theme.dart';
 
 class SavedAiReportPage extends StatelessWidget {
   final String language;
@@ -419,7 +420,7 @@ class SavedAiReportPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 11,
                                   color:
-                                      Colors.grey.shade600,
+                                      K.muted,
                                 ),
                               ),
                             ],

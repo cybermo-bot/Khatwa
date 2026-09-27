@@ -23,8 +23,10 @@ Future<void> saveTextScale(double value) async {
   await prefs.setDouble(_kTextScaleKey, value);
 }
 
-/// Light, dark, or follow the phone. Follows the phone by default.
-final ValueNotifier<ThemeMode> appThemeMode = ValueNotifier<ThemeMode>(ThemeMode.system);
+/// Light, dark, or follow the phone. Light by default (design A); the
+/// patient can choose dark or the phone's setting in Settings.
+final ValueNotifier<ThemeMode> appThemeMode =
+    ValueNotifier<ThemeMode>(ThemeMode.light);
 
 const String _kThemeModeKey = 'khatwa_theme_mode';
 
@@ -33,7 +35,7 @@ Future<void> loadThemeMode() async {
   final stored = prefs.getString(_kThemeModeKey);
   appThemeMode.value = ThemeMode.values.firstWhere(
     (mode) => mode.name == stored,
-    orElse: () => ThemeMode.system,
+    orElse: () => ThemeMode.light,
   );
 }
 
