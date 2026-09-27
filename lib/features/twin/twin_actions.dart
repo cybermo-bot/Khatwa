@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/khatwa_server.dart';
 import '../../ui/app_theme.dart';
+import '../common.dart';
 import '../voice/voice_page.dart';
 import 'foot_viewer.dart';
 import 'photo_sign_page.dart';
@@ -33,19 +34,19 @@ class TwinActions extends StatelessWidget {
   Widget build(BuildContext context) => Row(children: [
         _Action(
           icon: Icons.threed_rotation_rounded,
-          label: 'Mon pied 3D',
+          label: tr('Mon pied 3D', aeb: 'ساقي 3D', ar: 'قدمي 3D', en: 'My 3D foot'),
           onTap: () => _open(context, const _TwinOrScan()),
         ),
         const SizedBox(width: 8),
         _Action(
           icon: Icons.flip_rounded,
-          label: 'Plante',
+          label: tr('Plante', aeb: 'تحت الساق', ar: 'باطن القدم', en: 'Sole'),
           onTap: () => _open(context, const PhotoSignPage(sole: true)),
         ),
         const SizedBox(width: 8),
         _Action(
           icon: Icons.mic_rounded,
-          label: 'Parler',
+          label: tr('Parler', aeb: 'احكي', ar: 'تحدّث', en: 'Talk'),
           primary: true,
           onTap: () => _open(context, const VoicePage()),
         ),

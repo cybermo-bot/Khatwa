@@ -200,3 +200,11 @@ class NeedsServer extends StatelessWidget {
         OutlinedButton(onPressed: onRetry, child: const Text('Réessayer')),
       ]);
 }
+
+/// A short text in the app's language (derja by default).
+String tr(String fr, {required String aeb, required String ar, required String en}) => switch (langCode()) {
+      'aeb' => aeb,
+      'ar' => ar,
+      'en' => en,
+      _ => fr,
+    };

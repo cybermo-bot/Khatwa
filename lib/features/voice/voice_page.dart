@@ -53,7 +53,7 @@ class _VoicePageState extends State<VoicePage> {
   bool _thinking = false;
   bool _speaking = false;
   bool _urgentSeen = false;
-  bool _deviceStt = false;
+  final bool _deviceStt = false; // on-device recognition, kept for a server without AI
   String _sttText = '';
   DateTime? _pressAt;
   Timer? _limit;
@@ -107,7 +107,7 @@ class _VoicePageState extends State<VoicePage> {
       await _tts.stop();
       if (_deviceStt) {
         if (!await _stt.initialize()) {
-          if (mounted) kToast(context, 'Reconnaissance vocale indisponible sur ce téléphone.', error: true);
+          if (mounted) kToast(context, tr('Reconnaissance vocale indisponible sur ce téléphone.', aeb: 'التعرّف على الصوت موش متوفّر في التليفون هذا.', ar: 'التعرّف على الصوت غير متوفّر في هذا الهاتف.', en: 'Speech recognition is not available on this phone.'), error: true);
           return;
         }
         _sttText = '';
@@ -117,7 +117,7 @@ class _VoicePageState extends State<VoicePage> {
         );
       } else {
         if (!await _recorder.hasPermission()) {
-          if (mounted) kToast(context, 'Autorisez le micro pour parler à Khatwa.', error: true);
+          if (mounted) kToast(context, tr('Autorisez le micro pour parler à Khatwa.', aeb: 'اسمح بالميكرو باش تحكي مع خطوة.', ar: 'اسمح باستخدام الميكروفون للتحدث مع خطوة.', en: 'Allow the microphone to talk to Khatwa.'), error: true);
           return;
         }
         // WAV everywhere: every phone and browser records it, and the AI reads it.
@@ -157,14 +157,14 @@ class _VoicePageState extends State<VoicePage> {
     if (path == null) return;
     final bytes = await XFile(path).readAsBytes();
     if (bytes.length < 16000) {
-      if (mounted) kToast(context, 'Message trop court. Parlez après la vibration.');
+      if (mounted) kToast(context, tr('Message trop court. Parlez après la vibration.', aeb: 'الرسالة قصيرة برشا. احكي بعد ما يرعش التليفون.', ar: 'الرسالة قصيرة جدًا. تحدّث بعد الاهتزاز.', en: 'Too short. Speak after the vibration.'));
       return;
     }
     await _send(audio: bytes);
   }
 
   Future<void> _send({Uint8List? audio, String? text}) async {
-    final mine = audio != null ? _Msg(true, 'Message vocal envoyé', pending: true) : _Msg(true, text ?? '');
+    final mine = audio != null ? _Msg(true, tr('Message vocal envoyé', aeb: 'الرسالة الصوتية تبعثت', ar: 'أُرسلت الرسالة الصوتية', en: 'Voice message sent'), pending: true) : _Msg(true, text ?? '');
     setState(() {
       _thinking = true;
       _msgs.add(mine);
@@ -197,21 +197,21 @@ class _VoicePageState extends State<VoicePage> {
       _failed(mine, audio != null);
       if (e.status == 503 && audio != null) {
         // The AI is busy or over its quota for a moment: say so, and keep trying it next time.
-        kToast(context, 'L’assistant est très demandé. Réessayez dans un instant, ou écrivez votre question.', error: true);
+        kToast(context, tr('L’assistant est très demandé. Réessayez dans un instant, ou écrivez votre question.', aeb: 'المساعد مشغول برشا توّا. عاود بعد شوية، ولّا اكتب سؤالك.', ar: 'المساعد مشغول الآن. أعد المحاولة بعد قليل أو اكتب سؤالك.', en: 'The assistant is very busy. Try again in a moment, or type your question.'), error: true);
       } else {
-        kToast(context, 'Khatwa n’a pas pu répondre. Réessayez.', error: true);
+        kToast(context, tr('Khatwa n’a pas pu répondre. Réessayez.', aeb: 'خطوة ما نجمتش تجاوب. عاود.', ar: 'لم تتمكن خطوة من الرد. أعد المحاولة.', en: 'Khatwa could not answer. Try again.'), error: true);
       }
     } catch (_) {
       if (!mounted) return;
       _failed(mine, audio != null);
-      kToast(context, 'Pas de connexion au serveur Khatwa.', error: true);
+      kToast(context, tr('Pas de connexion au serveur Khatwa.', aeb: 'ما فمّاش اتصال بخطوة.', ar: 'لا يوجد اتصال بخادم خطوة.', en: 'No connection to the Khatwa server.'), error: true);
     }
   }
 
   void _failed(_Msg mine, bool voice) => setState(() {
         _thinking = false;
         mine.pending = false;
-        if (voice) mine.text = 'Message vocal non envoyé';
+        if (voice) mine.text = tr('Message vocal non envoyé', aeb: 'الرسالة ما تبعثتش', ar: 'لم تُرسل الرسالة', en: 'Voice message not sent');
       });
 
   Future<void> _say(String text, String lang) async {
@@ -248,7 +248,7 @@ class _VoicePageState extends State<VoicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: K.ground,
-      appBar: AppBar(title: const Text('Parler à Khatwa'), backgroundColor: K.ground, foregroundColor: K.ink),
+      appBar: AppBar(title: Text(tr('Parler à Khatwa', aeb: 'احكي مع خطوة', ar: 'تحدّث مع خطوة', en: 'Talk to Khatwa')), backgroundColor: K.ground, foregroundColor: K.ink),
       body: Column(children: [
         if (_urgentSeen) const UrgentBanner(),
         Expanded(
@@ -295,9 +295,9 @@ class _Welcome extends StatelessWidget {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.record_voice_over_rounded, size: 64, color: K.primary),
           const SizedBox(height: 16),
-          Text('اضغط على الزر و احكي', textDirection: TextDirection.rtl, style: K.h2),
+          Text(tr('Parlez à Khatwa', aeb: 'اضغط على الزر و احكي', ar: 'اضغط على الزر وتحدّث', en: 'Talk to Khatwa'), textAlign: TextAlign.center, style: K.h2),
           const SizedBox(height: 8),
-          Text('Maintenez le bouton et parlez, relâchez pour envoyer.\nOu touchez une fois pour commencer, une fois pour envoyer.',
+          Text(tr('Maintenez le bouton et parlez, relâchez pour envoyer. Ou touchez une fois pour commencer, une fois pour envoyer.', aeb: 'شدّ على الزر و احكي، و سيّبو باش تبعث.', ar: 'اضغط على الزر مطوّلًا وتحدّث، ثم اتركه للإرسال.', en: 'Hold the button and speak, release to send. Or tap once to start, once to send.'),
               textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
         ]),
       );
@@ -322,7 +322,7 @@ class _Bubble extends StatelessWidget {
             Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(Icons.mic_rounded, size: 18, color: K.primary),
               const SizedBox(width: 6),
-              Flexible(child: Text('Message vocal envoyé', style: K.body.copyWith(color: K.inkSoft))),
+              Flexible(child: Text(tr('Message vocal envoyé', aeb: 'الرسالة الصوتية تبعثت', ar: 'أُرسلت الرسالة الصوتية', en: 'Voice message sent'), style: K.body.copyWith(color: K.inkSoft))),
               const SizedBox(width: 10),
               const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
             ])
@@ -373,7 +373,7 @@ class _Typing extends StatelessWidget {
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
             const SizedBox(width: 10),
-            Text('Khatwa écoute et réfléchit…', style: K.body.copyWith(color: K.muted)),
+            Text(tr('Khatwa écoute et réfléchit…', aeb: 'خطوة تسمع و تخمّم…', ar: 'خطوة تستمع وتفكّر…', en: 'Khatwa is listening and thinking…'), style: K.body.copyWith(color: K.muted)),
           ]),
         ),
       );
@@ -399,10 +399,10 @@ class _Controls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hint = recording
-        ? (tapMode ? 'J’écoute… touchez pour envoyer' : 'J’écoute… relâchez pour envoyer')
+        ? (tapMode ? tr('J’écoute… touchez pour envoyer', aeb: 'نسمع فيك… انقر باش تبعث', ar: 'أستمع… انقر للإرسال', en: 'Listening… tap to send') : tr('J’écoute… relâchez pour envoyer', aeb: 'نسمع فيك… سيّب باش تبعث', ar: 'أستمع… اترك الزر للإرسال', en: 'Listening… release to send'))
         : busy
-            ? 'Khatwa prépare la réponse…'
-            : (deviceStt ? 'Maintenez et parlez (sans IA)' : 'Maintenez pour parler, ou touchez une fois');
+            ? tr('Khatwa prépare la réponse…', aeb: 'خطوة تحضّر في الجواب…', ar: 'خطوة تُعدّ الإجابة…', en: 'Khatwa is preparing the answer…')
+            : (deviceStt ? tr('Maintenez et parlez (sans IA)', aeb: 'شدّ و احكي (بلاش ذكاء اصطناعي)', ar: 'اضغط وتحدّث (دون ذكاء اصطناعي)', en: 'Hold and speak (no AI)') : tr('Maintenez pour parler, ou touchez une fois', aeb: 'شدّ باش تحكي، ولّا انقر مرّة', ar: 'اضغط مطوّلًا للتحدث، أو انقر مرة', en: 'Hold to talk, or tap once'));
     return SafeArea(
       top: false,
       child: Container(
@@ -410,7 +410,7 @@ class _Controls extends StatelessWidget {
         color: K.surface,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           if (speaking)
-            TextButton.icon(onPressed: onStopVoice, icon: const Icon(Icons.volume_off_rounded), label: const Text('Arrêter la voix')),
+            TextButton.icon(onPressed: onStopVoice, icon: const Icon(Icons.volume_off_rounded), label: Text(tr('Arrêter la voix', aeb: 'وقّف الصوت', ar: 'أوقف الصوت', en: 'Stop the voice'))),
           Semantics(
             button: true,
             label: 'Parler à Khatwa',
@@ -452,11 +452,11 @@ class _Controls extends StatelessWidget {
                 minLines: 1,
                 maxLines: 3,
                 maxLength: 2000,
-                decoration: const InputDecoration(hintText: 'Ou écrivez ici', isDense: true, counterText: ''),
+                decoration: InputDecoration(hintText: tr('Ou écrivez ici', aeb: 'ولّا اكتب هنا', ar: 'أو اكتب هنا', en: 'Or type here'), isDense: true, counterText: ''),
                 onSubmitted: (_) => onSendText(),
               ),
             ),
-            IconButton(onPressed: onSendText, tooltip: 'Envoyer', icon: Icon(Icons.send_rounded, color: K.primary)),
+            IconButton(onPressed: onSendText, tooltip: tr('Envoyer', aeb: 'ابعث', ar: 'إرسال', en: 'Send'), icon: Icon(Icons.send_rounded, color: K.primary)),
           ]),
         ]),
       ),
