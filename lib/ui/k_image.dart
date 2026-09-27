@@ -112,7 +112,8 @@ class KImage extends StatelessWidget {
             );
         Widget child;
         if (assets == null || !assets.contains(path(name))) {
-          child = KeyedSubtree(key: const ValueKey('placeholder'), child: fallback);
+          child =
+              KeyedSubtree(key: const ValueKey('placeholder'), child: fallback);
         } else {
           child = ClipRRect(
             key: const ValueKey('image'),

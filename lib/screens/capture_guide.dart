@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/foot_map.dart';
 import '../ui/foot_shapes.dart';
 import '../ui/strings.dart';
 
@@ -255,7 +256,8 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
 
   @override
   Widget build(BuildContext context) {
-    final captured = widget.steps.map((s) => _shots.containsKey(s.key)).toList();
+    final captured =
+        widget.steps.map((s) => _shots.containsKey(s.key)).toList();
     final doneCount = captured.where((value) => value).length;
 
     return Scaffold(
@@ -273,15 +275,35 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
               onDoubleTap: _resetFrame,
               child: AnimatedBuilder(
                 animation: _pulse,
-                builder: (context, _) => CustomPaint(
-                  painter: FootGuidePainter(
-                    side: step.side,
-                    view: step.view,
-                    pulse: _holding ? 1 : _pulse.value,
-                    locked: _locked,
-                    frame: _frame,
-                    adjusting: _adjusting,
-                  ),
+                builder: (context, _) => LayoutBuilder(
+                  builder: (context, box) {
+                    final rect = _frame.rectIn(box.biggest);
+                    return Stack(
+                      children: [
+                        // A ghost of the expected foot and view inside the
+                        // frame, from the map image.
+                        Positioned.fromRect(
+                          rect: rect.deflate(rect.width * 0.08),
+                          child: IgnorePointer(
+                            child: Opacity(
+                              opacity: _locked ? 0 : 0.28,
+                              child: FootMap(side: step.side, view: step.view),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: ScanFramePainter(
+                              pulse: _holding ? 1 : _pulse.value,
+                              locked: _locked,
+                              frame: _frame,
+                              adjusting: _adjusting,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -330,12 +352,14 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                 style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
             ] else ...[
-              const Icon(Icons.no_photography_outlined, color: Colors.white38, size: 46),
+              const Icon(Icons.no_photography_outlined,
+                  color: Colors.white38, size: 46),
               const SizedBox(height: 14),
               Text(
                 S.t(lang, 'capture.noCamera'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: 14, height: 1.5),
               ),
               const SizedBox(height: 20),
               FilledButton.icon(
@@ -376,12 +400,15 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                 IconButton(
                   onPressed: _resetFrame,
                   tooltip: S.t(lang, 'capture.reset'),
-                  icon: const Icon(Icons.restart_alt_rounded, color: Colors.white),
+                  icon: const Icon(Icons.restart_alt_rounded,
+                      color: Colors.white),
                 ),
               IconButton(
                 onPressed: _camera == null ? null : _toggleTorch,
                 icon: Icon(
-                  _torch ? Icons.flashlight_on_rounded : Icons.flashlight_off_rounded,
+                  _torch
+                      ? Icons.flashlight_on_rounded
+                      : Icons.flashlight_off_rounded,
                   color: _torch ? K.warn : Colors.white,
                 ),
               ),
@@ -441,7 +468,8 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
             Text(
               _moved ? S.t(lang, 'capture.adjust') : S.t(lang, 'capture.tip'),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.3),
+              style: const TextStyle(
+                  color: Colors.white70, fontSize: 12, height: 1.3),
             ),
           ],
         ),
@@ -458,7 +486,8 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
             width: 58,
             child: IconButton(
               onPressed: _fromGallery,
-              icon: const Icon(Icons.photo_library_outlined, color: Colors.white, size: 26),
+              icon: const Icon(Icons.photo_library_outlined,
+                  color: Colors.white, size: 26),
               tooltip: S.t(lang, 'check.gallery'),
             ),
           ),
@@ -476,7 +505,9 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                         size: const Size(92, 92),
                         painter: CaptureRingPainter(
                           total: widget.steps.length,
-                          done: widget.steps.map((s) => _shots.containsKey(s.key)).toList(),
+                          done: widget.steps
+                              .map((s) => _shots.containsKey(s.key))
+                              .toList(),
                           active: _index,
                         ),
                       ),
@@ -489,7 +520,8 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                           shape: BoxShape.circle,
                         ),
                         child: _locked
-                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 30)
+                            ? const Icon(Icons.check_rounded,
+                                color: Colors.white, size: 30)
                             : null,
                       ),
                     ],
@@ -506,7 +538,8 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                     onPressed: _finish,
                     child: Text(
                       S.t(lang, 'capture.done'),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w700),
                     ),
                   ),
           ),
@@ -548,20 +581,25 @@ class _StepChip extends StatelessWidget {
               decoration: BoxDecoration(
                 color: done ? K.ok.withAlpha(38) : Colors.white10,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: active ? Colors.white : Colors.transparent),
+                border: Border.all(
+                    color: active ? Colors.white : Colors.transparent),
               ),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  CustomPaint(
-                    size: const Size(42, 46),
-                    painter: FootBadgePainter(side: step.side, color: color),
+                  SizedBox(
+                    height: 38,
+                    child: Opacity(
+                      opacity: done || active ? 1 : 0.6,
+                      child: FootMap(side: step.side, view: step.view),
+                    ),
                   ),
                   if (done)
                     Positioned(
                       right: 4,
                       bottom: 4,
-                      child: Icon(Icons.check_circle_rounded, color: K.ok, size: 14),
+                      child: Icon(Icons.check_circle_rounded,
+                          color: K.ok, size: 14),
                     ),
                 ],
               ),

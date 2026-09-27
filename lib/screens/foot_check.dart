@@ -11,7 +11,9 @@ import '../data/khatwa_store.dart';
 import '../data/triage.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/foot_map.dart';
 import '../ui/foot_shapes.dart';
+import '../ui/k_image.dart';
 import '../ui/strings.dart';
 import 'capture_guide.dart';
 import 'patient_home.dart';
@@ -112,7 +114,8 @@ class _FootCheckPageState extends State<FootCheckPage> {
   }
 
   Future<void> analyse() async {
-    final filled = kCaptureSteps.where((s) => shots.containsKey(s.key)).toList();
+    final filled =
+        kCaptureSteps.where((s) => shots.containsKey(s.key)).toList();
 
     final payload = <String, dynamic>{
       for (final key in questionKeys) key: answers[key] ?? false,
@@ -166,7 +169,8 @@ class _FootCheckPageState extends State<FootCheckPage> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => ReportPage(caseId: footCase.id, language: lang, freshResult: true),
+        builder: (_) =>
+            ReportPage(caseId: footCase.id, language: lang, freshResult: true),
       ),
     );
   }
@@ -218,17 +222,27 @@ class _FootCheckPageState extends State<FootCheckPage> {
       Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: K.primaryDark,
-          borderRadius: BorderRadius.circular(K.r20),
+          // Fixed deep teal in both themes, so the white text always reads.
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0E5A66), Color(0xFF0A3440)],
+          ),
+          borderRadius: BorderRadius.circular(K.r24),
+          border: Border.all(color: const Color(0x3319C3B5)),
+          boxShadow: [
+            BoxShadow(
+                color: K.glow.withAlpha(K.isDark ? 60 : 30),
+                blurRadius: 32,
+                spreadRadius: -8),
+          ],
         ),
         child: Row(
           children: [
-            SizedBox(
-              width: 44,
-              height: 54,
-              child: CustomPaint(
-                painter: FootBadgePainter(side: FootSide.right, color: Colors.white70),
-              ),
+            const SizedBox(
+              width: 64,
+              height: 84,
+              child: KImage('scan_setup', radius: K.r14),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -238,7 +252,9 @@ class _FootCheckPageState extends State<FootCheckPage> {
                   Text(
                     S.t(lang, 'capture.guided'),
                     style: const TextStyle(
-                        color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -252,14 +268,15 @@ class _FootCheckPageState extends State<FootCheckPage> {
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: K.primaryDark,
+                        foregroundColor: const Color(0xFF0A434D),
                         minimumSize: const Size.fromHeight(46),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(K.r14),
                         ),
                       ),
                       onPressed: openGuide,
-                      icon: const Icon(Icons.center_focus_strong_rounded, size: 19),
+                      icon: const Icon(Icons.center_focus_strong_rounded,
+                          size: 19),
                       label: Text(
                         done == 0
                             ? S.t(lang, 'capture.open')
@@ -276,7 +293,8 @@ class _FootCheckPageState extends State<FootCheckPage> {
       const SizedBox(height: 16),
       Row(
         children: [
-          Expanded(child: KSectionLabel('${S.t(lang, 'check.photos')}  $done/4')),
+          Expanded(
+              child: KSectionLabel('${S.t(lang, 'check.photos')}  $done/4')),
           if (done > 0)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -323,13 +341,11 @@ class _FootCheckPageState extends State<FootCheckPage> {
                 color: K.paper,
                 child: Center(
                   child: SizedBox(
-                    width: 46,
-                    height: 58,
-                    child: CustomPaint(
-                      painter: FootBadgePainter(
-                        side: guideStep.side,
-                        color: K.line,
-                      ),
+                    height: 70,
+                    child: Opacity(
+                      opacity: 0.7,
+                      child:
+                          FootMap(side: guideStep.side, view: guideStep.view),
                     ),
                   ),
                 ),
@@ -391,7 +407,8 @@ class _FootCheckPageState extends State<FootCheckPage> {
             Container(width: 40, height: 4, color: K.line),
             const SizedBox(height: 10),
             ListTile(
-              leading: Icon(Icons.center_focus_strong_rounded, color: K.primary),
+              leading:
+                  Icon(Icons.center_focus_strong_rounded, color: K.primary),
               title: Text(S.t(lang, 'capture.open'), style: K.bodyStrong),
               onTap: () {
                 Navigator.of(sheetContext).pop();
@@ -424,7 +441,8 @@ class _FootCheckPageState extends State<FootCheckPage> {
   }
 
   List<Widget> _questionStep() {
-    final answered = questionKeys.where((key) => answers.containsKey(key)).length;
+    final answered =
+        questionKeys.where((key) => answers.containsKey(key)).length;
 
     return [
       Row(
@@ -502,8 +520,9 @@ class _AnalysingPageState extends State<AnalysingPage>
   @override
   void initState() {
     super.initState();
-    _spin = AnimationController(vsync: this, duration: const Duration(seconds: 2))
-      ..repeat();
+    _spin =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
     _run();
     _tick();
   }
@@ -541,7 +560,7 @@ class _AnalysingPageState extends State<AnalysingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: K.primaryDark,
+      backgroundColor: const Color(0xFF07131A),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -591,7 +610,9 @@ class _AnalysingPageState extends State<AnalysingPage>
                               color: i < stage ? K.ok : Colors.white12,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: i <= stage ? Colors.white54 : Colors.white12,
+                                color: i <= stage
+                                    ? Colors.white54
+                                    : Colors.white12,
                               ),
                             ),
                             child: i < stage
@@ -606,9 +627,11 @@ class _AnalysingPageState extends State<AnalysingPage>
                               style: TextStyle(
                                 fontSize: 14.5,
                                 height: 1.35,
-                                color: i <= stage ? Colors.white : Colors.white38,
-                                fontWeight:
-                                    i == stage ? FontWeight.w700 : FontWeight.w400,
+                                color:
+                                    i <= stage ? Colors.white : Colors.white38,
+                                fontWeight: i == stage
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
                               ),
                             ),
                           ),
@@ -691,7 +714,8 @@ class _Choice extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
           color: selected ? background : K.card,
-          border: Border.all(color: selected ? color : K.line, width: selected ? 1.5 : 1),
+          border: Border.all(
+              color: selected ? color : K.line, width: selected ? 1.5 : 1),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Text(

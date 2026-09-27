@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/learn_content.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
-import '../../ui/foot_art.dart';
-import '../../ui/foot_shapes.dart';
+import '../../ui/k_image.dart';
 import '../../ui/strings.dart';
 import '../article_page.dart';
 
@@ -46,7 +45,11 @@ class LearnTab extends StatelessWidget {
                 Text(info(LearnSection.know).subtitle.of(lang),
                     style: K.body.copyWith(color: K.primaryStrong)),
                 const SizedBox(height: 18),
-                const FeetPair(height: 170, view: FootView.top),
+                SizedBox(
+                  height: 190,
+                  child: KImage('sign_healthy',
+                      label: healthy.title.of(lang), radius: K.r20),
+                ),
                 const SizedBox(height: 18),
                 FilledButton.icon(
                   onPressed: () => open(healthy),

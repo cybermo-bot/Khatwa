@@ -6,6 +6,7 @@ import '../../data/risk_profile.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
 import '../../ui/foot_art.dart';
+import '../../ui/foot_map.dart';
 import '../../ui/foot_shapes.dart';
 import '../../ui/strings.dart';
 import '../feature_pages.dart';
@@ -39,14 +40,10 @@ class CheckTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 10),
-              Container(
+              GlassCard(
+                glow: !doneToday,
+                radius: K.r28,
                 padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
-                decoration: BoxDecoration(
-                  color: K.surface,
-                  borderRadius: BorderRadius.circular(K.r28),
-                  border: K.isDark ? Border.all(color: K.line) : null,
-                  boxShadow: K.lift,
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -68,7 +65,7 @@ class CheckTab extends StatelessWidget {
                           : 0,
                       showNext: !doneToday,
                       ground: K.surface,
-                      footHeight: 120,
+                      footHeight: 110,
                       labels: [
                         for (final key in const [
                           'check.rightSole',
@@ -173,46 +170,34 @@ class _PositionsGrid extends StatelessWidget {
         runSpacing: gap,
         children: [
           for (var i = 0; i < positions.length; i++)
-            Container(
+            SizedBox(
               width: width,
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-              decoration: BoxDecoration(
-                color: K.surface,
-                borderRadius: BorderRadius.circular(K.r20),
-                border: K.isDark ? Border.all(color: K.line) : null,
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 44,
-                    height: 78,
-                    child: CustomPaint(
-                      painter: FootArtPainter(
-                        side: positions[i].$1,
-                        view: positions[i].$2,
-                        zones: const [],
-                        pulse: 0,
-                        tone: SkinTone.current,
-                        marker: K.primary,
-                        ground: K.surface,
+              child: GlassCard(
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 78,
+                      child:
+                          FootMap(side: positions[i].$1, view: positions[i].$2),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${i + 1}',
+                              style: K.label.copyWith(
+                                  color: K.primary,
+                                  fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 2),
+                          Text(S.t(lang, positions[i].$3),
+                              style: K.bodyStrong.copyWith(fontSize: 15.5)),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${i + 1}',
-                            style: K.label.copyWith(
-                                color: K.primary, fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 2),
-                        Text(S.t(lang, positions[i].$3),
-                            style: K.bodyStrong.copyWith(fontSize: 15.5)),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
         ],

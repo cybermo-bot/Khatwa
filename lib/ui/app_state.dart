@@ -25,7 +25,8 @@ Future<void> saveTextScale(double value) async {
 
 /// Light, dark, or follow the phone. Dark by default (design v3); the
 /// patient can choose light or the phone's setting in Settings.
-final ValueNotifier<ThemeMode> appThemeMode = ValueNotifier<ThemeMode>(ThemeMode.dark);
+final ValueNotifier<ThemeMode> appThemeMode =
+    ValueNotifier<ThemeMode>(ThemeMode.dark);
 
 const String _kThemeModeKey = 'khatwa_theme_mode';
 

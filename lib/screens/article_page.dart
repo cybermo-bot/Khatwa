@@ -4,7 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/learn_content.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
-import '../ui/foot_art.dart';
+import '../ui/foot_map.dart';
+import '../ui/k_image.dart';
 import '../ui/sign_art.dart';
 
 class ArticlePage extends StatefulWidget {
@@ -30,9 +31,8 @@ class _ArticlePageState extends State<ArticlePage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final animated = widget.article.zones.isNotEmpty ||
-        artFor(widget.article.id) == ArtKind.dry ||
-        artFor(widget.article.id) == ArtKind.shoes;
+    final animated = widget.article.zones.isNotEmpty &&
+        articleImages(widget.article.id).isEmpty;
     if (animated && !KMotion.reduced(context) && !_pulse.isAnimating) {
       _pulse.repeat(reverse: true);
     }
@@ -48,40 +48,48 @@ class _ArticlePageState extends State<ArticlePage>
   Widget build(BuildContext context) {
     final lang = appLanguage.value;
     final a = widget.article;
-    final art = artFor(a.id);
+    final images = articleImages(a.id);
     final urgent = a.urgentNow.isNotEmpty;
     final well = urgent ? K.dangerSoft : K.primarySoft;
 
     Widget hero;
-    if (art != null) {
-      // What the sign or the care act looks like, on the patient's own skin.
-      hero = Container(
-        height: 250,
-        decoration: BoxDecoration(
-            color: well, borderRadius: BorderRadius.circular(K.r28)),
-        child: AnimatedBuilder(
-          animation: _pulse,
-          builder: (context, _) => SignArt(
-            kind: art,
-            ground: well,
-            pulse: Curves.easeInOut.transform(_pulse.value),
+    if (images.isNotEmpty) {
+      // What the sign or the care act looks like.
+      hero = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 250,
+            child: KImage(images.first,
+                icon: a.icon, label: a.title.of(lang), radius: K.r28),
           ),
-        ),
+          if (images.length > 1) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                for (final name in images.skip(1)) ...[
+                  Expanded(
+                    child: SizedBox(
+                        height: 130,
+                        child: KImage(name, icon: a.icon, radius: K.r20)),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ],
       );
-    } else if (a.zones.isNotEmpty || a.id == 'healthy') {
-      hero = Container(
+    } else if (a.zones.isNotEmpty) {
+      hero = GlassCard(
         padding: const EdgeInsets.symmetric(vertical: 22),
-        decoration: BoxDecoration(
-            color: well, borderRadius: BorderRadius.circular(K.r28)),
+        tint: urgent ? well : null,
         child: AnimatedBuilder(
           animation: _pulse,
-          builder: (context, _) => FeetPair(
+          builder: (context, _) => FootMapPair(
             height: 220,
             view: a.view,
-            ground: well,
             pulse: Curves.easeInOut.transform(_pulse.value),
-            leftZones: a.zones,
-            rightZones: a.zones,
+            highlight: {for (final z in a.zones) ...z.regions},
           ),
         ),
       );
@@ -346,7 +354,7 @@ class _VideoSlot extends StatelessWidget {
   }
 }
 
-/// Thumbnail for lists: the article's drawing in a tinted well, or its icon
+/// Thumbnail for lists: the article's illustration in a tinted well, or its icon
 /// when the article is not about a place on the foot.
 class ArticleArt extends StatelessWidget {
   final LearnArticle article;
@@ -358,7 +366,7 @@ class ArticleArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final art = artFor(article.id);
+    final images = articleImages(article.id);
     final urgent = article.urgentNow.isNotEmpty;
     final well = urgent ? K.dangerSoft : K.primarySoft;
     return Container(
@@ -367,8 +375,9 @@ class ArticleArt extends StatelessWidget {
       decoration: BoxDecoration(
           color: well, borderRadius: BorderRadius.circular(K.r14)),
       clipBehavior: Clip.antiAlias,
-      child: art != null
-          ? SignArt(kind: art, ground: well)
+      child: images.isNotEmpty
+          ? KImage(images.first,
+              icon: article.icon, radius: K.r14, width: double.infinity)
           : Icon(article.icon,
               color: urgent ? K.danger : K.primary, size: size * 0.5),
     );
