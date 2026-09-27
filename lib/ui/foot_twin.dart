@@ -14,6 +14,10 @@ import 'foot_shapes.dart';
 /// `assets/`, so the bundled path gains that prefix.
 String modelAsset(String path) => kIsWeb ? 'assets/$path' : path;
 
+/// A still of the model hologram, shown on the web while the 3D loads and
+/// kept where the browser cannot draw 3D (slow phones, no WebGL).
+String? get holoPoster => kIsWeb ? 'assets/assets/images/holo_poster.webp' : null;
+
 /// Where the camera looks at the twin from. [free] is the three-quarter
 /// view the home opens on; the patient can then turn it freely.
 enum TwinView { free, top, sole }
@@ -150,6 +154,7 @@ class FootTwin extends StatelessWidget {
     final chip = K.isDark ? 'rgba(13,32,41,0.88)' : 'rgba(255,255,255,0.92)';
     return '''
 model-viewer { --poster-color: transparent; background: transparent; }
+model-viewer::part(default-progress-bar) { display: none; }
 .hs { display: flex; align-items: center; gap: 6px; pointer-events: none;
   transition: opacity 200ms; font-family: 'Readex Pro', system-ui, sans-serif; }
 .hs:not([data-visible]) { opacity: 0; }
@@ -186,6 +191,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           // language or status needs a new view, not just a rebuild.
           key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}-${hotspots.hashCode}-$alt'),
           src: src ?? modelAsset('assets/models/foot_holo.glb'),
+          poster: src == null ? holoPoster : null,
           alt: alt,
           backgroundColor: Colors.transparent,
           cameraControls: true,
@@ -198,7 +204,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           cameraOrbit: _orbit,
           minCameraOrbit: 'auto auto 60%',
           maxCameraOrbit: 'auto auto 180%',
-          exposure: 1.1,
+          exposure: src == null ? 0.9 : 1.1,
           shadowIntensity: 0,
           scale: side == FootSide.right && src == null ? '1 1 -1' : null,
           innerModelViewerHtml: hotspots,

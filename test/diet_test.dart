@@ -118,4 +118,33 @@ void main() {
     expect(find.text('Lentils'), findsOneWidget);
     expect(find.text('Couscous'), findsNothing);
   });
+
+  test('every food has a portion one can see without scales', () {
+    for (final f in tunisianFoods) {
+      expect(f.hand, isNotNull, reason: f.id);
+      for (final t in f.hand!.all) {
+        expect(t.trim(), isNotEmpty, reason: f.id);
+      }
+    }
+  });
+
+  test('the fruits Tunisia eats are all there', () {
+    final ids = tunisianFoods.map((f) => f.id).toSet();
+    for (final id in ['apple', 'pear', 'banana', 'pomegranate', 'clementine', 'peach', 'apricot', 'plum', 'strawberries',
+      'prickly_pear', 'cherries', 'dates', 'figs', 'grapes', 'watermelon', 'melon', 'orange']) {
+      expect(ids, contains(id));
+    }
+  });
+
+  test('counted foods read as pieces', () {
+    final dates = tunisianFoods.firstWhere((f) => f.id == 'dates');
+    final cherries = tunisianFoods.firstWhere((f) => f.id == 'cherries');
+    appLanguage.value = 'Français';
+    expect(dates.countFor(2), '6 dattes');
+    expect(dates.countFor(0.5), '1,5 dattes');
+    appLanguage.value = 'العربية';
+    expect(dates.countFor(1), '3 تمرات');
+    expect(cherries.countFor(1), '15 حبة');
+    appLanguage.value = 'Français';
+  });
 }

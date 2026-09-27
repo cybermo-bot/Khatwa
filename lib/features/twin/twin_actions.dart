@@ -9,15 +9,16 @@ import 'photo_sign_page.dart';
 import 'scan_page.dart';
 import 'twin_page.dart';
 
-/// The patient's latest scanned foot of one side, ready for the 3D viewer, or
-/// null (no scan yet, or no connection): the model foot is shown instead.
+/// The patient's latest scanned foot of one side, in the hologram look of the
+/// home stage (their own shape), or null (no scan yet, or no connection): the
+/// model foot is shown instead.
 Future<String?> myTwinSource(String side) async {
   try {
     final server = KhatwaServer();
     final scans = await server.history(side);
     if (scans.isEmpty) return null;
     final id = (scans.last as Map)['id'] as String;
-    final glb = await server.model(id);
+    final glb = await server.model(id, look: 'holo');
     return glbSource(glb, '${id}_${glb.length}');
   } catch (_) {
     return null;

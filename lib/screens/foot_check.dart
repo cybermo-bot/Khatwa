@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import '../data/auth_store.dart';
 import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../data/triage.dart';
+import '../data/twin_signal.dart';
+import '../data/reminders.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
 import '../ui/foot_map.dart';
@@ -123,21 +126,23 @@ class _FootCheckPageState extends State<FootCheckPage> {
     };
     final profile = patientProfile();
 
-    final work = AiGateway.analyse(
-      images: filled
-          .map((s) => CaseImage(
-                label: S.t('Français', s.labelKey),
-                base64: base64Encode(shots[s.key]!),
-              ))
-          .toList(),
-      answers: payload,
-      profile: profile,
-      lang: lang,
-    );
+    // The 3D twin's measured change joins the answers when the patient has
+    // scans; without a server it adds nothing.
+    final work = TwinSignal.answers().then((twin) => AiGateway.analyse(
+          images: filled
+              .map((s) => CaseImage(
+                    label: S.t('Français', s.labelKey),
+                    base64: base64Encode(shots[s.key]!),
+                  ))
+              .toList(),
+          answers: {...payload, ...twin},
+          profile: profile,
+          lang: lang,
+        ));
 
     final triage = await Navigator.of(context).push<TriageResult>(
       MaterialPageRoute<TriageResult>(
-        builder: (_) => AnalysingPage(work: work, usingAi: ApiConfig.hasKey),
+        builder: (_) => AnalysingPage(work: work, usingAi: true),
       ),
     );
 
@@ -158,6 +163,7 @@ class _FootCheckPageState extends State<FootCheckPage> {
     );
 
     await CaseStore.instance.save(footCase);
+    unawaited(Reminders.instance.afterCheck(footCase.triage));
     await KhatwaStore.instance.addEntry({
       'type': 'foot_photo',
       'date': footCase.createdAt,

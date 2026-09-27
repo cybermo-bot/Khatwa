@@ -7,11 +7,13 @@ import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
 import '../../data/khatwa_store.dart';
 import '../../data/learn_content.dart';
+import '../../data/reminders.dart';
 import '../../data/routine_store.dart';
 import '../../features/twin/twin_actions.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
-import '../../ui/holo_backdrop.dart';
+import '../../ui/profile_avatar.dart';
+import '../shell.dart';
 import '../../ui/foot_shapes.dart';
 import '../../ui/foot_twin.dart';
 import '../../ui/strings.dart';
@@ -72,6 +74,14 @@ class _TodayTabState extends State<TodayTab> {
               icon: const Icon(Icons.tune_rounded, size: 23),
               onPressed: () => _open(const SettingsPage()),
             ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 4, end: 4),
+              child: ProfileAvatar(
+                size: 40,
+                name: (account?.guest ?? false) ? '' : (account?.name ?? ''),
+                onTap: () => AppShell.goTo(context, 4),
+              ),
+            ),
           ],
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,6 +90,7 @@ class _TodayTabState extends State<TodayTab> {
               KReveal(child: _TwinStage(lang: lang)),
               const SizedBox(height: 10),
               const KReveal(order: 1, child: TwinActions()),
+              _Nudges(patientId: patientId),
               const SizedBox(height: 14),
               KReveal(
                 order: 1,
@@ -247,13 +258,12 @@ class _TwinStageState extends State<_TwinStage> {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
-          color: HoloBackdrop.navy,
-          border: Border.all(color: HoloBackdrop.cyan.withAlpha(60)),
+          color: K.surface,
+          border: Border.all(color: K.glassBorder),
           boxShadow: K.lift,
         ),
         child: Stack(
           children: [
-            const Positioned.fill(child: HoloBackdrop(ringY: 0.78)),
             Positioned.fill(
               top: 44,
               bottom: 52,
@@ -308,11 +318,11 @@ class _TwinStageState extends State<_TwinStage> {
               bottom: 12,
               child: Row(
                 children: [
-                  const Icon(Icons.threesixty_rounded, size: 18, color: HoloBackdrop.inkSoft),
+                  Icon(Icons.threesixty_rounded, size: 18, color: K.muted),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(S.t(lang, 'twin.hint'),
-                        style: K.label.copyWith(color: HoloBackdrop.inkSoft), overflow: TextOverflow.ellipsis),
+                        style: K.label, overflow: TextOverflow.ellipsis),
                   ),
                   Flexible(
                     flex: 2,
@@ -861,6 +871,42 @@ class _TipCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// What to do now (recheck a sign, a doctor message, a visit), on the phone
+/// and on the web. Nothing when there is nothing to do.
+class _Nudges extends StatelessWidget {
+  final String patientId;
+  const _Nudges({required this.patientId});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Reminders.instance,
+      builder: (context, _) {
+        final list = Reminders.instance.nudges(patientId);
+        if (list.isEmpty) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(top: 14),
+          child: KGroup(children: [
+            for (final n in list)
+              KGroupRow(
+                icon: switch (n.kind) {
+                  'recheck' => Icons.replay_rounded,
+                  'message' => Icons.chat_bubble_outline_rounded,
+                  _ => Icons.event_outlined,
+                },
+                title: n.title,
+                subtitle: n.body,
+                onTap: () => n.kind == 'recheck'
+                    ? AppShell.goTo(context, 1)
+                    : Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DoctorMessagesPage())),
+              ),
+          ]),
+        );
+      },
     );
   }
 }

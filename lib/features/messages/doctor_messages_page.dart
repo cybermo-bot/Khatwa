@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../data/cloud.dart';
+import '../../data/reminders.dart';
 import '../../ui/app_theme.dart';
 import '../common.dart';
 
@@ -126,6 +127,7 @@ class _DoctorMessagesPageState extends State<DoctorMessagesPage> {
   void initState() {
     super.initState();
     _connect();
+    Reminders.instance.messagesSeen();
   }
 
   @override

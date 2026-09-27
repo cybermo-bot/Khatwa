@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../ui/app_theme.dart';
+import '../../ui/k_image.dart';
 import '../common.dart';
 import 'diet_data.dart';
 import 'diet_topics.dart';
@@ -38,7 +39,16 @@ class DietPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
+          KNote(
+            icon: Icons.favorite_outline_rounded,
+            text: tr(
+                'Aucun aliment n’est interdit. Ces repères aident à trouver la bonne portion, et votre médecin ou diététicien(ne) les adapte à vous. Ne sautez pas de repas.',
+                aeb: 'حتى ماكلة موش ممنوعة. هالعلامات تعاونك تلقى الكمية المناسبة، وطبيبك ولا أخصائي التغذية يعدّلها ليك. ما تفوّتش الماكلة.',
+                ar: 'لا يوجد طعام ممنوع. هذه الإرشادات تساعدك على إيجاد الحصة المناسبة، ويكيّفها طبيبك أو أخصائي التغذية لك. لا تفوّت الوجبات.',
+                en: 'No food is forbidden. These guides help you find the right portion, and your doctor or dietitian adapts them to you. Do not skip meals.'),
+          ),
+          const SizedBox(height: 14),
           KCard(
             onTap: () => _open(context, DietTopicPage(topic: dietTopic('plate'))),
             child: Column(
@@ -114,7 +124,7 @@ class PlateFigure extends StatelessWidget {
           Icon(Icons.water_drop_outlined, size: 18, color: K.primary),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(tr('De l’eau, pas de boissons sucrées', aeb: 'ماء، موش مشروبات مسكّرة', ar: 'ماء، لا مشروبات محلاة', en: 'Water, not sweet drinks'),
+            child: Text(tr('L’eau, la meilleure boisson', aeb: 'الماء، أحسن شراب', ar: 'الماء، أفضل مشروب', en: 'Water, the best drink'),
                 style: K.small),
           ),
         ]),
@@ -179,9 +189,9 @@ class _PlatePainter extends CustomPainter {
 }
 
 String levelName(FoodLevel level) => switch (level) {
-      FoodLevel.free => tr('Librement', aeb: 'على راحتك', ar: 'بحرية', en: 'Freely'),
-      FoodLevel.measured => tr('En portion mesurée', aeb: 'بكمية محسوبة', ar: 'بكمية محسوبة', en: 'In a measured portion'),
-      FoodLevel.rarely => tr('Rarement, petite part', aeb: 'مرة مرة، شوية', ar: 'نادرًا وبكمية صغيرة', en: 'Rarely, a small share'),
+      FoodLevel.free => tr('Au quotidien', aeb: 'كل نهار', ar: 'يوميًا', en: 'Every day'),
+      FoodLevel.measured => tr('Une portion à la fois', aeb: 'كمية وحدة في المرة', ar: 'حصة واحدة في كل مرة', en: 'One portion at a time'),
+      FoodLevel.rarely => tr('Pour le plaisir, petite part', aeb: 'للبنّة، شوية', ar: 'للمتعة، بكمية صغيرة', en: 'A treat, a small share'),
     };
 
 IconData levelIcon(FoodLevel level) => switch (level) {
@@ -272,7 +282,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 KGroupRow(
                   icon: levelIcon(f.level),
                   title: f.name.text,
-                  subtitle: '${f.portion.text} · ${_carbsLabel(f.carbs.round())}',
+                  subtitle: '${f.hand?.text ?? f.portion.text} · ${_carbsLabel(f.carbs.round())}',
                   onTap: () => showFoodSheet(context, f),
                 ),
             ]),
@@ -318,7 +328,24 @@ class _FoodSheetState extends State<FoodSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(f.name.text, style: K.h1),
-            const SizedBox(height: 4),
+            const SizedBox(height: 12),
+            if (f.hand != null)
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(color: K.primarySoft, borderRadius: BorderRadius.circular(K.r20)),
+                child: Row(children: [
+                  Icon(Icons.front_hand_outlined, color: K.primaryStrong, size: 30),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(tr('Une portion', aeb: 'كمية وحدة', ar: 'حصة واحدة', en: 'One portion'),
+                          style: K.small.copyWith(color: K.primaryStrong)),
+                      Text(f.hand!.text, style: K.h2.copyWith(color: K.primaryStrong)),
+                    ]),
+                  ),
+                ]),
+              ),
+            const SizedBox(height: 8),
             Text(f.portion.text, style: K.body.copyWith(color: K.inkSoft)),
             const SizedBox(height: 16),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -354,6 +381,12 @@ class _FoodSheetState extends State<FoodSheet> {
                     semanticFormatterCallback: (v) => _count(v),
                     onChanged: (v) => setState(() => portions = v),
                   ),
+                  if (f.countFor(portions) != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text('= ${f.countFor(portions)}',
+                          style: K.h2.copyWith(color: K.primaryStrong, fontFeatures: tabular)),
+                    ),
                   Row(children: [
                     Text('${_count(portions)} ×', style: K.bodyStrong.copyWith(color: K.primaryStrong, fontFeatures: tabular)),
                     const Spacer(),
@@ -391,6 +424,10 @@ class DietTopicPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 10),
+          // A picture for the topic when it has been made (diet_ramadan, ...).
+          if (topic.id != 'plate')
+            KImage('diet_${topic.id}',
+                height: 180, width: double.infinity, radius: K.r20, placeholder: const SizedBox.shrink()),
           if (topic.id == 'plate') ...[
             const KCard(child: PlateFigure()),
             const SizedBox(height: 14),

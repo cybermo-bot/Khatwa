@@ -7,7 +7,6 @@ import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
-import '../ui/holo_backdrop.dart';
 import '../ui/foot_twin.dart';
 import '../ui/k_image.dart';
 import '../ui/strings.dart';
@@ -163,20 +162,15 @@ class LandingVisual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExcludeSemantics(
-      child: Container(
+      child: SizedBox(
         height: height,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(K.r28),
-          color: HoloBackdrop.navy,
-        ),
         child: Stack(children: [
-          const Positioned.fill(child: HoloBackdrop(ringY: 0.82)),
           Positioned.fill(
               child: FootTwin.supported
                   ? ModelViewer(
                       key: ValueKey('landing-${K.isDark}'),
                       src: modelAsset('assets/models/foot_holo.glb'),
+                      poster: holoPoster,
                       alt: 'Khatwa',
                       backgroundColor: Colors.transparent,
                       cameraControls: false,
@@ -186,16 +180,16 @@ class LandingVisual extends StatelessWidget {
                       autoRotateDelay: 0,
                       rotationPerSecond: '14deg',
                       cameraOrbit: '-150deg 60deg 105%',
-                      exposure: 1.25,
+                      exposure: 0.9,
                       shadowIntensity: 0,
-                      relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; }',
+                      relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; } model-viewer::part(default-progress-bar) { display: none; }',
                     )
                   : Center(
                       child: KImage('hero_twin',
                           fit: BoxFit.contain,
                           height: height,
                           radius: K.r28,
-                          placeholder: Icon(Icons.view_in_ar_rounded, size: height * 0.3, color: HoloBackdrop.cyan)),
+                          placeholder: Icon(Icons.view_in_ar_rounded, size: height * 0.3, color: K.primary)),
                     )),
         ]),
       ),

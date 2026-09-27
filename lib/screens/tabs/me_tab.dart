@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
 import '../../data/risk_profile.dart';
+import '../../features/common.dart';
 import '../../features/diet/diet_page.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
+import '../../ui/profile_avatar.dart';
 import '../../ui/strings.dart';
 import '../ai_chatbot.dart';
 import '../feature_pages.dart';
 import '../glycemia.dart';
 import '../medical_information.dart';
 import '../risk_profile_page.dart';
+import '../reminders_page.dart';
 import '../settings_page.dart';
 import '../create_account.dart';
 import '../wellbeing.dart';
@@ -39,26 +42,11 @@ class MeTab extends StatelessWidget {
           if (displayName.trim().isNotEmpty)
             Row(
               children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: K.primarySoft,
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: K.glow.withAlpha(140), width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: K.glow.withAlpha(K.isDark ? 70 : 30),
-                          blurRadius: 24,
-                          spreadRadius: -4),
-                    ],
-                  ),
-                  child: Text(
-                    _initials(displayName),
-                    style: K.h1.copyWith(color: K.primaryStrong),
-                  ),
+                ProfileAvatar(
+                  size: 64,
+                  name: displayName,
+                  editable: true,
+                  onTap: () => showProfilePhotoSheet(context),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -176,6 +164,12 @@ class MeTab extends StatelessWidget {
                   '${S.t(lang, 'settings.textSize')}, ${S.t(lang, 'settings.theme')}',
               onTap: () => open(const SettingsPage()),
             ),
+            KGroupRow(
+              icon: Icons.notifications_none_rounded,
+              title: tr('Rappels', aeb: 'التذكير', ar: 'التذكيرات', en: 'Reminders'),
+              subtitle: tr('Contrôle, soin, glycémie, rendez-vous', aeb: 'الفحص، العناية، السكر، المواعيد', ar: 'الفحص، العناية، السكر، المواعيد', en: 'Check, care, blood sugar, appointments'),
+              onTap: () => open(const RemindersPage()),
+            ),
           ]),
           const SizedBox(height: 26),
           KSectionLabel(S.t(lang, 'me.privacy')),
@@ -226,15 +220,6 @@ class MeTab extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts =
-        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
-    if (parts.isEmpty) return '';
-    final first = parts.first.characters.first;
-    final second = parts.length > 1 ? parts.last.characters.first : '';
-    return (first + second).toUpperCase();
   }
 
   String _maskedEmail(String email) {
