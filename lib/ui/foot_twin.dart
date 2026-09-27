@@ -14,6 +14,10 @@ import 'foot_shapes.dart';
 /// `assets/`, so the bundled path gains that prefix.
 String modelAsset(String path) => kIsWeb ? 'assets/$path' : path;
 
+/// A still of the model hologram, shown on the web while the 3D loads and
+/// kept where the browser cannot draw 3D (slow phones, no WebGL).
+String? get holoPoster => kIsWeb ? 'assets/assets/images/holo_poster.webp' : null;
+
 /// Where the camera looks at the twin from. [free] is the three-quarter
 /// view the home opens on; the patient can then turn it freely.
 enum TwinView { free, top, sole }
@@ -186,6 +190,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           // language or status needs a new view, not just a rebuild.
           key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}-${hotspots.hashCode}-$alt'),
           src: src ?? modelAsset('assets/models/foot_holo.glb'),
+          poster: src == null ? holoPoster : null,
           alt: alt,
           backgroundColor: Colors.transparent,
           cameraControls: true,

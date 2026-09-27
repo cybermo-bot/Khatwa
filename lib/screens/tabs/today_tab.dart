@@ -12,7 +12,6 @@ import '../../data/routine_store.dart';
 import '../../features/twin/twin_actions.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
-import '../../ui/holo_backdrop.dart';
 import '../../ui/profile_avatar.dart';
 import '../shell.dart';
 import '../../ui/foot_shapes.dart';
@@ -259,13 +258,12 @@ class _TwinStageState extends State<_TwinStage> {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
-          color: HoloBackdrop.navy,
-          border: Border.all(color: HoloBackdrop.cyan.withAlpha(60)),
+          color: K.surface,
+          border: Border.all(color: K.glassBorder),
           boxShadow: K.lift,
         ),
         child: Stack(
           children: [
-            const Positioned.fill(child: HoloBackdrop(ringY: 0.78)),
             Positioned.fill(
               top: 44,
               bottom: 52,
@@ -320,11 +318,11 @@ class _TwinStageState extends State<_TwinStage> {
               bottom: 12,
               child: Row(
                 children: [
-                  const Icon(Icons.threesixty_rounded, size: 18, color: HoloBackdrop.inkSoft),
+                  Icon(Icons.threesixty_rounded, size: 18, color: K.muted),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(S.t(lang, 'twin.hint'),
-                        style: K.label.copyWith(color: HoloBackdrop.inkSoft), overflow: TextOverflow.ellipsis),
+                        style: K.label, overflow: TextOverflow.ellipsis),
                   ),
                   Flexible(
                     flex: 2,
