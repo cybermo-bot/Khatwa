@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/k_image.dart';
 import '../ui/strings.dart';
 
 /// Blood glucose log.
@@ -121,6 +122,7 @@ class _GlycemiaPageState extends State<GlycemiaPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 14),
+          const KImage('glucose_check', height: 160, width: double.infinity, radius: K.r20, placeholder: SizedBox.shrink()),
           if (latest != null) _hero(latest),
           if (list.length >= 2) ...[
             const SizedBox(height: 16),

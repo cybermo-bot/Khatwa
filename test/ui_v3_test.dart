@@ -46,8 +46,10 @@ void main() {
       'sign_healthy', 'care_check_mirror', 'care_wash', 'care_dry_toes',
       'care_moisturise', 'care_nails', 'care_shoes', 'care_socks',
       'care_no_barefoot', 'care_move', 'care_touch_test',
+      // Batch 2 (Claude outputs/KHATWA_IMAGE_PROMPTS_2.md).
+      'life_hammam', 'life_beach', 'life_ramadan', 'life_summer', 'food_plate',
     };
-    for (final id in ['healthy', 'nails', 'socks-shoes', 'colour', 'beach']) {
+    for (final id in ['healthy', 'nails', 'socks-shoes', 'colour', 'beach', 'hammam', 'ramadan', 'summer', 'food']) {
       for (final name in articleImages(id)) {
         expect(names, contains(name));
       }

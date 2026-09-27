@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../ui/app_theme.dart';
+import '../../ui/k_image.dart';
 import '../common.dart';
 import 'diet_data.dart';
 import 'diet_topics.dart';
@@ -423,6 +424,10 @@ class DietTopicPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 10),
+          // A picture for the topic when it has been made (diet_ramadan, ...).
+          if (topic.id != 'plate')
+            KImage('diet_${topic.id}',
+                height: 180, width: double.infinity, radius: K.r20, placeholder: const SizedBox.shrink()),
           if (topic.id == 'plate') ...[
             const KCard(child: PlateFigure()),
             const SizedBox(height: 14),

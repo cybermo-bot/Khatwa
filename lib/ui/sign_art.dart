@@ -2,6 +2,10 @@
 ///
 /// Since design v3 they are images in `assets/images/` (see [KImage]), not
 /// drawings. They are teaching illustrations, never real patient photos.
+library;
+
+import 'k_image.dart';
+
 enum ArtKind {
   dryskin,
   heelCracks,
@@ -71,7 +75,14 @@ List<String> articleImages(String articleId) {
     'nail-care': ['care_nails'],
     'socks-shoes': ['care_shoes', 'care_socks'],
     'move': ['care_move'],
-    'beach': ['care_no_barefoot'],
+    'beach': ['life_beach', 'care_no_barefoot'],
+    'hammam': ['life_hammam'],
+    'ramadan': ['life_ramadan'],
+    'summer': ['life_summer'],
+    'food': ['food_plate'],
   };
-  return map[articleId] ?? const [];
+  // A picture still to be made gives way to the next one that exists.
+  final list = map[articleId] ?? const <String>[];
+  final present = [for (final n in list) if (KImage.exists(n) != false) n];
+  return present.isEmpty && list.isNotEmpty ? [list.last] : present;
 }

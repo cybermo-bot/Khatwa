@@ -5,6 +5,7 @@ import '../../features/common.dart';
 import '../../data/learn_content.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
+import '../../ui/k_image.dart';
 import '../article_page.dart';
 
 /// The education centre: every article as a picture card with a one-line
@@ -35,8 +36,12 @@ class _LearnTabState extends State<LearnTab> {
             _LearnCard(
               art: Container(
                 height: 110,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(color: K.primarySoft, borderRadius: BorderRadius.circular(K.r14)),
-                child: Icon(Icons.restaurant_rounded, color: K.primary, size: 44),
+                child: KImage('food_tunisian',
+                    width: double.infinity,
+                    radius: K.r14,
+                    placeholder: Icon(Icons.restaurant_rounded, color: K.primary, size: 44)),
               ),
               title: tr('Alimentation', aeb: 'الماكلة', ar: 'التغذية', en: 'Food'),
               teaser: tr('Quoi manger, et combien', aeb: 'شنوّة تاكل، وقدّاش', ar: 'ماذا تأكل وكم', en: 'What to eat, and how much'),
