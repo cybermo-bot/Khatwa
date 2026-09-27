@@ -38,7 +38,9 @@ class VoicePage extends StatefulWidget {
 class _VoicePageState extends State<VoicePage> {
   final _server = KhatwaServer();
   final _recorder = AudioRecorder();
-  final _player = AudioPlayer();
+  // Made on first use: opening the page does not start the audio engine.
+  AudioPlayer? _audio;
+  AudioPlayer get _player => _audio ??= AudioPlayer();
   final _tts = FlutterTts();
   final _stt = SpeechToText();
   final _msgs = <_Msg>[];
@@ -68,7 +70,7 @@ class _VoicePageState extends State<VoicePage> {
   void dispose() {
     _limit?.cancel();
     _recorder.dispose();
-    _player.dispose();
+    _audio?.dispose();
     _tts.stop();
     _stt.stop();
     _scroll.dispose();
@@ -103,7 +105,7 @@ class _VoicePageState extends State<VoicePage> {
     if (_starting || _recording) return;
     _starting = true;
     try {
-      await _player.stop();
+      await _audio?.stop();
       await _tts.stop();
       if (_deviceStt) {
         if (!await _stt.initialize()) {
@@ -270,7 +272,7 @@ class _VoicePageState extends State<VoicePage> {
           onDown: _down,
           onUp: _up,
           onStopVoice: () async {
-            await _player.stop();
+            await _audio?.stop();
             await _tts.stop();
             setState(() => _speaking = false);
           },
@@ -356,7 +358,10 @@ class _UrgencyTag extends StatelessWidget {
       Icon(urgent ? Icons.emergency_rounded : Icons.schedule_rounded, size: 20, color: colour),
       const SizedBox(width: 6),
       Flexible(
-        child: Text(urgent ? 'Urgent : 190 / عاجل' : 'À voir dans les 24 h / في ظرف 24 ساعة',
+        child: Text(
+            urgent
+                ? tr('Urgent : 190', aeb: 'عاجل: 190', ar: 'عاجل: 190', en: 'Urgent: 190')
+                : tr('À voir dans les 24 h', aeb: 'يتشاف في ظرف 24 ساعة', ar: 'يُفحص خلال 24 ساعة', en: 'To be seen within 24 h'),
             style: TextStyle(color: colour, fontWeight: FontWeight.w700, fontSize: 14)),
       ),
     ]);
@@ -413,7 +418,7 @@ class _Controls extends StatelessWidget {
             TextButton.icon(onPressed: onStopVoice, icon: const Icon(Icons.volume_off_rounded), label: Text(tr('Arrêter la voix', aeb: 'وقّف الصوت', ar: 'أوقف الصوت', en: 'Stop the voice'))),
           Semantics(
             button: true,
-            label: 'Parler à Khatwa',
+            label: tr('Parler à Khatwa', aeb: 'احكي مع خطوة', ar: 'تحدّث مع خطوة', en: 'Talk to Khatwa'),
             child: Listener(
               onPointerDown: (_) => onDown(),
               onPointerUp: (_) => onUp(),

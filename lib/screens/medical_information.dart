@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../ui/app_state.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_theme.dart';
 
@@ -168,11 +169,11 @@ class _MedicalInformationPageState
 
   @override
   Widget build(BuildContext context) {
-    final t = texts[widget.language]!;
+    final t = texts[appLanguage.value]!;
 
     final isRTL =
-        widget.language == 'العربية' ||
-        widget.language == 'تونسي';
+        appLanguage.value == 'العربية' ||
+        appLanguage.value == 'تونسي';
 
     return Directionality(
       textDirection:
@@ -272,6 +273,7 @@ class _MedicalInformationPageState
                       const SizedBox(height: 10),
 
                       DropdownButtonFormField<String>(
+                        isExpanded: true,
                         initialValue: diabetesType,
 
                         decoration: InputDecoration(

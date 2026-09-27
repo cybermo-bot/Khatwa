@@ -128,13 +128,13 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 18,
+                  runSpacing: 8,
                   children: [
                     _legend(K.ok, S.t(lang, 'sens.felt')),
-                    const SizedBox(width: 18),
                     _legend(K.danger, S.t(lang, 'sens.notFelt')),
-                    const SizedBox(width: 18),
                     _legend(K.line, S.t(lang, 'sens.untested')),
                   ],
                 ),

@@ -11,6 +11,7 @@ import 'patient_view.dart';
 import 'public_health.dart';
 import 'scope.dart';
 import 'triage_board.dart';
+import '../ui/labels.dart';
 
 /// Doctor dashboard v2: triage board, patient view and public health view.
 /// Three panes from 1100 px wide, two on a tablet, one on a phone.
@@ -251,9 +252,10 @@ class _TopBar extends StatelessWidget {
     final demo = repository is DemoDoctorRepository ? repository as DemoDoctorRepository : null;
     final tabs = SegmentedButton<int>(
       showSelectedIcon: false,
-      segments: const [
-        ButtonSegment(value: 0, icon: Icon(Icons.monitor_heart_outlined, size: 18), label: Text('Triage')),
-        ButtonSegment(value: 1, icon: Icon(Icons.public_rounded, size: 18), label: Text('Santé publique')),
+      segments: [
+        const ButtonSegment(value: 0, icon: Icon(Icons.monitor_heart_outlined, size: 18), label: Text('Triage')),
+        ButtonSegment(
+            value: 1, icon: const Icon(Icons.public_rounded, size: 18), label: Text(dl('Santé publique', 'Public health'))),
       ],
       selected: {tab},
       onSelectionChanged: (s) => onTab(s.first),
@@ -268,13 +270,13 @@ class _TopBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (live) LivePulse(color: p.glow, size: 8),
-                Text('Démo live', style: DText.small(p).copyWith(color: p.inkSoft)),
+                Text(dl('Démo live', 'Live demo'), style: DText.small(p).copyWith(color: p.inkSoft)),
                 Switch(value: live, onChanged: demo.setLiveDemo),
               ],
             ),
           ),
         IconButton(
-          tooltip: dark ? 'Thème clair' : 'Thème sombre',
+          tooltip: dark ? dl('Thème clair', 'Light theme') : dl('Thème sombre', 'Dark theme'),
           icon: Icon(dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined, color: p.inkSoft),
           onPressed: () => onDark(!dark),
         ),
@@ -285,7 +287,7 @@ class _TopBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Tableau de bord clinique', style: DText.title(p)),
+        Text(dl('Tableau de bord clinique', 'Clinical dashboard'), style: DText.title(p)),
         if (subtitle != null) Text(subtitle!, style: DText.small(p), maxLines: 1, overflow: TextOverflow.ellipsis),
       ],
     );

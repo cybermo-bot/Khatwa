@@ -2,22 +2,31 @@ import 'package:flutter/material.dart';
 
 import '../../data/cloud.dart';
 import '../../data/khatwa_server.dart';
+import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
+import '../../ui/strings.dart';
 import '../common.dart';
 import 'foot_viewer.dart';
 import 'photo_sign_page.dart';
 import 'scan_page.dart';
 
-/// Server notes in French. The server writes them in English for developers.
-String _noteFr(String note) {
+/// Server notes in the app's language. The server writes them in English for developers.
+String _note(String note) {
   if (note.startsWith('Small local differences')) {
-    return 'De petites différences locales restent dans le bruit de mesure : aucun changement n’est signalé.';
+    return tr('De petites différences locales restent dans le bruit de mesure : aucun changement n’est signalé.',
+        aeb: 'فروقات صغار في بلايص قعدو في هامش القيس: ما فمّا حتى تبديل.',
+        ar: 'بقيت فروق محلية صغيرة ضمن هامش القياس: لا يوجد تغيير.',
+        en: 'Small local differences stay within measurement noise: no change is reported.');
   }
   final unseen = RegExp(r'^(\d+)% of the foot surface was not seen').firstMatch(note);
   if (unseen != null) {
-    return '${unseen.group(1)} % de la surface n’a pas été vue dans les deux scans (la plante repose au sol).';
+    final n = unseen.group(1);
+    return tr('$n % de la surface n’a pas été vue dans les deux scans (la plante repose au sol).',
+        aeb: '$n % من سطح الساق ما تشافش في السكانين (تحت الساق على الأرض).',
+        ar: '$n % من سطح القدم لم يُرَ في المسحين (باطن القدم على الأرض).',
+        en: '$n % of the surface was not seen in both scans (the sole rests on the floor).');
   }
-  return note;
+  return tr('Note technique du serveur.', aeb: 'ملاحظة تقنية من السيرفر.', ar: 'ملاحظة تقنية من الخادم.', en: note);
 }
 
 /// The patient's 3D twin: turn it, see the sole photo on it, the measures,
@@ -70,9 +79,12 @@ class _TwinPageState extends State<TwinPage> {
         await _loadModel();
       }
     } on ServerError {
-      _error = 'Le serveur Khatwa n’a pas pu répondre.';
+      _error = tr('Le serveur Khatwa n’a pas pu répondre.', aeb: 'سيرفر خطوة ما جاوبش.', ar: 'لم يتمكن خادم خطوة من الرد.', en: 'The Khatwa server could not answer.');
     } catch (_) {
-      _error = 'Pas de connexion au serveur Khatwa.';
+      _error = tr('Pas de connexion au serveur Khatwa. Le jumeau 3D a besoin du serveur.',
+          aeb: 'ما فمّاش اتصال بسيرفر خطوة. الساق 3D تستحق السيرفر.',
+          ar: 'لا يوجد اتصال بخادم خطوة. القدم ثلاثية الأبعاد تحتاج إلى الخادم.',
+          en: 'No connection to the Khatwa server. The 3D twin needs the server.');
     }
     if (mounted) setState(() => _loading = false);
   }
@@ -89,13 +101,17 @@ class _TwinPageState extends State<TwinPage> {
       final fhir = await _server.fhir();
       final ok = await KhatwaCloud.instance.shareWithDoctor(fhir);
       if (!mounted) return;
-      kToast(context, ok ? 'Envoyé à votre médecin.' : 'Envoi impossible pour le moment.', error: !ok);
+      kToast(context, ok ? _sentText() : _notSentText(), error: !ok);
     } catch (_) {
-      if (mounted) kToast(context, 'Envoi impossible pour le moment.', error: true);
+      if (mounted) kToast(context, _notSentText(), error: true);
     } finally {
       if (mounted) setState(() => _sending = false);
     }
   }
+
+  String _sentText() => tr('Envoyé à votre médecin.', aeb: 'تبعث للطبيب متاعك.', ar: 'أُرسل إلى طبيبك.', en: 'Sent to your doctor.');
+  String _notSentText() =>
+      tr('Envoi impossible pour le moment.', aeb: 'ما نجمناش نبعثو توّا.', ar: 'تعذّر الإرسال حاليًا.', en: 'Could not send for now.');
 
   void _open(Widget page) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((_) => _load());
 
@@ -103,14 +119,17 @@ class _TwinPageState extends State<TwinPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: K.ground,
-      appBar: AppBar(title: Text('Mon ${sideFr(_side)} en 3D'), backgroundColor: K.ground, foregroundColor: K.ink),
+      appBar: AppBar(
+          title: Text(tr('Mon ${sideName(_side)} en 3D', aeb: '${sideName(_side)} في 3D', ar: '${sideName(_side)} ثلاثية الأبعاد', en: 'My ${sideName(_side)} in 3D')),
+          backgroundColor: K.ground,
+          foregroundColor: K.ink),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'L', label: Text('Pied gauche')),
-              ButtonSegment(value: 'R', label: Text('Pied droit')),
+            segments: [
+              ButtonSegment(value: 'L', label: Text(S.t(appLanguage.value, 'twin.left'))),
+              ButtonSegment(value: 'R', label: Text(S.t(appLanguage.value, 'twin.right'))),
             ],
             selected: {_side},
             onSelectionChanged: _loading
@@ -135,11 +154,17 @@ class _TwinPageState extends State<TwinPage> {
   }
 
   Widget _empty() => ListView(padding: const EdgeInsets.all(16), children: [
-        KCard(child: Text('Pas encore de ${sideFr(_side)} en 3D. Faites un premier scan.', style: K.body)),
+        KCard(
+            child: Text(
+                tr('Pas encore de ${sideName(_side)} en 3D. Faites un premier scan.',
+                    aeb: 'مازال ما فمّاش ${sideName(_side)} في 3D. اعمل أول سكان.',
+                    ar: 'لا توجد بعد ${sideName(_side)} ثلاثية الأبعاد. قم بأول مسح.',
+                    en: 'No ${sideName(_side)} in 3D yet. Make a first scan.'),
+                style: K.body)),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const ScanPage())),
-          child: const Text('Scanner mon pied'),
+          child: Text(tr('Scanner mon pied', aeb: 'اعمل سكان لساقي', ar: 'امسح قدمي', en: 'Scan my foot')),
         ),
       ]);
 
@@ -168,21 +193,26 @@ class _TwinPageState extends State<TwinPage> {
                 ? const Center(child: CircularProgressIndicator())
                 : FootViewer(
                     model: _model!,
-                    pinsHtml: pinsHtml(pins, (p) => kindFr[p['kind']] ?? '${p['kind']}'),
+                    pinsHtml: pinsHtml(pins, (p) => kindName(p['kind'])),
                     cameraOrbit: _fromBelow ? '0deg 165deg auto' : '35deg 70deg auto',
                   ),
           ),
         ),
       ),
       const SizedBox(height: 8),
-      Text('Les zones grises n’ont été vues ni par le scan ni par une photo.', style: K.small.copyWith(color: K.muted)),
+      Text(
+          tr('Les zones grises n’ont été vues ni par le scan ni par une photo.',
+              aeb: 'البلايص الرمادية ما تشافوش لا بالسكان لا بالتصويرة.',
+              ar: 'المناطق الرمادية لم يرها المسح ولا الصورة.',
+              en: 'Grey areas were seen neither by the scan nor by a photo.'),
+          style: K.small.copyWith(color: K.muted)),
       const SizedBox(height: 8),
       Row(children: [
         Expanded(
           child: SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'skin', label: Text('Peau')),
-              ButtonSegment(value: 'regions', label: Text('Zones')),
+            segments: [
+              ButtonSegment(value: 'skin', label: Text(tr('Peau', aeb: 'الجلد', ar: 'الجلد', en: 'Skin'))),
+              ButtonSegment(value: 'regions', label: Text(tr('Zones', aeb: 'البلايص', ar: 'المناطق', en: 'Zones'))),
             ],
             selected: {_look},
             onSelectionChanged: (v) async {
@@ -196,7 +226,9 @@ class _TwinPageState extends State<TwinPage> {
         ),
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          tooltip: _fromBelow ? 'Voir de dessus' : 'Voir la plante',
+          tooltip: _fromBelow
+              ? tr('Voir de dessus', aeb: 'شوف من الفوق', ar: 'انظر من الأعلى', en: 'See from above')
+              : tr('Voir la plante', aeb: 'شوف من تحت', ar: 'انظر إلى باطن القدم', en: 'See the sole'),
           onPressed: () => setState(() => _fromBelow = !_fromBelow),
           icon: Icon(_fromBelow ? Icons.north_rounded : Icons.south_rounded),
         ),
@@ -207,7 +239,7 @@ class _TwinPageState extends State<TwinPage> {
         icon: _sending
             ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
             : const Icon(Icons.send_rounded),
-        label: const Text('Envoyer au médecin'),
+        label: Text(tr('Envoyer au médecin', aeb: 'ابعث للطبيب', ar: 'أرسل إلى الطبيب', en: 'Send to the doctor')),
       ),
       const SizedBox(height: 8),
       Row(children: [
@@ -215,7 +247,7 @@ class _TwinPageState extends State<TwinPage> {
           child: OutlinedButton.icon(
             onPressed: () => _open(PhotoSignPage(side: _side, sole: true)),
             icon: const Icon(Icons.flip_rounded),
-            label: const Text('Plante du pied'),
+            label: Text(tr('Plante du pied', aeb: 'تحت الساق', ar: 'باطن القدم', en: 'Sole')),
           ),
         ),
         const SizedBox(width: 8),
@@ -223,39 +255,48 @@ class _TwinPageState extends State<TwinPage> {
           child: OutlinedButton.icon(
             onPressed: () => _open(PhotoSignPage(side: _side)),
             icon: const Icon(Icons.add_location_alt_rounded),
-            label: const Text('Noter un signe'),
+            label: Text(tr('Noter un signe', aeb: 'سجّل علامة', ar: 'سجّل علامة', en: 'Note a sign')),
           ),
         ),
       ]),
       const SizedBox(height: 16),
       KCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Dernier scan, ${(last['time'] as String).substring(0, 10)}', style: K.h2),
+          Text(
+              '${tr('Dernier scan', aeb: 'آخر سكان', ar: 'آخر مسح', en: 'Last scan')}, ${(last['time'] as String).substring(0, 10)}',
+              style: K.h2),
           const SizedBox(height: 8),
-          for (final e in measureFr.entries)
-            if (m[e.key] != null) _row(e.value.$1, fmtMeasure(e.key, m[e.key])),
+          for (final key in measurePrecision.keys)
+            if (m[key] != null) _row(measureName(key), fmtMeasure(key, m[key])),
           const SizedBox(height: 8),
-          Text(precisionNote, style: K.small.copyWith(color: K.muted)),
+          Text(precisionNote(), style: K.small.copyWith(color: K.muted)),
         ]),
       ),
       if (_change != null) ...[const SizedBox(height: 12), _changeCard()],
       const SizedBox(height: 12),
       KCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Signes notés', style: K.h2),
+          Text(tr('Signes notés', aeb: 'العلامات المسجّلة', ar: 'العلامات المسجّلة', en: 'Signs noted'), style: K.h2),
           const SizedBox(height: 8),
-          if (tracks.isEmpty) Text('Aucun pour ce pied.', style: K.body),
+          if (tracks.isEmpty)
+            Text(tr('Aucun pour ce pied.', aeb: 'حتى شي في الساق هذي.', ar: 'لا شيء لهذه القدم.', en: 'None for this foot.'), style: K.body),
           for (final t in tracks)
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.place_rounded, color: K.primary),
-              title: Text('${kindFr[(t as Map)['kind']] ?? t['kind']}, ${regionFr[t['region']] ?? t['region']}'),
-              subtitle: Text('${statusFr[t['status']] ?? t['status']}, vu le ${t['last_seen']}'),
+              title: Text('${kindName((t as Map)['kind'])}, ${regionName(t['region'])}'),
+              subtitle: Text(
+                  '${statusName(t['status'])}, ${tr('vu le', aeb: 'تشاف نهار', ar: 'شوهد في', en: 'seen on')} ${t['last_seen']}'),
             ),
         ]),
       ),
       const SizedBox(height: 12),
-      Text('${_scans.length} scan(s) de ce pied.', style: K.small.copyWith(color: K.muted)),
+      Text(
+          tr('${_scans.length} scan(s) de ce pied.',
+              aeb: 'عدد السكانات للساق هذي: ${_scans.length}',
+              ar: 'عدد المسوح لهذه القدم: ${_scans.length}',
+              en: '${_scans.length} scan(s) of this foot.'),
+          style: K.small.copyWith(color: K.muted)),
     ]);
   }
 
@@ -266,21 +307,34 @@ class _TwinPageState extends State<TwinPage> {
     final notes = ((c['notes'] as List?) ?? []).cast<String>();
     return KCard(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Évolution depuis le premier scan', style: K.h2),
-        Text('Recherche, seuils provisoires', style: K.small.copyWith(color: K.muted)),
+        Text(tr('Évolution depuis le premier scan', aeb: 'التبديل من أول سكان', ar: 'التطوّر منذ أول مسح', en: 'Change since the first scan'),
+            style: K.h2),
+        Text(tr('Recherche, seuils provisoires', aeb: 'بحث، عتبات مؤقتة', ar: 'بحث، عتبات مؤقتة', en: 'Research, provisional thresholds'),
+            style: K.small.copyWith(color: K.muted)),
         const SizedBox(height: 8),
-        if (sig.isEmpty) Text('Pas de différence au-delà des seuils provisoires.', style: K.body),
+        if (sig.isEmpty)
+          Text(
+              tr('Pas de différence au-delà des seuils provisoires.',
+                  aeb: 'ما فمّا حتى فرق فوق العتبات المؤقتة.',
+                  ar: 'لا فرق يتجاوز العتبات المؤقتة.',
+                  en: 'No difference beyond the provisional thresholds.'),
+              style: K.body),
         for (final k in sig)
           if (meas[k] is num)
             _row(
-              measureFr[k]?.$1 ?? k,
-              '${(meas[k] as num) >= 0 ? '+' : ''}${(meas[k] as num).round()} ${measureFr[k]?.$2 ?? ''} '
-                  '(${(meas[k] as num) >= 0 ? 'plus grand' : 'plus petit'} qu’au premier scan)',
+              measureName(k),
+              '${(meas[k] as num) >= 0 ? '+' : ''}${(meas[k] as num).round()} ${measureUnit(k)} '
+                  '(${(meas[k] as num) >= 0 ? tr('plus grand qu’au premier scan', aeb: 'أكبر من أول سكان', ar: 'أكبر من أول مسح', en: 'larger than at the first scan') : tr('plus petit qu’au premier scan', aeb: 'أصغر من أول سكان', ar: 'أصغر من أول مسح', en: 'smaller than at the first scan')})',
             ),
         const SizedBox(height: 8),
-        Text('Le scan ne voit ni la chaleur ni la couleur : continuez le contrôle quotidien.', style: K.bodyStrong),
+        Text(
+            tr('Le scan ne voit ni la chaleur ni la couleur : continuez le contrôle quotidien.',
+                aeb: 'السكان ما يشوفش السخانة ولا اللون: كمّل الفحص كل يوم.',
+                ar: 'المسح لا يرى الحرارة ولا اللون: واصل الفحص اليومي.',
+                en: 'The scan sees neither warmth nor colour: keep up the daily check.'),
+            style: K.bodyStrong),
         for (final n in notes)
-          Padding(padding: const EdgeInsets.only(top: 6), child: Text(_noteFr(n), style: K.small.copyWith(color: K.muted))),
+          Padding(padding: const EdgeInsets.only(top: 6), child: Text(_note(n), style: K.small.copyWith(color: K.muted))),
       ]),
     );
   }

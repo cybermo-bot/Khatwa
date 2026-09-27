@@ -158,7 +158,8 @@ class _Foot3d extends StatelessWidget {
       child: ModelViewer(
         key: key,
         src: src ?? 'assets/models/foot_model.glb',
-        alt: 'Modèle 3D du ${sideLabel(side).toLowerCase()} avec les zones signalées',
+        alt: dl('Modèle 3D du ${sideLabel(side).toLowerCase()} avec les zones signalées',
+            '3D model of the ${sideLabel(side).toLowerCase()} with the reported zones'),
         cameraControls: true,
         disableZoom: false,
         autoRotate: false,

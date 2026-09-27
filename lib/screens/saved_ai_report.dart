@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../ui/app_state.dart';
 
 import '../data/ai_engine.dart';
 import '../data/khatwa_store.dart';
@@ -15,8 +16,8 @@ class SavedAiReportPage extends StatelessWidget {
   });
 
   bool get rtl =>
-      language == 'العربية' ||
-      language == 'تونسي';
+      appLanguage.value == 'العربية' ||
+      appLanguage.value == 'تونسي';
 
   String text(
     String en,
@@ -24,7 +25,7 @@ class SavedAiReportPage extends StatelessWidget {
     String ar,
     String tn,
   ) {
-    switch (language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':

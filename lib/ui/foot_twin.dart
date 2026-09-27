@@ -175,8 +175,11 @@ model-viewer { --poster-color: transparent; background: transparent; }
       valueListenable: TwinRegion.loaded,
       builder: (context, regions, _) {
         if (regions == null) return const SizedBox.expand();
+        final hotspots = _hotspots(regions);
         return ModelViewer(
-          key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}'),
+          // The labels are part of the page inside the web view: a new
+          // language or status needs a new view, not just a rebuild.
+          key: ValueKey('twin-${side.name}-${view.name}-${K.isDark}-${src.hashCode}-${hotspots.hashCode}-$alt'),
           src: src ?? 'assets/models/foot_holo.glb',
           alt: alt,
           backgroundColor: Colors.transparent,
@@ -193,7 +196,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           exposure: 1.1,
           shadowIntensity: 0,
           scale: side == FootSide.right && src == null ? '1 1 -1' : null,
-          innerModelViewerHtml: _hotspots(regions),
+          innerModelViewerHtml: hotspots,
           relatedCss: _css,
         );
       },

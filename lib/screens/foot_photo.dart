@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../ui/app_state.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../data/khatwa_store.dart';
@@ -24,8 +25,8 @@ class _FootPhotoPageState extends State<FootPhotoPage> {
   bool loading = false;
 
   bool get rtl =>
-      widget.language == 'العربية' ||
-      widget.language == 'تونسي';
+      appLanguage.value == 'العربية' ||
+      appLanguage.value == 'تونسي';
 
   String text(
     String en,
@@ -33,7 +34,7 @@ class _FootPhotoPageState extends State<FootPhotoPage> {
     String ar,
     String tn,
   ) {
-    switch (widget.language) {
+    switch (appLanguage.value) {
       case 'Français':
         return fr;
       case 'العربية':
