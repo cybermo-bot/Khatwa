@@ -25,11 +25,12 @@ class PatientView extends StatefulWidget {
 
 class _PatientViewState extends State<PatientView> {
   late DoctorRepository repo;
-  late Stream<List<Scan>> scans;
-  late Stream<List<Message>> messages;
-  late Stream<List<Finding>> findings;
-  late Stream<List<Check>> checks;
-  late Stream<List<Share>> shares;
+  List<Scan>? scans;
+  List<Message>? messages;
+  List<Finding>? findings;
+  List<Check>? checks;
+  List<Share>? shares;
+  final _subs = <StreamSubscription<Object?>>[];
   String? _for;
 
   String side = 'L';
@@ -59,11 +60,26 @@ class _PatientViewState extends State<PatientView> {
     _for = key;
     repo = r;
     final id = widget.patient.id;
-    scans = repo.scans(id);
-    messages = repo.messages(id);
-    findings = repo.findings(patientId: id);
-    checks = repo.checks(patientId: id);
-    shares = repo.shares(id);
+    for (final sub in _subs) {
+      sub.cancel();
+    }
+    _subs
+      ..clear()
+      ..addAll([
+        repo.scans(id).listen((v) => setState(() => scans = v)),
+        repo.messages(id).listen((v) => setState(() => messages = v)),
+        repo.findings(patientId: id).listen((v) => setState(() => findings = v)),
+        repo.checks(patientId: id).listen((v) => setState(() => checks = v)),
+        repo.shares(id).listen((v) => setState(() => shares = v)),
+      ]);
+  }
+
+  @override
+  void dispose() {
+    for (final sub in _subs) {
+      sub.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -102,10 +118,10 @@ class _PatientViewState extends State<PatientView> {
   Widget _twinCard() {
     final p = DPalette.of(context);
     final scope = DoctorScope.of(context);
-    return StreamBuilder<List<Scan>>(
-      stream: scans,
-      builder: (context, scanSnap) => StreamBuilder<List<Finding>>(
-        stream: findings,
+    return _Latest<List<Scan>>(
+      value: scans,
+      builder: (context, scanSnap) => _Latest<List<Finding>>(
+        value: findings,
         builder: (context, findSnap) {
           final ofSide = (scanSnap.data ?? const <Scan>[]).where((s) => s.side == side).toList();
           final index = ofSide.isEmpty ? null : (visit ?? ofSide.length - 1).clamp(0, ofSide.length - 1);
@@ -208,7 +224,7 @@ class _SideToggle extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   final Patient patient;
-  final Stream<List<Share>> shares;
+  final List<Share>? shares;
 
   const _Header({required this.patient, required this.shares});
 
@@ -273,8 +289,8 @@ class _Header extends StatelessWidget {
                 label: const Text('Exporter FHIR'),
                 onPressed: scope.onExportFhir == null ? null : () => scope.onExportFhir!(context, patient),
               ),
-              StreamBuilder<List<Share>>(
-                stream: shares,
+              _Latest<List<Share>>(
+                value: shares,
                 builder: (context, snap) {
                   final validated = (snap.data ?? const <Share>[]).any((s) => (s.gazelleReport ?? '').toUpperCase().contains('PASS'));
                   return DTag(
@@ -391,7 +407,7 @@ class _OpenAlerts extends StatelessWidget {
 }
 
 class _Trends extends StatelessWidget {
-  final Stream<List<Scan>> scans;
+  final List<Scan>? scans;
   final String measure;
   final ValueChanged<String> onMeasure;
 
@@ -401,8 +417,8 @@ class _Trends extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = DPalette.of(context);
     return GlassPanel(
-      child: StreamBuilder<List<Scan>>(
-        stream: scans,
+      child: _Latest<List<Scan>>(
+        value: scans,
         builder: (context, snap) {
           final all = snap.data ?? const <Scan>[];
           final (label, unit) = measurementLabels[measure]!;
@@ -518,7 +534,7 @@ class _Legend extends StatelessWidget {
 }
 
 class _SolePhotos extends StatelessWidget {
-  final Stream<List<Scan>> scans;
+  final List<Scan>? scans;
 
   const _SolePhotos({required this.scans});
 
@@ -527,8 +543,8 @@ class _SolePhotos extends StatelessWidget {
     final p = DPalette.of(context);
     final repo = DoctorScope.of(context).repository;
     return GlassPanel(
-      child: StreamBuilder<List<Scan>>(
-        stream: scans,
+      child: _Latest<List<Scan>>(
+        value: scans,
         builder: (context, snap) {
           final list = (snap.data ?? const <Scan>[]).reversed.toList();
           return Column(
@@ -610,7 +626,7 @@ class _PhotoPlaceholder extends StatelessWidget {
 }
 
 class _Findings extends StatelessWidget {
-  final Stream<List<Finding>> findings;
+  final List<Finding>? findings;
 
   const _Findings({required this.findings});
 
@@ -619,8 +635,8 @@ class _Findings extends StatelessWidget {
     final p = DPalette.of(context);
     final scope = DoctorScope.of(context);
     return GlassPanel(
-      child: StreamBuilder<List<Finding>>(
-        stream: findings,
+      child: _Latest<List<Finding>>(
+        value: findings,
         builder: (context, snap) {
           final list = [...(snap.data ?? const <Finding>[])]..sort((a, b) {
               final active = (a.isActive ? 0 : 1).compareTo(b.isActive ? 0 : 1);
@@ -667,7 +683,9 @@ class _Findings extends StatelessWidget {
                         Row(children: [
                           Icon(Icons.verified_outlined, size: 14, color: p.ok),
                           const SizedBox(width: 4),
-                          Text('Revu par le clinicien', style: DText.small(p).copyWith(color: p.ok)),
+                          Flexible(
+                            child: Text('Revu par le clinicien', style: DText.small(p).copyWith(color: p.ok)),
+                          ),
                         ]),
                       ],
                       if (scope.clinician && f.isActive) ...[
@@ -696,7 +714,7 @@ class _Findings extends StatelessWidget {
 }
 
 class _CheckHistory extends StatelessWidget {
-  final Stream<List<Check>> checks;
+  final List<Check>? checks;
 
   const _CheckHistory({required this.checks});
 
@@ -704,8 +722,8 @@ class _CheckHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = DPalette.of(context);
     return GlassPanel(
-      child: StreamBuilder<List<Check>>(
-        stream: checks,
+      child: _Latest<List<Check>>(
+        value: checks,
         builder: (context, snap) {
           final byDay = {for (final c in snap.data ?? const <Check>[]) c.day: c};
           final now = DateTime.now();
@@ -747,7 +765,7 @@ class _CheckHistory extends StatelessWidget {
 
 class _Messages extends StatefulWidget {
   final String patientId;
-  final Stream<List<Message>> messages;
+  final List<Message>? messages;
 
   const _Messages({required this.patientId, required this.messages});
 
@@ -775,8 +793,8 @@ class _MessagesState extends State<_Messages> {
   Widget build(BuildContext context) {
     final p = DPalette.of(context);
     return GlassPanel(
-      child: StreamBuilder<List<Message>>(
-        stream: widget.messages,
+      child: _Latest<List<Message>>(
+        value: widget.messages,
         builder: (context, snap) {
           final list = snap.data ?? const <Message>[];
           return Column(
@@ -834,4 +852,21 @@ class _MessagesState extends State<_Messages> {
       ),
     );
   }
+}
+
+/// The latest value of a repository stream, held by [PatientView], given to
+/// a section as a snapshot (null until the first value arrives).
+class _Latest<T> extends StatelessWidget {
+  final T? value;
+  final AsyncWidgetBuilder<T> builder;
+
+  const _Latest({super.key, required this.value, required this.builder});
+
+  @override
+  Widget build(BuildContext context) => builder(
+        context,
+        value == null
+            ? AsyncSnapshot<T>.waiting()
+            : AsyncSnapshot<T>.withData(ConnectionState.active, value as T),
+      );
 }

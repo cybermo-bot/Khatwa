@@ -169,7 +169,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         onDark: (v) => setState(() => dark = v),
                         repository: repo,
                         actions: widget.actions,
-                        compact: width < 700,
+                        compact: width < 1100,
                       ),
                       Expanded(
                         child: AnimatedSwitcher(
