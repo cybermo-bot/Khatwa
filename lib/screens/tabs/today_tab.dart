@@ -5,6 +5,7 @@ import '../../data/case_store.dart';
 import '../../data/khatwa_store.dart';
 import '../../data/learn_content.dart';
 import '../../data/routine_store.dart';
+import '../../features/twin/foot_hero.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
 import '../../ui/foot_art.dart';
@@ -71,6 +72,8 @@ class _TodayTabState extends State<TodayTab> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 10),
+              const KReveal(child: FootHero()),
+              const SizedBox(height: 22),
               KReveal(
                 child: _CheckPanel(
                   lang: lang,

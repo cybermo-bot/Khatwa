@@ -4,6 +4,7 @@ import '../data/ai_gateway.dart';
 import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../data/triage.dart';
+import '../features/voice/voice_page.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
 import '../ui/strings.dart';
@@ -175,6 +176,9 @@ class _AiChatbotPageState extends State<AiChatbotPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Patients talk to the voice-first assistant (Tunisian derja, French, Arabic,
+    // English), with the safety layer and the doctor alert; doctors keep this chat.
+    if (widget.role != 'doctor') return const VoicePage();
     return Scaffold(
       backgroundColor: K.paper,
       body: SafeArea(

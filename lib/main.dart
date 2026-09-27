@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data/ai_gateway.dart';
 import 'data/auth_store.dart';
+import 'data/cloud.dart';
 import 'data/case_store.dart';
 import 'data/khatwa_store.dart';
 import 'screens/auth_pages.dart';
@@ -21,6 +24,8 @@ Future<void> main() async {
   await AuthStore.instance.init();
   await CaseStore.instance.init();
   await ApiConfig.load();
+  await KhatwaCloud.instance.init();
+  await _demoQuickStart();
   await loadTextScale();
   await loadThemeMode();
   await loadSkinTone();
@@ -28,6 +33,19 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   runApp(const KhatwaApp());
+}
+
+/// The audience opens the web app from a QR code (`?demo`): a guest patient
+/// account is made on the spot, so the 3D twin and the voice assistant are one
+/// tap away. Guest accounts hold no real data and are wiped after the event.
+Future<void> _demoQuickStart() async {
+  if (!kIsWeb || !Uri.base.queryParameters.containsKey('demo') || AuthStore.instance.isSignedIn) return;
+  final r = Random.secure();
+  final phone = '9${List.generate(7, (_) => r.nextInt(10)).join()}';
+  final password = List.generate(16, (_) => 'abcdefghjkmnpqrstuvwxyz23456789'[r.nextInt(31)]).join();
+  final result = await AuthStore.instance.signUp(
+      name: 'Invité', phone: phone, password: password, confirm: password, pin: '2468', role: 'patient');
+  if (result == AuthError.none) unawaited(KhatwaCloud.instance.ensurePatient());
 }
 
 class KhatwaApp extends StatefulWidget {
