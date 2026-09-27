@@ -1,262 +1,269 @@
-# Khatwa · خطوة
+<div align="center">
 
-A phone app that helps a person with diabetes check their feet every day, and lets a doctor review what the app found.
+# 🦶 Khatwa · خطوة
 
-Built for the **Future Health Connectathon 2026**, Défi 3.1: *Repérer plus tôt les signes d'alerte du pied diabétique*.
+### Le pied diabétique, suivi en 3D. Une voix qui parle tunisien. Un médecin qui voit tout, en direct.
 
----
+*A 3D digital twin of the diabetic foot, a voice assistant that speaks Tunisian derja, and a live doctor dashboard, on open standards.*
 
-## Why this matters
+[![Live demo](https://img.shields.io/badge/Démo_en_ligne-khatwa--demo.netlify.app-0E5A66?style=for-the-badge&logo=netlify&logoColor=white)](https://khatwa-demo.netlify.app/?demo)
+[![Flutter](https://img.shields.io/badge/Flutter-Android_%2B_Web-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![FHIR R4](https://img.shields.io/badge/HL7_FHIR-R4_·_0_erreur-E34F26?style=for-the-badge)](#-interoperability-fhir-r4-and-gazelle)
+[![Supabase](https://img.shields.io/badge/Supabase-EU_(Paris)-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Voice](https://img.shields.io/badge/Voix-derja_·_عربية_·_FR_·_EN-19C3B5?style=for-the-badge)](#-the-voice-assistant)
 
-When you have diabetes, two things go wrong in the foot. You stop feeling pain, so you do not notice an injury. And blood flows badly, so injuries do not heal. A small crack or a callus can turn into an ulcer, then an infection, then an amputation.
+**Future Health Connectathon 2026 · Défi 3.1** · *Repérer plus tôt les signes d'alerte du pied diabétique*
+**Telehealth Connect 2026, Tunis**
 
-The moment to catch it is early, when there is only redness, dry skin, a callus or a crack. Nobody catches it because nobody looks at the bottom of their own feet every day, and many patients cannot even see them.
+<br/>
 
-In one Tunisian study (Mahdia, 220 diabetic patients), around 27% were already at risk of a foot ulcer.
+<img src="docs/images/app-home.png" width="250" alt="Khatwa home: the patient's 3D foot"/>
+&nbsp;&nbsp;
+<img src="docs/images/app-voice-urgent.png" width="250" alt="The voice assistant raising an urgent sign with the 190 button"/>
+&nbsp;&nbsp;
+<img src="docs/images/qr-demo.png" width="220" alt="QR code to try Khatwa"/>
 
----
+<sub>Home on the patient's 3D foot · an urgent sign told to the assistant · scan to try it (guest mode, no install)</sub>
 
-## What the app does
-
-### For the patient
-
-1. **Set your risk level** once: 4 questions give your IWGDF category (0 to 3) and how often your feet should be examined
-2. **Take photos**, guided by a foot outline on the camera that turns green when the shot is taken, one position at a time
-3. **Answer 8 quick yes/no questions** (pain, wound, swelling, fever...)
-4. **Get a result** in your language: green, orange or red, with what to do
-5. **See the change** since your last check, the same foot side by side
-6. **Send it to a health professional**, after ticking consent
-
-### For the doctor
-
-1. See a list of cases, most serious first, with how many are waiting and the median review delay
-2. Open a case: photos, what the AI found, what the patient answered, their risk category
-3. Confirm or change the level, choose where the patient should go (home follow-up, SSB, regional hospital), add a note
-4. Export the case as a FHIR file for the hospital system
-
-Identity stays hidden unless the patient agreed to share it, and revealing it is recorded in the access trail.
-
-### The rule that never breaks
-
-**The app never gives a diagnosis.** It helps spot things and sort cases. A health professional decides. The app also never tells a patient their foot is fine, only that nothing was detected in these photos.
+</div>
 
 ---
 
+## 💡 Why
+
+When you live with diabetes, the foot loses feeling and heals badly. A crack, a callus or a small blister can turn into an ulcer, an infection, an amputation. It is caught early only if someone **looks at the foot every day**, including **the sole**, where most ulcers start and where most people cannot see.
+
+In one Tunisian study (Mahdia, 220 patients), about **27 %** were already at risk of a foot ulcer.
+
+Khatwa makes that daily look easy, turns it into a **3D record that follows the foot over time**, answers questions **in the language people actually speak at home**, and puts **the doctor in the loop, live**.
+
 ---
 
-## How a check travels
+## ✨ What it does
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🧍 For the patient
+- 🦶 **3D digital twin** of their own foot from a 25 s phone video around it, next to a printed A4 sheet
+- 👣 **The sole on the 3D foot**: one photo of the sole is placed on the twin (2 to 3 mm on straight-on photos in our tests), so a callus under the ball of the foot stays at the same spot, visit after visit
+- 📍 **Mark a sign** on any photo (callus, blister, wound, colour change, or "I don't know"), and get the advice of one triage table: *go now, call 190* / *see someone within 24 h* / *keep checking daily*
+- 🎙️ **Talk to Khatwa**: hold the button and ask, in **Tunisian derja**, Arabic, French or English; answers are spoken with a **Tunisian voice**
+- ✅ **Daily foot check**, risk profile (IWGDF 0 to 3), glucose log, 26 learning articles
+- 📤 **"Envoyer au médecin"**: twin, sole, signs and a FHIR bundle, in one tap
+
+</td>
+<td width="50%" valign="top">
+
+### 🩺 For the doctor
+- 🚨 **Live triage board**: urgent first, new alerts arrive in a second (a black toe told to the assistant, a wound placed on the sole)
+- 🧊 **Each patient's 3D foot** with the signs pinned where they are, left/right, a visit timeline, measurement trends
+- 🖼️ **Sole photos** side by side over time
+- 💬 Reply to the patient, set the next visit, mark a sign reviewed or healed
+- 🏥 **Export FHIR R4**, validated with the official HL7 validator (0 errors)
+- 🗺️ **Public health view** for decision makers: lesions of every patient on one 3D foot, risk levels, alerts per week, by governorate
+
+</td>
+</tr>
+</table>
+
+> **The rule that never breaks: Khatwa never diagnoses.** It helps notice, sort and send. A health professional decides. Urgent signs always lead to **190**, and nothing ever tells a patient their foot is "fine".
+
+---
+
+## 🏗️ How it fits together
 
 ```mermaid
 flowchart LR
-    A["Patient<br/>at home"] --> B["4 guided photos<br/>both soles, both insteps"]
-    B --> C["8 red flag questions<br/>+ optional glucose"]
-    C --> D{"Khatwa triage<br/>rules + AI"}
-    D -->|green| E["Keep checking daily"]
-    D -->|amber| F["Consent, then send"]
-    D -->|red| F
-    F --> G["Clinician queue<br/>red first"]
-    G --> H["Clinician confirms<br/>or overrides the level"]
-    H --> I["Orientation<br/>home / SSB / hospital"]
-    I --> J["Decision returns<br/>to the patient"]
-    I --> K["FHIR R4 bundle<br/>to the hospital system"]
+    subgraph P["📱 Patients"]
+        A["Khatwa app<br/>Android"]
+        W["Khatwa web<br/>from a QR code"]
+    end
+    subgraph D["🩺 Doctor"]
+        DB["Dashboard<br/>web, laptop or tablet"]
+    end
+    subgraph S["☁️ Supabase · EU, Paris"]
+        AU["Auth<br/>anonymous patients,<br/>doctor accounts"]
+        PG[("Postgres<br/>row-level security")]
+        ST[("Storage<br/>3D twins, photos")]
+        RT["Realtime"]
+    end
+    subgraph C["🧠 Khatwa compute server"]
+        TW["3D twin<br/>reconstruction"]
+        SO["Sole and photo<br/>mapping"]
+        VO["Voice assistant<br/>+ safety layer"]
+        FH["FHIR R4 export"]
+    end
+    G["Gemini<br/>speech + language"]
+    AZ["Azure Speech<br/>Tunisian voices"]
+
+    A & W -->|"sign-in token"| C
+    A & W <--> S
+    C -->|"scans, findings,<br/>alerts"| PG
+    C -->|".glb, photos"| ST
+    RT -->|"live"| DB
+    DB <--> PG
+    VO --> G
+    VO --> AZ
 ```
 
-## The two layers that decide the level
+- The apps talk to Supabase directly for their own data. Row-level security means a patient sees only their own record, and a doctor account sees the patients.
+- Heavy work (3D, photo mapping, the voice assistant) runs on the compute server, which checks the patient's Supabase sign-in and writes the results back to Supabase, where the doctor sees them live.
+- Patients are **pseudonymous** (a random reference like `k-7f3a9c2b1d`, a pseudonym like "Patient 07"). No name or phone number from the phone ever reaches the server.
 
-The rules can raise the level. They can never lower it. That is the whole safety design in one line.
+---
 
-```mermaid
-flowchart TD
-    P["Photos + answers + risk category"] --> AI["AI layer<br/>Gemini multimodal"]
-    P --> R["Clinical rules<br/>deterministic, offline"]
-    AI -->|"level, findings, confidence"| M{"Merge<br/>keep the higher level"}
-    R -->|"open wound, infection signs,<br/>insensate foot, critical glucose"| M
-    M --> OUT["Triage result<br/>green / amber / red"]
-    AI -.->|"no key or no network"| SKIP["AI skipped<br/>report says so"]
-    SKIP --> R
-```
-
-## What is inside the app
-
-```mermaid
-flowchart TB
-    subgraph UI["Screens"]
-        S1["Guided capture"]
-        S2["Questionnaire"]
-        S3["Report"]
-        S4["Clinician queue"]
-        S5["Risk profile"]
-    end
-    subgraph DATA["Data layer"]
-        D1["auth_store<br/>accounts, PIN, lockout"]
-        D2["crypto_box<br/>encryption at rest"]
-        D3["case_store<br/>cases, consent, audit trail"]
-        D4["rule_engine"]
-        D5["ai_gateway"]
-        D6["fhir_export"]
-    end
-    subgraph OUTSIDE["Outside the phone"]
-        X1["Gemini API"]
-        X2["Hospital system<br/>FHIR R4"]
-    end
-    UI --> DATA
-    D5 --> X1
-    D6 --> X2
-    D1 -->|"PIN unlocks the key"| D2
-    D2 --> D3
-```
-
-## Who can see what
+## 🧊 The 3D digital twin
 
 ```mermaid
 flowchart LR
-    PAT["Patient"] -->|"own cases only"| STORE["Encrypted store<br/>on the device"]
-    DOC["Clinician"] -->|"submitted cases"| STORE
-    STORE -.->|"no PIN, no key"| LOCKED["Unreadable<br/>ciphertext"]
-    DOC --> MASK{"Patient consented<br/>to be named?"}
-    MASK -->|no| INIT["Initials + case number"]
-    MASK -->|yes| NAME["Full name"]
-    INIT -->|"reveal is logged"| AUDIT["Access trail<br/>who, what, when"]
-    NAME --> AUDIT
+    V["🎥 25 s video<br/>around the foot"] --> M["📄 Printed A4 sheet<br/>ChArUco pattern<br/>gives scale and<br/>camera positions"]
+    M --> N["🧠 Neural network<br/>FOCUS / TocNet<br/>each pixel → a point<br/>of a standard foot"]
+    N --> T["📐 Triangulation<br/>thousands of<br/>3D points"]
+    T --> F["🦶 Standard foot fitted<br/>to the points and to<br/>the outline in each frame"]
+    F --> R["📏 Measures<br/>length, widths, girth,<br/>instep, volume"]
+    F --> CH["📈 Change since<br/>the first scan"]
 ```
 
-## The details that make it usable
+Every twin shares the **same mesh**: point number 5 000 is the same anatomical spot on every foot, at every visit. That is what lets Khatwa compare visits and keep a sign in its place.
 
-- **Guided camera**: the screen dims everything except a foot-shaped outline, the outline breathes while you frame and locks green when the photo lands, and a ring around the shutter fills one segment per position. Four positions: both soles, both insteps.
-- **Sensation test**: tap the 10 classic test points on two foot maps, once for felt, twice for not felt. Losing sensation is the biggest ulcer risk factor and it is invisible, so we made it visual.
-- **Glucose log**: a line chart with your target range drawn behind it, out-of-range points marked by colour and a ring.
-- **Text size**: three sizes in Settings, for people with retinopathy.
-- **4 languages**: Tunisian derja by default, plus Arabic, French and English, with the layout flipping for Arabic.
-- **Works offline**: without network or key, the clinical rules still run and the report says so.
+### 👣 The sole, which a standing scan cannot see
 
-## How to run it
+```mermaid
+flowchart LR
+    SP["📸 One photo<br/>of the sole"] --> NR["🧠 Network readings<br/>noisy one by one<br/>(about 15 mm)"]
+    NR --> H["📐 One perspective<br/>transform (homography)<br/>fitted robustly, RANSAC"]
+    H --> E["🎯 Refined on the<br/>sole outline known<br/>from the scan (ECC)"]
+    E --> TX["🖼️ The photo becomes<br/>the texture of<br/>the twin's sole"]
+    E --> A2["📏 Signs outlined<br/>on the sole get a<br/>real area in mm²"]
+    E -.->|"poor fit"| RE["↩️ Refused:<br/>retake straight on"]
+```
+
+<img align="right" src="docs/images/sole-render.png" width="120" alt="The model foot's sole, rendered from the 3D model"/>
+
+Home photos of the sole are an accepted way to catch early warning signs ([Foot Selfie, Armstrong's team, 2023](https://journals.sagepub.com/doi/10.1177/19322968211053348); [remote monitoring, 2025](https://onlinelibrary.wiley.com/doi/full/10.1002/dmrr.70096)). Photos alone are not a diagnosis ([van Netten 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573347/)), which is why Khatwa sends them to a clinician. What Khatwa adds is **the place**: the photo lives on the patient's own 3D sole.
+
+<br clear="right"/>
+
+---
+
+## 🎙️ The voice assistant
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor P as Patient
+    participant App as Khatwa app
+    participant S as Compute server
+    participant L as Safety layer
+    participant G as Gemini
+    participant V as Azure voice
+    participant Dr as Doctor dashboard
+    P->>App: holds the button, speaks derja
+    App->>S: voice message + sign-in token
+    S->>G: understand + answer from the Learn content
+    G-->>S: transcript, reply, urgency
+    S->>L: check the words against the triage table
+    L-->>S: level can only go UP (never down)
+    S-->>App: reply + urgency (+ 190 banner if urgent)
+    App->>V: speak it with a Tunisian voice
+    V-->>P: 🔊 answer
+    S--)Dr: urgent? alert, live (sign labels only, no words kept)
+```
+
+- **Deterministic safety layer**: a black toe, pus, fever with a foot problem, a spreading redness… always reach *go now, 190*, whatever the AI says. Clothing colours ("black socks") and general questions ("what are the signs of…?") do not raise false alarms. Tested with 170+ cases in derja, arabizi, French and English.
+- **No AI? Still works**: without a network key, answers come from the 26 reviewed Learn articles, with the same safety layer.
+- **Privacy**: no audio and no text of the conversation are stored. The doctor's alert carries only the sign labels.
+
+---
+
+## ✅ What we measured, honestly
+
+| What | Result | How |
+|---|---|---|
+| 3D surface | **1.1 to 1.5 mm** error | synthetic scans, known ground truth |
+| Foot length | **0.85 mm** mean error | synthetic scans |
+| False change alarms | **0 of 10** no-change pairs | 5 repeat scans through the real pipeline |
+| Swelling detection | **8 mm** detected, 4 mm below the noise | same benchmark |
+| Sole photo placement | **2 to 2.6 mm** median (straight on) | rendered sole photos, 10 camera set-ups |
+| Voice safety layer | **170+** test phrases pass | derja, arabizi, FR, EN, negations, doubt |
+| FHIR bundle | **0 errors** | official HL7 validator, R4 4.0.1 |
+| End to end | all checks pass | video → twin → change → photo → finding → voice → FHIR → erase |
+
+**Limits we say out loud:** measurements are validated on simulated scans only (real test-retest comes next), so they are shown as *research, provisional thresholds*; the sole is photographed, not measured in 3D; the triage table and the 26 articles await sign-off by the team's clinician; demo data only.
+
+---
+
+## 🔗 Interoperability: FHIR R4 and Gazelle
+
+```mermaid
+flowchart LR
+    TW["🦶 Twin + findings"] --> B["📦 FHIR R4 Bundle"]
+    B --> O1["Observation × 6<br/>measures, UCUM units,<br/>SNOMED body site"]
+    B --> O2["Observation<br/>per finding,<br/>preliminary"]
+    B --> DR["DocumentReference<br/>the 3D model (glTF)"]
+    B --> V1["✅ HL7 validator<br/>0 errors"]
+    B --> V2["🧪 IHE Gazelle<br/>EVS Client"]
+```
+
+Left and right feet are coded with SNOMED CT (22335008, 7769000), units with UCUM, measurements are `preliminary` (research), findings reported by the patient are never `final`. One bundle per patient, served as `application/fhir+json`.
+
+---
+
+## 🔐 Privacy and security
+
+- Patients are pseudonymous; the audience's guest accounts hold no real data and are wiped after the event
+- Row-level security in Postgres: a patient reads only their own rows; doctor accounts read patients
+- The compute server checks every Supabase sign-in, and refuses another patient's record (tested)
+- Photos are re-encoded without EXIF (no GPS, no phone model); uploads have size limits
+- Server data encrypted at rest (AES-256-GCM); an erasure cannot be undone by a scan still processing
+- On the phone: local accounts, hashed passwords, encrypted local data, automatic lock
+
+---
+
+## 🚀 Run it
 
 ```bash
 flutter pub get
-flutter run -d chrome     # on a computer
-flutter run               # on an Android phone
+flutter run                 # Android phone
+flutter run -d chrome       # web
+flutter build web --release # the QR demo site
 ```
 
-That is it. It works on both.
-
----
-
-## The Gemini API key (each person needs their own)
-
-The key is **not** in this repository, and it should never be. Everyone uses their own.
-
-### Getting your key (1 minute, free)
-
-1. Go to <https://aistudio.google.com/apikey>
-2. Sign in with any Google account
-3. Click "Create API key" and copy it
-
-### Putting it in the app (easiest way)
-
-1. Run the app and create an account
-2. On the home screen, tap the **gear icon** at the top right
-3. Paste your key in the "Gemini API key" field
-4. Tap **Save**, then **Test connection**
-
-If it says "Connection works", you are done. The key stays on your own device and is never sent to the repository or to anyone else.
-
-### Or pass it when you run (for the demo machine)
-
-```bash
-flutter run -d chrome --dart-define=GEMINI_API_KEY=your_key_here
-```
-
-### If you have no key
-
-The app still works. It uses the clinical rules instead of the AI, and the report says so honestly. Nothing crashes.
-
----
-
-## What is inside
-
-Two layers decide the result, and this is the most important part to understand.
-
-**1. The clinical rules** (`lib/data/rule_engine.dart`)
-Fixed medical rules written in code. Open wound, signs of infection, a wound on a foot the person cannot feel, dangerous glucose. These always run, even with no internet.
-
-**2. The AI** (`lib/data/ai_gateway.dart`)
-The photos and the answers go to Gemini in one call. It looks at the images and returns what it sees, a level, advice and a confidence score.
-
-**How they combine:** the rules can make the alert *more* serious, never less. If the patient says there is an open wound, the case is red even if the AI saw nothing. The safety never depends on the AI.
-
-### Sending the case to a hospital system (FHIR)
-
-Every case can be exported as an HL7 FHIR R4 bundle, the standard hospitals use:
-
-| Piece | What it holds |
+| Link | Opens |
 |---|---|
-| Patient | who the patient is |
-| QuestionnaireResponse | the 8 answers |
-| Observation | one per thing found |
-| Media | one per photo |
-| RiskAssessment | the AI result and how confident it was |
-| ServiceRequest | the referral, only after a doctor validated it |
-| Provenance | who did what: the app, then the doctor |
+| `https://khatwa-demo.netlify.app/?demo` | a guest patient, straight to the 3D home |
+| `https://khatwa-demo.netlify.app/?medecin` | the doctor dashboard (then "Connecter aux données") |
 
-### Security
+The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build.
 
-- Passwords are hashed, never stored as text
-- A PIN is required on top of the password
-- Everything stored on the device is encrypted, and the key is locked by the PIN
-- 5 wrong attempts locks the account for a minute
-- Automatic sign out after 10 minutes without activity
-- The patient must tick consent before anything is sent
-- Without consent to be named, the doctor sees initials and a case number
-- Every access to a case is recorded (who, what, when)
-
----
-
-## Project structure
+<details>
+<summary><b>📁 Project structure</b></summary>
 
 ```
 lib/
-  data/
-    auth_store.dart    accounts, PIN, lockout
-    crypto_box.dart    encryption
-    case_store.dart    cases, consent, access trail
-    rule_engine.dart   the clinical rules
-    ai_gateway.dart    the Gemini calls
-    triage.dart        the shared result model
-    fhir_export.dart   the FHIR bundle
-    khatwa_store.dart  daily follow-up data
-    risk_profile.dart  IWGDF risk categories
-  screens/
-    auth_pages.dart      language, role, login and signup
-    patient_home.dart    patient home screen
-    foot_check.dart      photos, questions, analysis
-    capture_guide.dart   the guided camera
-    sensory_check.dart   the 10 point sensation test
-    risk_profile_page.dart  the 4 risk questions
-    report_view.dart     result, comparison, consent, sending
-    doctor_home.dart     case list, review, decision, FHIR
-    settings_page.dart   API key, text size
-  ui/
-    app_theme.dart     colors, text styles, shared widgets
-    foot_shapes.dart   the foot outline drawn in code
-    strings.dart       the 4 languages
+  data/          accounts, encryption, cases, rules, AI gateway, FHIR,
+                 cloud.dart (Supabase), khatwa_server.dart (compute server)
+  features/
+    twin/        scan, 3D twin, sole photo, sign photo, 3D viewer
+    voice/       the voice-first assistant
+  doctor/        dashboard v2: triage board, patient view, public health,
+                 demo and Supabase repositories
+  screens/       home tabs, daily check, learn, settings, sign-in
+  ui/            design system, 3D foot stage, tap maps, strings (4 languages)
+assets/models/   the model foot (glTF) and its zones
+supabase/        the data model and access rules
+docs/            design notes and task briefs
 ```
-
-Languages: Tunisian derja (default), Arabic, French, English. Arabic screens flip right to left automatically.
-
----
-
-## What is real and what is not
-
-**Real:** the accounts, the encryption, the AI call, the clinical rules, the full path from photo to doctor decision, the FHIR export, the 4 languages.
-
-**Not yet, and we say it openly:**
-
-- The AI is a general vision model with a good prompt. It is **not** a model trained on diabetic foot images, and we have not measured its accuracy on a labelled dataset.
-- Data is stored on the device only. A real deployment needs a server, INPDP authorisation and the national health identifier.
-- The medical codes in the FHIR export are indicative until SNOMED licensing for Tunisia is confirmed.
-
-Being honest about this is not a weakness in this competition. The rules ask for proof and limits, not for big claims.
+</details>
 
 ---
 
-Read `EXPLANATION&TIPS.md` for how to present the project and what to do next.
+<div align="center">
+
+**Khatwa** · خطوة · *a step*
+
+Prototype for research. Not a medical device. In an emergency, call **190**.
+
+</div>
