@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
@@ -70,6 +71,7 @@ class _LandingPageState extends State<LandingPage> {
         ],
         const SizedBox(height: 22),
         KNote(text: S.t(lang, 'report.disclaimer'), icon: Icons.info_outline_rounded),
+        if (kIsWeb) KNote(text: S.t(lang, 'demo.noRealData'), icon: Icons.science_outlined),
       ],
     );
 

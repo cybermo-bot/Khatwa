@@ -3,9 +3,9 @@
     "short_name": "Khatwa",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#F7F4EF",
+    "background_color": "#F4F7F8",
     "theme_color": "#083E45",
-    "description": "Surveillance guidee du pied diabetique",
+    "description": "Khatwa : le contrôle quotidien des pieds pour les personnes diabétiques, avec un soignant au bout de chaque alerte.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
@@ -31,5 +31,10 @@
             "type": "image/png",
             "purpose": "maskable"
         }
+    ],
+    "lang": "fr",
+    "categories": [
+        "health",
+        "medical"
     ]
 }

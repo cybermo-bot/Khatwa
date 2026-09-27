@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/auth_store.dart';
@@ -85,6 +86,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       children: [
         Text(S.t(lang, upgrading ? 'auth.guestUpgradeSub' : 'auth.signupSub'),
             style: K.body.copyWith(color: K.inkSoft)),
+        if (kIsWeb) ...[
+          const SizedBox(height: 10),
+          KBanner(text: S.t(lang, 'demo.noRealData'), icon: Icons.science_outlined),
+        ],
         const SizedBox(height: 18),
         KField(label: S.t(lang, 'auth.name'), controller: name),
         KField(

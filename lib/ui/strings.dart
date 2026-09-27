@@ -60,6 +60,12 @@ class S {
     'auth.err.exists': ['هذا الرقم مسجل من قبل', 'النمرة هذي مسجلة', 'Ce numéro est déjà enregistré', 'This number is already registered'],
     'auth.err.bad': ['البريد أو كلمة السر خاطئة', 'الإيمايل ولا كلمة السر غالطين', 'E-mail ou mot de passe incorrect', 'Wrong e-mail or password'],
     'auth.welcome': ['مرحبا', 'أهلا', 'Bonjour', 'Welcome'],
+    'demo.noRealData': [
+      'نسخة تجريبية: لا تُدخل بيانات حقيقية.',
+      'نسخة تجريبية: ما تدخّلش معلومات حقيقية.',
+      'Démo : n’entrez pas de données réelles.',
+      'Demo: do not enter real data.'
+    ],
     'auth.email': ['البريد الإلكتروني', 'الإيمايل', 'E-mail', 'E-mail'],
     'auth.identifier': [
       'البريد الإلكتروني (أو رقم الهاتف لحساب قديم)',
