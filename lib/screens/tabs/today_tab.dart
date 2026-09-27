@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/diet/diet_page.dart';
+import '../../features/messages/doctor_messages_page.dart';
 import '../../features/common.dart';
 import '../../data/auth_store.dart';
 import '../../data/case_store.dart';
@@ -102,6 +103,8 @@ class _TodayTabState extends State<TodayTab> {
                   onGlucose: () => _open(GlycemiaPage(language: lang)),
                 ),
               ),
+              const SizedBox(height: 12),
+              const KReveal(order: 3, child: DoctorMessagesCard()),
               const SizedBox(height: 12),
               KReveal(
                 order: 3,

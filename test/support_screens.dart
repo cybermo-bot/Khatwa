@@ -6,6 +6,7 @@ import 'package:diabetic_foot_app/data/learn_content.dart';
 import 'package:diabetic_foot_app/features/diet/diet_data.dart';
 import 'package:diabetic_foot_app/features/diet/diet_page.dart';
 import 'package:diabetic_foot_app/features/diet/diet_topics.dart';
+import 'package:diabetic_foot_app/features/messages/doctor_messages_page.dart';
 import 'package:diabetic_foot_app/features/twin/photo_sign_page.dart';
 import 'package:diabetic_foot_app/features/twin/scan_page.dart';
 import 'package:diabetic_foot_app/features/twin/twin_page.dart';
@@ -51,6 +52,8 @@ Future<void> setUpScreens() async {
 Map<String, Widget Function()> screens() {
   return <String, Widget Function()>{
     'onboarding': () => const OnboardingPage(),
+    'doctor messages': () => const DoctorMessagesPage(),
+    'doctor messages card': () => const Scaffold(body: DoctorMessagesCard()),
     'landing': () => const LandingPage(),
     'sign-in': () => const AuthPage(role: 'patient'),
     'sign-in doctor': () => const AuthPage(role: 'doctor'),

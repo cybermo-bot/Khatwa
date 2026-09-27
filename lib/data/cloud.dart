@@ -273,6 +273,16 @@ class KhatwaCloud extends ChangeNotifier {
     return db.from('messages').stream(primaryKey: ['id']).eq('patient_id', patientId!).order('created_at');
   }
 
+  /// This patient's record, updated live: the doctor sets `next_visit`.
+  Stream<Map<String, dynamic>?> myRecord() {
+    if (patientId == null) return const Stream.empty();
+    return db
+        .from('patients')
+        .stream(primaryKey: ['id'])
+        .eq('id', patientId!)
+        .map((rows) => rows.isEmpty ? null : rows.first);
+  }
+
   Future<void> sendMessage(String body) async {
     if (!await ensurePatient()) return;
     await db.from('messages').insert({'patient_id': patientId, 'sender': 'patient', 'body': body});
