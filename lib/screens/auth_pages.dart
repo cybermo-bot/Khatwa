@@ -180,9 +180,9 @@ class LandingVisual extends StatelessWidget {
                       autoRotateDelay: 0,
                       rotationPerSecond: '14deg',
                       cameraOrbit: '-150deg 60deg 105%',
-                      exposure: 1.25,
+                      exposure: 0.9,
                       shadowIntensity: 0,
-                      relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; }',
+                      relatedCss: 'model-viewer { --poster-color: transparent; background: transparent; } model-viewer::part(default-progress-bar) { display: none; }',
                     )
                   : Center(
                       child: KImage('hero_twin',

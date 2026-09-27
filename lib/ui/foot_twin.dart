@@ -154,6 +154,7 @@ class FootTwin extends StatelessWidget {
     final chip = K.isDark ? 'rgba(13,32,41,0.88)' : 'rgba(255,255,255,0.92)';
     return '''
 model-viewer { --poster-color: transparent; background: transparent; }
+model-viewer::part(default-progress-bar) { display: none; }
 .hs { display: flex; align-items: center; gap: 6px; pointer-events: none;
   transition: opacity 200ms; font-family: 'Readex Pro', system-ui, sans-serif; }
 .hs:not([data-visible]) { opacity: 0; }
@@ -203,7 +204,7 @@ model-viewer { --poster-color: transparent; background: transparent; }
           cameraOrbit: _orbit,
           minCameraOrbit: 'auto auto 60%',
           maxCameraOrbit: 'auto auto 180%',
-          exposure: 1.1,
+          exposure: src == null ? 0.9 : 1.1,
           shadowIntensity: 0,
           scale: side == FootSide.right && src == null ? '1 1 -1' : null,
           innerModelViewerHtml: hotspots,
