@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'app_theme.dart';
 
-/// An illustration from `assets/images/<name>.png`.
+/// An illustration from `assets/images/<name>.webp`.
 ///
 /// The images are made outside the code and some may not be there yet, so a
 /// missing file never breaks a screen: it shows a quiet glass tile with an
@@ -38,7 +38,7 @@ class KImage extends StatelessWidget {
     this.placeholder,
   });
 
-  static String path(String name) => 'assets/images/$name.png';
+  static String path(String name) => 'assets/images/$name.webp';
 
   /// The bundled asset paths, read once from the asset manifest.
   static final ValueNotifier<Set<String>?> _assets = ValueNotifier(null);
@@ -60,7 +60,7 @@ class KImage extends StatelessWidget {
     );
   }
 
-  /// Whether `assets/images/<name>.png` is bundled. Null until the manifest
+  /// Whether `assets/images/<name>.webp` is bundled. Null until the manifest
   /// has been read.
   static bool? exists(String name) => _assets.value?.contains(path(name));
 
