@@ -40,18 +40,16 @@ Future<void> main() async {
   runApp(const KhatwaApp());
 }
 
-/// The audience opens the web app from a QR code (`?demo`): a guest patient
-/// account is made on the spot, so the 3D twin and the voice assistant are one
-/// tap away. Guest accounts hold no real data. `?medecin` opens the doctor
-/// dashboard on the demo laptop (it then signs in to the shared data).
+/// `?medecin` opens the doctor dashboard on the demo laptop (it then signs in
+/// to the shared data). The audience's QR code (`?demo`) opens like any first
+/// visit, on the intro and then the profile choice, where "Continuer en
+/// invité" makes a guest patient in one tap. Guest accounts hold no real data.
 Future<void> _demoQuickStart() async {
   final q = Uri.base.queryParameters;
-  final doctor = q.containsKey('medecin');
-  if (!kIsWeb || !(q.containsKey('demo') || doctor) || AuthStore.instance.isSignedIn) return;
-  await AuthStore.instance.signInGuest(role: doctor ? 'doctor' : 'patient');
+  if (!kIsWeb || !q.containsKey('medecin') || AuthStore.instance.isSignedIn) return;
+  await AuthStore.instance.signInGuest(role: 'doctor');
   await CaseStore.instance.unlock();
   await KhatwaStore.instance.reload();
-  if (!doctor) unawaited(KhatwaCloud.instance.ensurePatient());
 }
 
 class KhatwaApp extends StatefulWidget {
