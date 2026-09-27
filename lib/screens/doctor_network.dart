@@ -470,6 +470,8 @@ class _DoctorLoginPageState
     final savedSpecialty =
         prefs.getString('doctor_specialty') ?? '';
 
+    if (!mounted) return;
+
     if (savedId == null ||
         savedPassword == null) {
       ScaffoldMessenger.of(context).showSnackBar(

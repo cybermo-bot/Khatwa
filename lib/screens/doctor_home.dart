@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/auth_store.dart';
+import '../doctor/screens/doctor_dashboard.dart';
 import '../data/case_store.dart';
 import '../data/fhir_export.dart';
 import '../data/triage.dart';
@@ -13,16 +14,70 @@ import 'patient_home.dart';
 import 'report_view.dart';
 import 'settings_page.dart';
 
-class DoctorHomePage extends StatefulWidget {
+/// Doctor home: the dashboard v2 (triage, patient view, public health).
+/// The cases sent from this device stay reachable from "Dossiers reçus".
+class DoctorHomePage extends StatelessWidget {
   final String language;
 
   const DoctorHomePage({super.key, required this.language});
 
   @override
-  State<DoctorHomePage> createState() => _DoctorHomePageState();
+  Widget build(BuildContext context) {
+    final account = AuthStore.instance.current;
+    final lang = appLanguage.value;
+    return DoctorDashboard(
+      subtitle: account == null
+          ? null
+          : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
+      actions: [
+        IconButton(
+          tooltip: 'Dossiers reçus',
+          icon: const Icon(Icons.inbox_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const DoctorCaseQueuePage()),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'tool.chat'),
+          icon: const Icon(Icons.forum_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => AiChatbotPage(language: lang, role: 'doctor'),
+            ),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'settings.title'),
+          icon: const Icon(Icons.settings_outlined, size: 21),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SettingsPage()),
+          ),
+        ),
+        IconButton(
+          tooltip: S.t(lang, 'auth.logout'),
+          icon: const Icon(Icons.logout_rounded, size: 20),
+          onPressed: () async {
+            CaseStore.instance.lock();
+            await AuthStore.instance.signOut();
+            if (context.mounted) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+        ),
+      ],
+    );
+  }
 }
 
-class _DoctorHomePageState extends State<DoctorHomePage> {
+/// The queue of cases submitted from this device (the first doctor screen).
+class DoctorCaseQueuePage extends StatefulWidget {
+  const DoctorCaseQueuePage({super.key});
+
+  @override
+  State<DoctorCaseQueuePage> createState() => _DoctorCaseQueuePageState();
+}
+
+class _DoctorCaseQueuePageState extends State<DoctorCaseQueuePage> {
   String filter = 'all'; // all | new | reviewed
 
   String get lang => appLanguage.value;
@@ -68,37 +123,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
           subtitle: account == null
               ? null
               : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
-          showBack: false,
-          actions: [
-            const LanguageButton(),
-            IconButton(
-              tooltip: S.t(lang, 'tool.chat'),
-              icon: const Icon(Icons.forum_outlined, size: 21),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => AiChatbotPage(language: lang, role: 'doctor'),
-                ),
-              ),
-            ),
-            IconButton(
-              tooltip: S.t(lang, 'settings.title'),
-              icon: const Icon(Icons.settings_outlined, size: 21),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsPage()),
-              ),
-            ),
-            IconButton(
-              tooltip: S.t(lang, 'auth.logout'),
-              icon: const Icon(Icons.logout_rounded, size: 20),
-              onPressed: () async {
-                CaseStore.instance.lock();
-                await AuthStore.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              },
-            ),
-          ],
+          actions: const [LanguageButton()],
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
