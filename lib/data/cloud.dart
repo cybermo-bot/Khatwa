@@ -140,6 +140,57 @@ class KhatwaCloud extends ChangeNotifier {
   /// The doctor's display name in the shared data, once signed in there.
   String? doctorName;
 
+  /// A patient's e-mail and password, checked by Supabase Auth, for a device
+  /// that has no copy of the account. Returns the saved profile (name, phone)
+  /// or null when the password is wrong, the account is a doctor's, or there
+  /// is no connection.
+  Future<Map<String, String>?> signInPatient(String email, String password) async {
+    if (!ready) return null;
+    try {
+      final res = await db.auth
+          .signInWithPassword(email: email.trim().toLowerCase(), password: password)
+          .timeout(const Duration(seconds: 20));
+      final meta = res.user?.userMetadata ?? const {};
+      if (res.user == null || meta['role'] == 'doctor') {
+        await db.auth.signOut();
+        return null;
+      }
+      resetPatient();
+      notifyListeners();
+      return {
+        if (meta['name'] is String) 'name': meta['name'] as String,
+        if (meta['phone'] is String) 'phone': meta['phone'] as String,
+      };
+    } catch (e) {
+      lastError = '$e';
+      return null;
+    }
+  }
+
+  /// Saves the password (hashed by Supabase) and the profile on the signed-in
+  /// patient's cloud account. Best effort: the account still works on this
+  /// device without it.
+  Future<bool> saveAccount({required String password, required String name, String phone = ''}) async {
+    final user = ready ? db.auth.currentUser : null;
+    if (user == null || user.isAnonymous) return false;
+    final data = {'name': name, 'phone': phone, 'role': 'patient'};
+    try {
+      await db.auth.updateUser(UserAttributes(password: password, data: data)).timeout(const Duration(seconds: 20));
+      return true;
+    } on AuthException {
+      // Same password as before: keep it, still save the profile.
+      try {
+        await db.auth.updateUser(UserAttributes(data: data)).timeout(const Duration(seconds: 20));
+        return true;
+      } catch (_) {
+        return false;
+      }
+    } catch (e) {
+      lastError = '$e';
+      return false;
+    }
+  }
+
   /// Sends a 6-digit sign-in code by e-mail (Supabase Auth). False when it
   /// could not be sent: no network, or the mail quota of the hour is used.
   Future<bool> sendEmailCode(String email) async {

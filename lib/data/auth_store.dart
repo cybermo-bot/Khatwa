@@ -179,7 +179,11 @@ class _Pending {
   final bool stay;
   final bool isNew;
   final bool upgrade;
-  const _Pending(this.account, this.key, this.stay, {this.isNew = false, this.upgrade = false});
+
+  /// Kept in memory until the code is confirmed, then saved to the account
+  /// in the cloud (hashed there) so the patient can sign in on any device.
+  final String? password;
+  const _Pending(this.account, this.key, this.stay, {this.isNew = false, this.upgrade = false, this.password});
 }
 
 class AuthStore extends ChangeNotifier {
@@ -580,7 +584,7 @@ class AuthStore extends ChangeNotifier {
         guest: false,
       );
     }
-    _pending = _Pending(account, key, stay, isNew: true, upgrade: guest != null);
+    _pending = _Pending(account, key, stay, isNew: true, upgrade: guest != null, password: password);
     return AuthError.none;
   }
 
@@ -631,6 +635,27 @@ class AuthStore extends ChangeNotifier {
       }
     }
 
+    // A patient on a device they never used: the account lives in the cloud.
+    // The password is checked there, the account is rebuilt here, and the
+    // e-mail code follows as on any new device.
+    if (account == null && role == 'patient' && id.contains('@')) {
+      final profile = await KhatwaCloud.instance.signInPatient(id, password);
+      if (profile != null) {
+        final key = _storeKey();
+        final made = _newAccount(
+          role: role,
+          name: profile['name'] ?? id.split('@').first,
+          email: id,
+          phone: profile['phone'] ?? '',
+          password: password,
+          key: key,
+        );
+        await _clearFailures(id, role);
+        _pending = _Pending(made, key, stay, isNew: true, password: password);
+        return AuthError.needCode;
+      }
+    }
+
     if (account == null) {
       await _registerFailure(id, role);
       return lockedSeconds(id, role) > 0 ? AuthError.locked : AuthError.bad;
@@ -672,7 +697,7 @@ class AuthStore extends ChangeNotifier {
 
     final needsCode = account.email.isNotEmpty && !cloudVerified && !isTrusted(account.id);
     if (needsCode) {
-      _pending = _Pending(account, key, stay);
+      _pending = _Pending(account, key, stay, password: password);
       return AuthError.needCode;
     }
     await _open(account, key, stay: stay);
@@ -699,6 +724,12 @@ class AuthStore extends ChangeNotifier {
     if (pending.isNew) {
       _replace(pending.account);
       await _persist();
+    }
+    // The code opened a cloud session: the password and the profile go with
+    // the account there, so it opens from any device (older accounts too).
+    final password = pending.password;
+    if (password != null && pending.account.role == 'patient') {
+      await KhatwaCloud.instance.saveAccount(password: password, name: pending.account.name, phone: pending.account.phone);
     }
     await _open(pending.account, pending.key, stay: pending.stay || pending.upgrade);
     return AuthError.none;
