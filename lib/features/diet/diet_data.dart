@@ -60,6 +60,15 @@ class Food {
   /// Other spellings people search with (transliterations).
   final List<String> aliases;
 
+  /// The portion without scales: a hand size, spoons or a count.
+  final L? hand;
+
+  /// For foods one counts (dates, fruits, pieces): how many make a portion,
+  /// and the word for one and for several.
+  final int? count;
+  final L? one;
+  final L? many;
+
   const Food({
     required this.id,
     required this.name,
@@ -69,10 +78,27 @@ class Food {
     required this.level,
     required this.swap,
     this.aliases = const [],
+    this.hand,
+    this.count,
+    this.one,
+    this.many,
   });
 
   /// Carbohydrate for a number of portions, rounded to the gram.
   int carbsFor(double portions) => (carbs * portions).round();
+
+  /// "6 dattes" for a number of portions (to the half), or null when the food
+  /// is not counted. Arabic keeps the singular from 11 on, as in "15 حبة".
+  String? countFor(double portions) {
+    final c = count;
+    if (c == null || one == null || many == null) return null;
+    final n = (c * portions * 2).round() / 2;
+    final whole = n == n.roundToDouble();
+    final shown = whole ? '${n.round()}' : n.toStringAsFixed(1).replaceAll('.', ',');
+    final arabic = langCode() == 'ar' || langCode() == 'aeb';
+    final singular = n <= 1 || (arabic && whole && n >= 11);
+    return '$shown ${(singular ? one! : many!).text}';
+  }
 }
 
 /// Folds accents, Arabic vowel marks and letter variants, so "fève",
@@ -123,6 +149,7 @@ const tunisianFoods = <Food>[
         ar: 'ربع في الوجبة مع كثير من الخضار. الخبز الكامل أفضل.',
         en: 'A quarter per meal, with plenty of vegetables. Wholemeal bread is even better.'),
     aliases: ['tabona', 'tabounna'],
+    hand: L('Grand comme la paume de votre main', aeb: 'قد كف يدك', ar: 'بحجم كف يدك', en: 'The size of your palm'),
   ),
   Food(
     id: 'baguette',
@@ -137,6 +164,7 @@ const tunisianFoods = <Food>[
         ar: 'فضّل الخبز الكامل أو خبز الشعير بنفس الكمية.',
         en: 'Prefer wholemeal or barley bread, in the same amount.'),
     aliases: ['pain blanc', 'bagett', 'baget'],
+    hand: L('Un morceau long comme votre main', aeb: 'طرف طولو قد يدك', ar: 'قطعة بطول يدك', en: 'A piece as long as your hand'),
   ),
   Food(
     id: 'whole_bread',
@@ -151,6 +179,10 @@ const tunisianFoods = <Food>[
         ar: 'أفضل خبز: أليافه تجعل السكر يرتفع ببطء.',
         en: 'The best bread: its fibre makes blood sugar rise more slowly.'),
     aliases: ['pain integral', 'pain d orge', 'khobz kamel'],
+    hand: L('Chaque tranche : la paume de votre main', aeb: 'كل طرف قد كف يدك', ar: 'كل شريحة بحجم كف يدك', en: 'Each slice: the size of your palm'),
+    count: 2,
+    one: L('tranche', aeb: 'طرف', ar: 'شريحة', en: 'slice'),
+    many: L('tranches', aeb: 'طرفات', ar: 'شرائح', en: 'slices'),
   ),
   // ---------------------------------------------------------------- dishes
   Food(
@@ -166,6 +198,7 @@ const tunisianFoods = <Food>[
         ar: 'صحن صغير مع كثير من الخضار واللحم أو السمك. كسكسي الشعير (البلبولة) أفضل.',
         en: 'A small plate, with plenty of vegetables and the meat or fish. Barley couscous (belboula) is better.'),
     aliases: ['kouskous', 'kousksi', 'couscous orge', 'belboula'],
+    hand: L('La taille de votre poing fermé, environ 5 cuillères à soupe', aeb: 'قد قبضة يدك، قريب 5 مغارف كبار', ar: 'بحجم قبضة يدك، نحو 5 ملاعق كبيرة', en: 'The size of your fist, about 5 tablespoons'),
   ),
   Food(
     id: 'makrouna',
@@ -180,6 +213,7 @@ const tunisianFoods = <Food>[
         ar: 'صحن صغير غير مطهو كثيرًا، مع سلطة قبله. المعكرونة الكاملة أفضل.',
         en: 'A small plate cooked al dente, with a salad first. Wholemeal pasta is better.'),
     aliases: ['macaroni', 'pates', 'makarouna', 'spaghetti'],
+    hand: L('La taille de votre poing fermé, environ 5 cuillères à soupe', aeb: 'قد قبضة يدك، قريب 5 مغارف كبار', ar: 'بحجم قبضة يدك، نحو 5 ملاعق كبيرة', en: 'The size of your fist, about 5 tablespoons'),
   ),
   Food(
     id: 'rice',
@@ -194,6 +228,7 @@ const tunisianFoods = <Food>[
         ar: 'صحن صغير مع الخضار. الأرز البني أو البرغل أفضل.',
         en: 'A small plate, with vegetables. Brown rice or bulgur is better.'),
     aliases: ['rouz', 'roz'],
+    hand: L('La taille de votre poing fermé, environ 5 cuillères à soupe', aeb: 'قد قبضة يدك، قريب 5 مغارف كبار', ar: 'بحجم قبضة يدك، نحو 5 ملاعق كبيرة', en: 'The size of your fist, about 5 tablespoons'),
   ),
   Food(
     id: 'lablabi',
@@ -209,6 +244,7 @@ const tunisianFoods = <Food>[
         ar: 'طبق بقوليات جيد: ضع قليلًا من الخبز، قطعة صغيرة تكفي.',
         en: 'A good legume dish: put little bread in it, a small piece is enough.'),
     aliases: ['leblebi', 'lablebi'],
+    hand: L('Un bol comme vos deux mains en creux', aeb: 'زلافة قد يديك الزوز ملمومين', ar: 'وعاء بحجم كفّيك مضمومتين', en: 'A bowl the size of your two cupped hands'),
   ),
   Food(
     id: 'chorba',
@@ -224,6 +260,7 @@ const tunisianFoods = <Food>[
         ar: 'مقبلات جيدة، خاصة مع الخضار واللحم قليل الدهن. دون خبز إضافي.',
         en: 'A good starter, especially with vegetables and lean meat. No extra bread.'),
     aliases: ['chorba frik', 'shorba', 'soupe'],
+    hand: L('Un bol moyen', aeb: 'زلافة متوسطة', ar: 'وعاء متوسط', en: 'A medium bowl'),
   ),
   Food(
     id: 'brik',
@@ -233,11 +270,12 @@ const tunisianFoods = <Food>[
     grams: 90,
     carbs: 14,
     level: FoodLevel.rarely,
-    swap: L('Frite, elle est riche en huile : une seule, rarement, bien égouttée. Mieux : l’œuf et le thon avec une salade.',
-        aeb: 'مقلية وفيها برشا زيت: وحدة برك، مرة مرة، مصفّية مليح. خير: العظم والتن مع سلاطة.',
-        ar: 'مقلية وغنية بالزيت: واحدة فقط ونادرًا، مصفّاة جيدًا. الأفضل: البيض والتونة مع سلطة.',
-        en: 'Fried, so rich in oil: just one, rarely, well drained. Better: the egg and tuna with a salad.'),
+    swap: L('Frite : une seule, bien égouttée, pour le plaisir. L’œuf et le thon avec une salade font aussi un bon repas.', aeb: 'مقلية: وحدة، مصفّية مليح، للبنّة. العظم والتن مع سلاطة ماكلة باهية زادة.', ar: 'مقلية: واحدة مصفّاة جيدًا للمتعة. البيض والتونة مع سلطة وجبة جيدة أيضًا.', en: 'Fried: just one, well drained, for pleasure. Egg and tuna with a salad also make a good meal.'),
     aliases: ['brick', 'brik a l oeuf'],
+    hand: L('Une seule, grande comme votre main', aeb: 'وحدة، قد يدك', ar: 'واحدة بحجم يدك', en: 'One, the size of your hand'),
+    count: 1,
+    one: L('brik', aeb: 'بريكة', ar: 'بريكة', en: 'brik'),
+    many: L('briks', aeb: 'بريكات', ar: 'بريكات', en: 'briks'),
   ),
   Food(
     id: 'fricasse',
@@ -248,11 +286,9 @@ const tunisianFoods = <Food>[
     grams: 120,
     carbs: 40,
     level: FoodLevel.rarely,
-    swap: L('Pain frit : rarement, un seul. Mieux : un sandwich de pain complet au thon et aux légumes.',
-        aeb: 'خبز مقلي: مرة مرة، واحد برك. خير: كسكروت خبز كامل بالتن والخضرة.',
-        ar: 'خبز مقلي: نادرًا وواحد فقط. الأفضل: شطيرة خبز كامل بالتونة والخضار.',
-        en: 'Fried bread: rarely, just one. Better: a wholemeal sandwich with tuna and vegetables.'),
+    swap: L('Pain frit : un seul, de temps en temps. Un sandwich de pain complet au thon et aux légumes est une bonne alternative.', aeb: 'خبز مقلي: واحد، من وقت لوقت. كسكروت خبز كامل بالتن والخضرة بديل باهي.', ar: 'خبز مقلي: واحد من حين لآخر. شطيرة خبز كامل بالتونة والخضار بديل جيد.', en: 'Fried bread: one, now and then. A wholemeal sandwich with tuna and vegetables is a good alternative.'),
     aliases: ['fricasse', 'friccassee'],
+    hand: L('Un seul, petit comme votre poing', aeb: 'واحد صغير قد قبضة يدك', ar: 'واحد صغير بحجم قبضة يدك', en: 'One small one, the size of your fist'),
   ),
   Food(
     id: 'mlawi',
@@ -262,11 +298,9 @@ const tunisianFoods = <Food>[
     grams: 100,
     carbs: 46,
     level: FoodLevel.rarely,
-    swap: L('Riche en farine blanche et en huile : un demi, rarement, avec une garniture de légumes et d’œuf.',
-        aeb: 'فيه برشا فارينة وزيت: نص، مرة مرة، بالخضرة والعظم.',
-        ar: 'غني بالدقيق الأبيض والزيت: نصف واحد نادرًا، مع حشوة خضار وبيض.',
-        en: 'Rich in white flour and oil: half of one, rarely, filled with vegetables and egg.'),
+    swap: L('Farine blanche et huile : un demi, avec une garniture de légumes et d’œuf.', aeb: 'فارينة بيضاء وزيت: نص، بالخضرة والعظم.', ar: 'دقيق أبيض وزيت: نصف واحد مع حشوة خضار وبيض.', en: 'White flour and oil: half of one, filled with vegetables and egg.'),
     aliases: ['mlaoui', 'malawi'],
+    hand: L('Un demi, grand comme votre main', aeb: 'نص، قد يدك', ar: 'نصف واحد بحجم يدك', en: 'Half of one, the size of your hand'),
   ),
   Food(
     id: 'chapati',
@@ -281,6 +315,7 @@ const tunisianFoods = <Food>[
         ar: 'نصفه، مع سلطة وبيض أكثر، وبطاطا مقلية ومايونيز أقل.',
         en: 'Half of one, with more salad and egg, fewer chips and less mayonnaise.'),
     aliases: ['chapatti', 'chappati'],
+    hand: L('Un demi, grand comme votre main', aeb: 'نص، قد يدك', ar: 'نصف واحد بحجم يدك', en: 'Half of one, the size of your hand'),
   ),
   Food(
     id: 'bsissa',
@@ -296,6 +331,7 @@ const tunisianFoods = <Food>[
         ar: 'دون سكر مضاف ومع قليل من زيت الزيتون: فطور جيد بكمية محسوبة.',
         en: 'With no added sugar and a drizzle of olive oil: a good breakfast, in a measured portion.'),
     aliases: ['bsisa', 'bssissa'],
+    hand: L('3 cuillères à soupe', aeb: '3 مغارف كبار', ar: '3 ملاعق كبيرة', en: '3 tablespoons'),
   ),
   Food(
     id: 'assida',
@@ -310,6 +346,7 @@ const tunisianFoods = <Food>[
         ar: 'للمناسبات: بضع ملاعق دون إضافة عسل أو سكر.',
         en: 'For celebrations: a few spoonfuls, without extra honey or sugar.'),
     aliases: ['assida zgougou', 'aassida'],
+    hand: L('La taille de votre poing fermé', aeb: 'قد قبضة يدك', ar: 'بحجم قبضة يدك', en: 'The size of your fist'),
   ),
   Food(
     id: 'potato',
@@ -324,6 +361,7 @@ const tunisianFoods = <Food>[
         ar: 'تُحسب من النشويات لا من الخضار. مسلوقة أو في الفرن أفضل من المقلية.',
         en: 'It counts as a starch, not a vegetable. Boiled or baked rather than fried.'),
     aliases: ['batata', 'patate', 'frites'],
+    hand: L('La taille de votre poing fermé', aeb: 'قد قبضة يدك', ar: 'بحجم قبضة يدك', en: 'The size of your fist'),
   ),
   // ---------------------------------------------------------------- legumes
   Food(
@@ -339,6 +377,7 @@ const tunisianFoods = <Food>[
         ar: 'غني بالألياف والبروتين: نشويات جيدة بدل الخبز.',
         en: 'Rich in fibre and protein: a good starch, instead of bread.'),
     aliases: ['hommos', 'hummus', 'hommes'],
+    hand: L('4 cuillères à soupe, le creux de votre main', aeb: '4 مغارف كبار، قد كف يدك', ar: '4 ملاعق كبيرة، بحجم راحة يدك', en: '4 tablespoons, one cupped hand'),
   ),
   Food(
     id: 'lentils',
@@ -353,6 +392,7 @@ const tunisianFoods = <Food>[
         ar: 'ممتاز: ألياف وبروتين. مع الخضار ودون كثير من الخبز.',
         en: 'Excellent: fibre and protein. With vegetables, without much bread.'),
     aliases: ['adas', 'ades'],
+    hand: L('La taille de votre poing fermé', aeb: 'قد قبضة يدك', ar: 'بحجم قبضة يدك', en: 'The size of your fist'),
   ),
   Food(
     id: 'fava',
@@ -367,6 +407,7 @@ const tunisianFoods = <Food>[
         ar: 'نشويات جيدة غنية بالألياف، مع قليل من زيت الزيتون والكمون.',
         en: 'A good fibre-rich starch, with a drizzle of olive oil and cumin.'),
     aliases: ['foul', 'ful', 'feves', 'fava'],
+    hand: L('La taille de votre poing fermé', aeb: 'قد قبضة يدك', ar: 'بحجم قبضة يدك', en: 'The size of your fist'),
   ),
   // ---------------------------------------------------------------- proteins
   Food(
@@ -382,6 +423,10 @@ const tunisianFoods = <Food>[
         ar: 'تقريبًا دون سكريات. مسلوق أو عجة بالخضار أفضل من المقلي.',
         en: 'Almost no carbohydrate. Boiled, poached or in an omelette with vegetables rather than fried.'),
     aliases: ['oeuf', 'oeufs', 'adhm', 'bid'],
+    hand: L('2 œufs', aeb: 'زوز عظمات', ar: 'بيضتان', en: '2 eggs'),
+    count: 2,
+    one: L('œuf', aeb: 'عظمة', ar: 'بيضة', en: 'egg'),
+    many: L('œufs', aeb: 'عظمات', ar: 'بيضات', en: 'eggs'),
   ),
   Food(
     id: 'fish',
@@ -396,6 +441,7 @@ const tunisianFoods = <Food>[
         ar: 'دون سكريات. مشوي أو في الفرن، مرتين في الأسبوع أو أكثر (سردين، إسقمري).',
         en: 'No carbohydrate. Grilled or baked, twice a week or more (sardines, mackerel).'),
     aliases: ['hout', 'sardine', 'thon'],
+    hand: L('La taille et l’épaisseur de la paume de votre main', aeb: 'قد كف يدك في الطول والغلظ', ar: 'بحجم كف يدك وسُمكه', en: 'The size and thickness of your palm'),
   ),
   Food(
     id: 'chicken',
@@ -410,6 +456,7 @@ const tunisianFoods = <Food>[
         ar: 'دون سكريات. دون الجلد، مشوي أو بصلصة خفيفة.',
         en: 'No carbohydrate. Without the skin, grilled or in a light sauce.'),
     aliases: ['djej', 'dajaj', 'volaille'],
+    hand: L('La taille et l’épaisseur de la paume de votre main', aeb: 'قد كف يدك في الطول والغلظ', ar: 'بحجم كف يدك وسُمكه', en: 'The size and thickness of your palm'),
   ),
   // ---------------------------------------------------------------- dairy, fats
   Food(
@@ -425,6 +472,7 @@ const tunisianFoods = <Food>[
         ar: 'نصف دسم ودون سكر مضاف. فيه سكر طبيعي (اللاكتوز).',
         en: 'Semi-skimmed, with no added sugar. It contains natural sugar (lactose).'),
     aliases: ['halib', 'lben'],
+    hand: L('Un verre à eau', aeb: 'كاس ماء', ar: 'كوب ماء', en: 'A water glass'),
   ),
   Food(
     id: 'yogurt',
@@ -439,6 +487,7 @@ const tunisianFoods = <Food>[
         ar: 'الطبيعي أفضل من المحلى أو بالفواكه (فيه ضعفان إلى ثلاثة أضعاف).',
         en: 'Plain rather than sweetened or fruit yogurt (which has 2 to 3 times more).'),
     aliases: ['yaourt', 'yoghourt', 'rayeb'],
+    hand: L('Un pot', aeb: 'ياغورت واحد', ar: 'علبة واحدة', en: 'One pot'),
   ),
   Food(
     id: 'cheese',
@@ -453,6 +502,7 @@ const tunisianFoods = <Food>[
         ar: 'قليل السكريات لكنه غني بالملح والدهون: قطعة في اليوم.',
         en: 'Little carbohydrate, but salt and fat: one piece a day.'),
     aliases: ['fromaj', 'jben', 'ricotta'],
+    hand: L('La taille de vos deux pouces', aeb: 'قد صبعيك الكبار الزوز', ar: 'بحجم إبهاميك', en: 'The size of your two thumbs'),
   ),
   Food(
     id: 'olive_oil',
@@ -467,6 +517,7 @@ const tunisianFoods = <Food>[
         ar: 'أفضل دهون، لكنها غنية جدًا بالسعرات: قِس بالملعقة.',
         en: 'The best fat, but very rich in calories: measure it by the spoon.'),
     aliases: ['huile', 'zit', 'zitouna'],
+    hand: L('1 cuillère à soupe, la taille de votre pouce', aeb: 'مغرفة كبيرة، قد صبعك الكبير', ar: 'ملعقة كبيرة، بحجم إبهامك', en: '1 tablespoon, the size of your thumb'),
   ),
   // ---------------------------------------------------------------- fruits
   Food(
@@ -477,11 +528,12 @@ const tunisianFoods = <Food>[
     grams: 21,
     carbs: 16,
     level: FoodLevel.measured,
-    swap: L('Très sucrées : 2 ou 3, pas plus, de préférence avec des amandes ou un verre de lait.',
-        aeb: 'حلوة برشا: 2 ولا 3، موش أكثر، خير مع لوز ولا كاس حليب.',
-        ar: 'حلوة جدًا: 2 أو 3 لا أكثر، ويفضل مع اللوز أو كوب حليب.',
-        en: 'Very sweet: 2 or 3, no more, ideally with almonds or a glass of milk.'),
+    swap: L('Deux ou trois à la fois font une portion. Avec quelques amandes ou un verre de lait, c’est encore mieux.', aeb: 'زوز ولا ثلاثة في المرة هوما كمية. مع شوية لوز ولا كاس حليب خير.', ar: 'تمرتان أو ثلاث في المرة تعادل حصة. مع بعض اللوز أو كوب حليب أفضل.', en: 'Two or three at a time make one portion. With a few almonds or a glass of milk, even better.'),
     aliases: ['tmar', 'deglet', 'datte'],
+    hand: L('3 dattes', aeb: '3 تمرات', ar: '3 تمرات', en: '3 dates'),
+    count: 3,
+    one: L('datte', aeb: 'تمرة', ar: 'تمرة', en: 'date'),
+    many: L('dattes', aeb: 'تمرات', ar: 'تمرات', en: 'dates'),
   ),
   Food(
     id: 'figs',
@@ -496,6 +548,10 @@ const tunisianFoods = <Food>[
         ar: 'تينتان طازجتان تعادلان حصة فاكهة. التين المجفف أحلى بكثير: واحدة فقط.',
         en: 'Two fresh ones make one fruit. Dried figs are much sweeter: just one.'),
     aliases: ['karmous', 'figue'],
+    hand: L('2 figues', aeb: 'زوز كرموسات', ar: 'تينتان', en: '2 figs'),
+    count: 2,
+    one: L('figue', aeb: 'كرموسة', ar: 'تينة', en: 'fig'),
+    many: L('figues', aeb: 'كرموسات', ar: 'تينات', en: 'figs'),
   ),
   Food(
     id: 'grapes',
@@ -510,6 +566,7 @@ const tunisianFoods = <Food>[
         ar: 'عنقود صغير، بعد الوجبة أفضل من تناوله وحده.',
         en: 'A small bunch, after a meal rather than on its own.'),
     aliases: ['aneb', 'raisins'],
+    hand: L('Environ 15 grains, ce qui tient dans votre main', aeb: 'قريب 15 حبة، اللي يشدّو كفّك', ar: 'نحو 15 حبة، ما يسعه كف يدك', en: 'About 15 grapes, what fits in your hand'),
   ),
   Food(
     id: 'watermelon',
@@ -519,11 +576,9 @@ const tunisianFoods = <Food>[
     grams: 250,
     carbs: 19,
     level: FoodLevel.measured,
-    swap: L('Pleine d’eau, mais elle fait monter vite la glycémie : une tranche, pas la moitié du fruit.',
-        aeb: 'فيه برشا ماء، أما يطلّع السكر بالخف: طرف برك، موش نص دلاعة.',
-        ar: 'غني بالماء لكنه يرفع السكر بسرعة: شريحة واحدة لا نصف البطيخة.',
-        en: 'Full of water, but it raises blood sugar fast: one slice, not half the fruit.'),
+    swap: L('Rafraîchissante et pleine d’eau : une belle tranche fait une portion. Au repas, elle fait monter le sucre moins vite que seule.', aeb: 'تبرّد وفيها برشا ماء: طرف مزيان هو كمية. مع الماكلة يطلّع السكر بشوية أكثر ملي وحدها.', ar: 'منعشة وغنية بالماء: شريحة جيدة تعادل حصة. مع الوجبة ترفع السكر أبطأ مما لو أُكلت وحدها.', en: 'Refreshing and full of water: a good slice is one portion. With a meal it raises sugar more slowly than on its own.'),
     aliases: ['dellaa', 'dala', 'pasteque'],
+    hand: L('Une tranche comme vos deux mains ouvertes', aeb: 'طرف قد يديك الزوز محلولين', ar: 'شريحة بحجم يديك مفتوحتين', en: 'A slice the size of your two open hands'),
   ),
   Food(
     id: 'melon',
@@ -538,6 +593,7 @@ const tunisianFoods = <Food>[
         ar: 'شريحة كتحلية تعادل حصة فاكهة.',
         en: 'One slice as dessert counts as a fruit.'),
     aliases: ['batikh'],
+    hand: L('Une tranche comme votre main ouverte', aeb: 'طرف قد يدك محلولة', ar: 'شريحة بحجم يدك المفتوحة', en: 'A slice the size of your open hand'),
   ),
   Food(
     id: 'orange',
@@ -552,6 +608,187 @@ const tunisianFoods = <Food>[
         ar: 'تناول الثمرة كاملة بدل العصير: الألياف تبطئ السكر.',
         en: 'Eat the whole fruit rather than juice: the fibre slows the sugar down.'),
     aliases: ['bordgan', 'burtugal', 'clementine'],
+    hand: L('1 orange, comme votre poing', aeb: 'برتقالة قد قبضة يدك', ar: 'برتقالة بحجم قبضة يدك', en: '1 orange, the size of your fist'),
+    count: 1,
+    one: L('orange', aeb: 'برتقالة', ar: 'برتقالة', en: 'orange'),
+    many: L('oranges', aeb: 'برتقالات', ar: 'برتقالات', en: 'oranges'),
+  ),
+  Food(
+    id: 'apple',
+    // USDA: Apples, raw, with skin: 13.8 g/100 g. A small apple ≈ 130 g.
+    name: L('Pomme', aeb: 'تفاح', ar: 'التفاح', en: 'Apple'),
+    portion: L('1 petite pomme (130 g)', aeb: 'تفاحة صغيرة (130 غ)', ar: 'تفاحة صغيرة (130 غ)', en: '1 small apple (130 g)'),
+    grams: 130,
+    carbs: 18,
+    level: FoodLevel.measured,
+    swap: L('Un bon fruit à croquer, avec la peau bien lavée : ses fibres ralentissent le sucre.', aeb: 'غلة باهية تتقرمش، بقشرتها مغسولة مليح: الألياف يخلّيو السكر يطلع بشوية.', ar: 'فاكهة جيدة تؤكل بقشرها المغسول جيدًا: أليافها تبطئ السكر.', en: 'A good fruit to crunch, with the skin well washed: its fibre slows the sugar.'),
+    aliases: ['toffeh', 'tfeh', 'pomme'],
+    hand: L('1 pomme, comme votre poing', aeb: 'تفاحة قد قبضة يدك', ar: 'تفاحة بحجم قبضة يدك', en: '1 apple, the size of your fist'),
+    count: 1,
+    one: L('pomme', aeb: 'تفاحة', ar: 'تفاحة', en: 'apple'),
+    many: L('pommes', aeb: 'تفاحات', ar: 'تفاحات', en: 'apples'),
+  ),
+  Food(
+    id: 'pear',
+    // USDA: Pears, raw: 15.2 g/100 g. A small pear ≈ 140 g.
+    name: L('Poire', aeb: 'إنجاص', ar: 'الإجاص', en: 'Pear'),
+    portion: L('1 petite poire (140 g)', aeb: 'إنجاصة صغيرة (140 غ)', ar: 'إجاصة صغيرة (140 غ)', en: '1 small pear (140 g)'),
+    grams: 140,
+    carbs: 21,
+    level: FoodLevel.measured,
+    swap: L('Avec la peau, mûre à point : un bon dessert.', aeb: 'بقشرتها، طايبة على قدّها: ديسار باهي.', ar: 'بقشرها وناضجة باعتدال: تحلية جيدة.', en: 'With the skin, just ripe: a good dessert.'),
+    aliases: ['inges', 'anjas', 'poire'],
+    hand: L('1 poire, comme votre poing', aeb: 'إنجاصة قد قبضة يدك', ar: 'إجاصة بحجم قبضة يدك', en: '1 pear, the size of your fist'),
+    count: 1,
+    one: L('poire', aeb: 'إنجاصة', ar: 'إجاصة', en: 'pear'),
+    many: L('poires', aeb: 'إنجاصات', ar: 'إجاصات', en: 'pears'),
+  ),
+  Food(
+    id: 'banana',
+    // USDA: Bananas, raw: 22.8 g/100 g. A small banana ≈ 100 g peeled.
+    name: L('Banane', aeb: 'بنان', ar: 'الموز', en: 'Banana'),
+    portion: L('1 petite banane (100 g)', aeb: 'بنانة صغيرة (100 غ)', ar: 'موزة صغيرة (100 غ)', en: '1 small banana (100 g)'),
+    grams: 100,
+    carbs: 23,
+    level: FoodLevel.measured,
+    swap: L('Plus sucrée que d’autres fruits : une petite fait une portion, un peu verte c’est encore mieux.', aeb: 'أحلى من غلال أخرى: وحدة صغيرة هي كمية، وكي تكون شوية خضراء خير.', ar: 'أحلى من فواكه أخرى: واحدة صغيرة حصة، والأقل نضجًا أفضل.', en: 'Sweeter than some fruits: a small one is a portion, a little green is even better.'),
+    aliases: ['banan', 'mouz', 'banane'],
+    hand: L('1 petite banane, ou la moitié d’une grande', aeb: 'بنانة صغيرة، ولا نص كبيرة', ar: 'موزة صغيرة أو نصف كبيرة', en: '1 small banana, or half a large one'),
+    count: 1,
+    one: L('banane', aeb: 'بنانة', ar: 'موزة', en: 'banana'),
+    many: L('bananes', aeb: 'بنانات', ar: 'موزات', en: 'bananas'),
+  ),
+  Food(
+    id: 'pomegranate',
+    // USDA: Pomegranates, raw: 18.7 g/100 g. Seeds of half a fruit ≈ 100 g.
+    name: L('Grenade', aeb: 'رمان', ar: 'الرمان', en: 'Pomegranate'),
+    portion: L('Les grains d’½ grenade (100 g)', aeb: 'حب نص رمانة (100 غ)', ar: 'حبوب نصف رمانة (100 غ)', en: 'Seeds of ½ pomegranate (100 g)'),
+    grams: 100,
+    carbs: 19,
+    level: FoodLevel.measured,
+    swap: L('Plein de bonnes choses : les grains valent mieux que le jus.', aeb: 'فيه برشا خير: الحب خير من العصير.', ar: 'مليء بالفوائد: الحبوب أفضل من العصير.', en: 'Full of good things: the seeds are better than the juice.'),
+    aliases: ['roummen', 'romman', 'grenade'],
+    hand: L('Une demi-grenade, ce qui tient dans votre main en creux', aeb: 'نص رمانة، اللي يشدّو كفّك', ar: 'نصف رمانة، ما تسعه راحة يدك', en: 'Half a pomegranate, what fits in your cupped hand'),
+  ),
+  Food(
+    id: 'clementine',
+    // USDA: Clementines, raw: 12.0 g/100 g. Two small ones ≈ 150 g.
+    name: L('Clémentines', aeb: 'مندارين', ar: 'اليوسفي', en: 'Clementines'),
+    portion: L('2 petites clémentines (150 g)', aeb: 'زوز مندارين صغار (150 غ)', ar: 'حبتا يوسفي صغيرتان (150 غ)', en: '2 small clementines (150 g)'),
+    grams: 150,
+    carbs: 18,
+    level: FoodLevel.measured,
+    swap: L('Deux petites font une portion. Parfaites en collation l’hiver.', aeb: 'زوز صغار هوما كمية. باهيين بين الماكلات في الشتاء.', ar: 'اثنتان صغيرتان حصة. مثاليتان كوجبة خفيفة في الشتاء.', en: 'Two small ones make a portion. Perfect as a winter snack.'),
+    aliases: ['mandarine', 'mandarin', 'clementine', 'youssefi'],
+    hand: L('2 clémentines', aeb: 'زوز مندارين', ar: 'حبتا يوسفي', en: '2 clementines'),
+    count: 2,
+    one: L('clémentine', aeb: 'مندارينة', ar: 'حبة يوسفي', en: 'clementine'),
+    many: L('clémentines', aeb: 'مندارينات', ar: 'حبات يوسفي', en: 'clementines'),
+  ),
+  Food(
+    id: 'peach',
+    // USDA: Peaches, yellow, raw: 9.5 g/100 g. A medium peach ≈ 150 g.
+    name: L('Pêche', aeb: 'خوخ', ar: 'الخوخ', en: 'Peach'),
+    portion: L('1 pêche moyenne (150 g)', aeb: 'خوخة متوسطة (150 غ)', ar: 'خوخة متوسطة (150 غ)', en: '1 medium peach (150 g)'),
+    grams: 150,
+    carbs: 14,
+    level: FoodLevel.measured,
+    swap: L('Un fruit d’été léger : une pêche moyenne fait une portion.', aeb: 'غلة صيف خفيفة: خوخة متوسطة هي كمية.', ar: 'فاكهة صيفية خفيفة: خوخة متوسطة حصة.', en: 'A light summer fruit: one medium peach is a portion.'),
+    aliases: ['khoukh', 'peche'],
+    hand: L('1 pêche, comme votre poing', aeb: 'خوخة قد قبضة يدك', ar: 'خوخة بحجم قبضة يدك', en: '1 peach, the size of your fist'),
+    count: 1,
+    one: L('pêche', aeb: 'خوخة', ar: 'خوخة', en: 'peach'),
+    many: L('pêches', aeb: 'خوخات', ar: 'خوخات', en: 'peaches'),
+  ),
+  Food(
+    id: 'apricot',
+    // USDA: Apricots, raw: 11.1 g/100 g. One apricot ≈ 35 g.
+    name: L('Abricots', aeb: 'مشماش', ar: 'المشمش', en: 'Apricots'),
+    portion: L('3 abricots (105 g)', aeb: '3 مشماشات (105 غ)', ar: '3 حبات مشمش (105 غ)', en: '3 apricots (105 g)'),
+    grams: 105,
+    carbs: 12,
+    level: FoodLevel.measured,
+    swap: L('Trois frais font une portion. Secs, ils sont bien plus sucrés : deux suffisent.', aeb: 'ثلاثة طريين هوما كمية. الشايح أحلى برشا: زوز يكفيو.', ar: 'ثلاث حبات طازجة حصة. المجفف أحلى بكثير: حبتان تكفيان.', en: 'Three fresh ones make a portion. Dried, they are much sweeter: two are enough.'),
+    aliases: ['mechmech', 'abricot'],
+    hand: L('3 abricots', aeb: '3 مشماشات', ar: '3 حبات مشمش', en: '3 apricots'),
+    count: 3,
+    one: L('abricot', aeb: 'مشماشة', ar: 'حبة مشمش', en: 'apricot'),
+    many: L('abricots', aeb: 'مشماشات', ar: 'حبات مشمش', en: 'apricots'),
+  ),
+  Food(
+    id: 'plum',
+    // USDA: Plums, raw: 11.4 g/100 g. One plum ≈ 65 g.
+    name: L('Prunes', aeb: 'عوينة', ar: 'البرقوق', en: 'Plums'),
+    portion: L('2 prunes (130 g)', aeb: 'زوز عوينات (130 غ)', ar: 'حبتا برقوق (130 غ)', en: '2 plums (130 g)'),
+    grams: 130,
+    carbs: 15,
+    level: FoodLevel.measured,
+    swap: L('Deux font une portion, un bon fruit d’été.', aeb: 'زوز هوما كمية، غلة صيف باهية.', ar: 'حبتان حصة، فاكهة صيفية جيدة.', en: 'Two make a portion, a good summer fruit.'),
+    aliases: ['3wina', 'awina', 'prune', 'barkouk'],
+    hand: L('2 prunes', aeb: 'زوز عوينات', ar: 'حبتا برقوق', en: '2 plums'),
+    count: 2,
+    one: L('prune', aeb: 'عوينة', ar: 'حبة برقوق', en: 'plum'),
+    many: L('prunes', aeb: 'عوينات', ar: 'حبات برقوق', en: 'plums'),
+  ),
+  Food(
+    id: 'strawberries',
+    // USDA: Strawberries, raw: 7.7 g/100 g. Ten strawberries ≈ 150 g.
+    name: L('Fraises', aeb: 'فراولو', ar: 'الفراولة', en: 'Strawberries'),
+    portion: L('1 bol, environ 10 fraises (150 g)', aeb: 'زلافة، قريب 10 حبات (150 غ)', ar: 'وعاء، نحو 10 حبات (150 غ)', en: '1 bowl, about 10 strawberries (150 g)'),
+    grams: 150,
+    carbs: 12,
+    level: FoodLevel.measured,
+    swap: L('Peu sucrées : un bol, sans sucre ajouté, c’est une portion.', aeb: 'موش حلوة برشا: زلافة بلا سكر زايد هي كمية.', ar: 'قليلة السكر: وعاء دون سكر مضاف حصة.', en: 'Not very sweet: a bowl, with no added sugar, is a portion.'),
+    aliases: ['fraise', 'fraoula', 'frawla'],
+    hand: L('Un bol, environ 10 fraises', aeb: 'زلافة، قريب 10 حبات', ar: 'وعاء، نحو 10 حبات', en: 'A bowl, about 10 strawberries'),
+    count: 10,
+    one: L('fraise', aeb: 'حبة', ar: 'حبة', en: 'strawberry'),
+    many: L('fraises', aeb: 'حبات', ar: 'حبات', en: 'strawberries'),
+  ),
+  Food(
+    id: 'prickly_pear',
+    // USDA: Prickly pears, raw: 9.6 g/100 g. One fruit ≈ 100 g peeled.
+    name: L('Figues de Barbarie', aeb: 'هندي', ar: 'التين الشوكي', en: 'Prickly pears'),
+    portion: L('2 figues de Barbarie (200 g)', aeb: 'زوز هنديات (200 غ)', ar: 'حبتا تين شوكي (200 غ)', en: '2 prickly pears (200 g)'),
+    grams: 200,
+    carbs: 19,
+    level: FoodLevel.measured,
+    swap: L('Le fruit de l’été tunisien, riche en fibres : deux à la fois font une portion.', aeb: 'غلة الصيف التونسي، فيها برشا ألياف: زوز في المرة هوما كمية.', ar: 'فاكهة الصيف التونسي الغنية بالألياف: حبتان في المرة حصة.', en: 'The Tunisian summer fruit, rich in fibre: two at a time make a portion.'),
+    aliases: ['hindi', 'figue de barbarie', 'karmous hindi'],
+    hand: L('2 fruits épluchés', aeb: 'زوز هنديات مقشّرين', ar: 'حبتان مقشرتان', en: '2 peeled fruits'),
+    count: 2,
+    one: L('figue de Barbarie', aeb: 'هندية', ar: 'حبة تين شوكي', en: 'prickly pear'),
+    many: L('figues de Barbarie', aeb: 'هنديات', ar: 'حبات تين شوكي', en: 'prickly pears'),
+  ),
+  Food(
+    id: 'cherries',
+    // USDA: Cherries, sweet, raw: 16.0 g/100 g. Fifteen cherries ≈ 100 g.
+    name: L('Cerises', aeb: 'حب الملوك', ar: 'الكرز', en: 'Cherries'),
+    portion: L('15 cerises (100 g)', aeb: '15 حبة حب ملوك (100 غ)', ar: '15 حبة كرز (100 غ)', en: '15 cherries (100 g)'),
+    grams: 100,
+    carbs: 16,
+    level: FoodLevel.measured,
+    swap: L('Une quinzaine font une portion. Servez-les dans un bol : on en mange moins sans compter.', aeb: 'قريب 15 هوما كمية. حطّهم في زلافة: تاكل أقل بلا ما تحسب.', ar: 'نحو 15 حبة حصة. قدّمها في وعاء لتأكل أقل دون عدّ.', en: 'About fifteen make a portion. Serve them in a bowl: you eat fewer without counting.'),
+    aliases: ['hab el molouk', 'cerise'],
+    hand: L('Une quinzaine, dans un petit bol', aeb: 'قريب 15، في زلافة صغيرة', ar: 'نحو 15 حبة في وعاء صغير', en: 'About 15, in a small bowl'),
+    count: 15,
+    one: L('cerise', aeb: 'حبة', ar: 'حبة', en: 'cherry'),
+    many: L('cerises', aeb: 'حبات', ar: 'حبات', en: 'cherries'),
+  ),
+  Food(
+    id: 'olives',
+    // USDA: Olives, ripe, canned: 6.3 g/100 g. Ten olives ≈ 40 g.
+    name: L('Olives', aeb: 'زيتون', ar: 'الزيتون', en: 'Olives'),
+    portion: L('10 olives (40 g)', aeb: '10 حبات زيتون (40 غ)', ar: '10 حبات زيتون (40 غ)', en: '10 olives (40 g)'),
+    grams: 40,
+    carbs: 3,
+    level: FoodLevel.measured,
+    swap: L('Presque sans glucides, mais salées : une dizaine accompagne bien un repas.', aeb: 'تقريب بلا سكريات، أما فيها الملح: قريب 10 يمشيو مع الماكلة.', ar: 'شبه خالية من السكريات لكنها مالحة: نحو عشر حبات ترافق الوجبة جيدًا.', en: 'Almost no carbohydrate, but salty: about ten go well with a meal.'),
+    aliases: ['zitoun', 'zaytoun', 'olive'],
+    hand: L('Une dizaine', aeb: 'قريب 10 حبات', ar: 'نحو 10 حبات', en: 'About ten'),
+    count: 10,
+    one: L('olive', aeb: 'حبة', ar: 'حبة', en: 'olive'),
+    many: L('olives', aeb: 'حبات', ar: 'حبات', en: 'olives'),
   ),
   // ---------------------------------------------------------------- drinks
   Food(
@@ -562,11 +799,9 @@ const tunisianFoods = <Food>[
     grams: 200,
     carbs: 21,
     level: FoodLevel.rarely,
-    swap: L('Même « 100 % pur jus », c’est du sucre rapide. Mieux : le fruit entier et de l’eau. Utile seulement en cas d’hypoglycémie.',
-        aeb: 'حتى «عصير طبيعي 100 %» هو سكر سريع. خير: الغلة كاملة والماء. ينفع كان كي يطيح السكر.',
-        ar: 'حتى العصير الطبيعي 100 % سكر سريع. الأفضل: الفاكهة كاملة والماء. مفيد فقط عند هبوط السكر.',
-        en: 'Even 100 % pure juice is fast sugar. Better: the whole fruit and water. Useful only for a low.'),
+    swap: L('Le fruit entier rassasie plus que le jus. Un verre de temps en temps, et le jus est très utile en cas d’hypoglycémie.', aeb: 'الغلة كاملة تشبّع أكثر من العصير. كاس من وقت لوقت، والعصير ينفع برشا كي يطيح السكر.', ar: 'الفاكهة كاملة تشبع أكثر من العصير. كوب من حين لآخر، والعصير مفيد جدًا عند هبوط السكر.', en: 'The whole fruit fills you more than juice. A glass now and then, and juice is very useful for a low.'),
     aliases: ['jus', 'aasir', 'citronnade'],
+    hand: L('Un verre à eau', aeb: 'كاس ماء', ar: 'كوب ماء', en: 'A water glass'),
   ),
   Food(
     id: 'soda',
@@ -576,11 +811,9 @@ const tunisianFoods = <Food>[
     grams: 330,
     carbs: 35,
     level: FoodLevel.rarely,
-    swap: L('Environ 7 morceaux de sucre par canette. Mieux : de l’eau, de l’eau gazeuse avec du citron.',
-        aeb: 'تقريب 7 طوابع سكر في الكانات. خير: الماء، ولا ماء غازية بالقارص.',
-        ar: 'نحو 7 قطع سكر في العلبة. الأفضل: الماء أو الماء الفوار بالليمون.',
-        en: 'About 7 sugar cubes per can. Better: water, or sparkling water with lemon.'),
+    swap: L('Une canette contient l’équivalent de 7 morceaux de sucre. L’eau gazeuse avec du citron ou de la menthe fait plaisir sans sucre.', aeb: 'الكانات فيها قد 7 طوابع سكر. الماء الغازية بالقارص ولا النعناع تفرّح بلا سكر.', ar: 'العلبة تحتوي ما يعادل 7 قطع سكر. الماء الفوار بالليمون أو النعناع ممتع بلا سكر.', en: 'A can holds the equivalent of 7 sugar cubes. Sparkling water with lemon or mint is a treat without sugar.'),
     aliases: ['soda', 'coca', 'gazouz', 'boisson'],
+    hand: L('Une canette', aeb: 'كانات وحدة', ar: 'علبة واحدة', en: 'One can'),
   ),
   Food(
     id: 'mint_tea',
@@ -595,6 +828,7 @@ const tunisianFoods = <Food>[
         ar: 'قلّل السكر تدريجيًا حتى نصف ملعقة أو دون سكر. الشاي نفسه لا يحتوي سكريات.',
         en: 'Cut the sugar down little by little, to half a spoon or none. Tea itself has no carbohydrate.'),
     aliases: ['the', 'tay', 'chay', 'the vert'],
+    hand: L('Un petit verre à thé', aeb: 'كاس تاي صغير', ar: 'كأس شاي صغير', en: 'A small tea glass'),
   ),
   Food(
     id: 'coffee',
@@ -609,6 +843,7 @@ const tunisianFoods = <Food>[
         ar: 'دون سكر لا تحتوي سكريات. كل ملعقة سكر تضيف 5 غ.',
         en: 'Without sugar, no carbohydrate. Each spoon of sugar adds 5 g.'),
     aliases: ['kahwa', 'express', 'capucin'],
+    hand: L('Une tasse', aeb: 'فنجان', ar: 'فنجان', en: 'One cup'),
   ),
   // ---------------------------------------------------------------- vegetables
   Food(
@@ -624,6 +859,7 @@ const tunisianFoods = <Food>[
         ar: 'نصف الصحن: بلا حدود، مع ملعقة زيت زيتون.',
         en: 'Half the plate: as much as you like, with one spoon of olive oil.'),
     aliases: ['slata', 'salade', 'tomate', 'concombre'],
+    hand: L('Deux mains pleines, ou plus', aeb: 'ملو يديك الزوز ولا أكثر', ar: 'ملء اليدين أو أكثر', en: 'Two handfuls, or more'),
   ),
   Food(
     id: 'mechouia',
@@ -638,6 +874,7 @@ const tunisianFoods = <Food>[
         ar: 'خضار مشوية: بلا حدود. انتبه فقط لكمية الزيت.',
         en: 'Grilled vegetables: as much as you like. Just watch the oil.'),
     aliases: ['mechouia', 'mechwiya', 'salade mechouia'],
+    hand: L('Deux mains pleines', aeb: 'ملو يديك الزوز', ar: 'ملء اليدين', en: 'Two handfuls'),
   ),
   // ---------------------------------------------------------------- sweets
   Food(
@@ -653,6 +890,10 @@ const tunisianFoods = <Food>[
         ar: 'قطعة واحدة في المناسبات، في آخر الوجبة لا بين الوجبات.',
         en: 'One piece, at a celebration, at the end of a meal rather than between meals.'),
     aliases: ['makroud', 'maqrouth'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'baklawa',
@@ -667,6 +908,10 @@ const tunisianFoods = <Food>[
         ar: 'قطعة صغيرة نادرًا. حفنة لوز طبيعي خيار أفضل.',
         en: 'One small piece, rarely. A handful of plain almonds is a better treat.'),
     aliases: ['baklava', 'baqlawa'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'bambalouni',
@@ -676,11 +921,9 @@ const tunisianFoods = <Food>[
     grams: 80,
     carbs: 35,
     level: FoodLevel.rarely,
-    swap: L('Frit et sucré : rarement, sans le sucre dessus, et à partager.',
-        aeb: 'مقلي ومسكّر: مرة مرة، بلا السكر اللي فوقو، وقسّمو.',
-        ar: 'مقلي ومحلى: نادرًا، دون السكر فوقه، وتقاسمه.',
-        en: 'Fried and sweet: rarely, without the sugar on top, and shared.'),
+    swap: L('Frit et sucré : pour le plaisir, sans le sucre dessus, et à partager.', aeb: 'مقلي ومسكّر: للبنّة، بلا السكر اللي فوقو، وقسّمو.', ar: 'مقلي ومحلى: للمتعة، دون السكر فوقه، وتقاسمه.', en: 'Fried and sweet: for pleasure, without the sugar on top, and shared.'),
     aliases: ['bambaloni', 'beignet'],
+    hand: L('Un, à partager', aeb: 'واحد، تقسمو', ar: 'واحدة للمشاركة', en: 'One, to share'),
   ),
   Food(
     id: 'zlabia',
@@ -690,11 +933,12 @@ const tunisianFoods = <Food>[
     grams: 30,
     carbs: 20,
     level: FoodLevel.rarely,
-    swap: L('Du sirop de sucre presque pur : une seule pièce, pas tous les soirs de Ramadan.',
-        aeb: 'تقريب سكر صافي: حبة وحدة، موش كل ليلة في رمضان.',
-        ar: 'شبه شراب سكر خالص: قطعة واحدة، لا كل ليلة في رمضان.',
-        en: 'Almost pure sugar syrup: a single piece, not every night of Ramadan.'),
+    swap: L('Très sucrée (sirop) : une pièce pour le plaisir, de temps en temps pendant le Ramadan.', aeb: 'مسكّرة برشا (شحور): حبة للبنّة، من وقت لوقت في رمضان.', ar: 'حلوة جدًا (شراب): قطعة للمتعة، من حين لآخر في رمضان.', en: 'Very sweet (syrup): one piece for pleasure, now and then during Ramadan.'),
     aliases: ['zlebia', 'zalabia'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'mkharek',
@@ -709,6 +953,10 @@ const tunisianFoods = <Food>[
         ar: 'قطعة واحدة نادرًا، بعد وجبة.',
         en: 'One piece, rarely, after a meal.'),
     aliases: ['mkhareq', 'makhareq'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'samsa',
@@ -718,11 +966,12 @@ const tunisianFoods = <Food>[
     grams: 30,
     carbs: 15,
     level: FoodLevel.rarely,
-    swap: L('Une pièce, rarement. Les amandes sont bonnes, le sirop non.',
-        aeb: 'حبة، مرة مرة. اللوز باهي، الشحور لا.',
-        ar: 'قطعة نادرًا. اللوز جيد، أما الشراب فلا.',
-        en: 'One piece, rarely. The almonds are good, the syrup is not.'),
+    swap: L('Une pièce pour le plaisir. Les amandes sont bonnes ; c’est le sirop qui sucre.', aeb: 'حبة للبنّة. اللوز باهي؛ الشحور هو اللي يسكّر.', ar: 'قطعة للمتعة. اللوز مفيد؛ الشراب هو الذي يُحلّي.', en: 'One piece for pleasure. The almonds are good; the syrup is what makes it sweet.'),
     aliases: ['samssa'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'ghraiba',
@@ -732,11 +981,12 @@ const tunisianFoods = <Food>[
     grams: 25,
     carbs: 16,
     level: FoodLevel.rarely,
-    swap: L('Une pièce avec le thé, pas le plateau.',
-        aeb: 'حبة مع التاي، موش الصينية الكل.',
-        ar: 'قطعة مع الشاي، لا الصينية كلها.',
-        en: 'One piece with tea, not the whole tray.'),
+    swap: L('Une pièce avec le thé, pour le plaisir.', aeb: 'حبة مع التاي، للبنّة.', ar: 'قطعة مع الشاي للمتعة.', en: 'One piece with tea, for pleasure.'),
     aliases: ['ghriba', 'ghraiba', 'ghoriba'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'kaak_warka',
@@ -751,6 +1001,10 @@ const tunisianFoods = <Food>[
         ar: 'قطعة واحدة في المناسبات.',
         en: 'One piece, for celebrations.'),
     aliases: ['kaak', 'kaak warqa'],
+    hand: L('Une pièce', aeb: 'حبة وحدة', ar: 'قطعة واحدة', en: 'One piece'),
+    count: 1,
+    one: L('pièce', aeb: 'حبة', ar: 'قطعة', en: 'piece'),
+    many: L('pièces', aeb: 'حبات', ar: 'قطع', en: 'pieces'),
   ),
   Food(
     id: 'bouza',
@@ -765,6 +1019,7 @@ const tunisianFoods = <Food>[
         ar: 'كأس صغيرة نادرًا. الزبادي الطبيعي مع بعض البندق أفضل.',
         en: 'A small cup, rarely. Plain yogurt with a few hazelnuts is a better idea.'),
     aliases: ['bouza sorgho', 'bouza noisette'],
+    hand: L('4 cuillères à soupe, une petite coupe', aeb: '4 مغارف كبار', ar: '4 ملاعق كبيرة', en: '4 tablespoons, a small cup'),
   ),
   Food(
     id: 'halwa',
@@ -774,11 +1029,9 @@ const tunisianFoods = <Food>[
     grams: 30,
     carbs: 18,
     level: FoodLevel.rarely,
-    swap: L('Sucrée et grasse : un petit morceau, rarement. Mieux : un peu de tahini sur du pain complet.',
-        aeb: 'حلوة وفيها شحم: طرف صغير، مرة مرة. خير: شوية طحينة على خبز كامل.',
-        ar: 'حلوة ودسمة: قطعة صغيرة نادرًا. الأفضل: قليل من الطحينة على خبز كامل.',
-        en: 'Sweet and fatty: a small piece, rarely. Better: a little tahini on wholemeal bread.'),
+    swap: L('Sucrée et grasse : un petit morceau pour le plaisir. Un peu de tahini sur du pain complet est aussi délicieux.', aeb: 'حلوة وفيها شحم: طرف صغير للبنّة. شوية طحينة على خبز كامل بنينة زادة.', ar: 'حلوة ودسمة: قطعة صغيرة للمتعة. قليل من الطحينة على خبز كامل لذيذ أيضًا.', en: 'Sweet and rich: a small piece for pleasure. A little tahini on wholemeal bread is delicious too.'),
     aliases: ['halwa', 'halva', 'halawa'],
+    hand: L('Un morceau de la taille de votre pouce', aeb: 'طرف قد صبعك الكبير', ar: 'قطعة بحجم إبهامك', en: 'A piece the size of your thumb'),
   ),
   Food(
     id: 'honey',
@@ -788,11 +1041,9 @@ const tunisianFoods = <Food>[
     grams: 21,
     carbs: 17,
     level: FoodLevel.rarely,
-    swap: L('Le miel est du sucre, comme le sucre blanc : une petite cuillère au plus. Utile en cas d’hypoglycémie.',
-        aeb: 'العسل سكر كيف السكر الأبيض: مغرفة صغيرة أكثر حاجة. ينفع كي يطيح السكر.',
-        ar: 'العسل سكر مثل السكر الأبيض: ملعقة صغيرة على الأكثر. مفيد عند هبوط السكر.',
-        en: 'Honey is sugar, like white sugar: one teaspoon at most. Useful for a low.'),
+    swap: L('Le miel sucre comme le sucre : une petite cuillère pour le plaisir. Très utile en cas d’hypoglycémie.', aeb: 'العسل يسكّر كيف السكر: مغرفة صغيرة للبنّة. ينفع برشا كي يطيح السكر.', ar: 'العسل يرفع السكر مثل السكر: ملعقة صغيرة للمتعة. مفيد جدًا عند هبوط السكر.', en: 'Honey raises sugar like sugar does: a teaspoon for pleasure. Very useful for a low.'),
     aliases: ['assel', 'asal'],
+    hand: L('1 cuillère à soupe, la taille de votre pouce', aeb: 'مغرفة كبيرة، قد صبعك الكبير', ar: 'ملعقة كبيرة، بحجم إبهامك', en: '1 tablespoon, the size of your thumb'),
   ),
   Food(
     id: 'jam',
@@ -807,5 +1058,6 @@ const tunisianFoods = <Food>[
         ar: 'طبقة رقيقة. الأفضل: جبن طري أو بيضة في الفطور.',
         en: 'A thin layer. Better: fresh cheese or an egg at breakfast.'),
     aliases: ['confiture', 'maajoun', 'konfitir'],
+    hand: L('1 cuillère à soupe, la taille de votre pouce', aeb: 'مغرفة كبيرة، قد صبعك الكبير', ar: 'ملعقة كبيرة، بحجم إبهامك', en: '1 tablespoon, the size of your thumb'),
   ),
 ];
