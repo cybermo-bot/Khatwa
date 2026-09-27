@@ -301,7 +301,7 @@ class ReportBody extends StatelessWidget {
                       ),
                     ),
                     KTag(
-                      finding.source == 'image' ? 'photo' : finding.source,
+                      finding.source == 'image' ? 'photo' : finding.source == 'twin' ? '3D' : finding.source,
                       color: K.inkSoft,
                       background: K.paper,
                     ),

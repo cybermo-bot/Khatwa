@@ -156,6 +156,12 @@ class AiGateway {
   "clinicianSummary": "3 or 4 lines for the reviewing clinician: visible signs, reported symptoms, suggested priority and suggested orientation (SSB or regional hospital)"
 }''');
     buffer.writeln();
+    final twin = answers['twin_detail'];
+    if (twin is String && twin.isNotEmpty) {
+      buffer.writeln('3D foot scan (measured shape, supporting context only; it cannot see colour or warmth): $twin.');
+      buffer.writeln('If it shows swelling, mention it in clinicianSummary; never lower a level because the scan shows nothing.');
+      buffer.writeln();
+    }
     buffer.writeln(
         'Write "findings[].label", "findings[].detail", "advice" and "patientSummary" in ${_languageName(lang)}.');
     buffer.writeln('Write "clinicianSummary" in French, the working language of Tunisian clinicians.');

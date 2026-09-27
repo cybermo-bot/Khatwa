@@ -127,6 +127,39 @@ class RuleEngine {
       ));
     }
 
+    // ---- 3D twin ---------------------------------------------------------
+    // Measured growth of the foot since the first scan, beyond the noise
+    // (lib/data/twin_signal.dart). Shape only: warmth and colour come from
+    // the patient's answers.
+    if (yes('twin_swelling')) {
+      final both = yes('color');
+      raise(both ? TriageLevel.red : TriageLevel.amber);
+      findings.add(TriageFinding(
+        label: both
+            ? _s(lang, 'pied gonflé au scan 3D et changement de couleur', 'Swelling on the 3D scan with a colour change',
+                'تورم في المسح ثلاثي الأبعاد مع تغير في اللون', 'انتفاخ في السكان 3D مع تبدّل في اللون')
+            : _s(lang, 'pied plus gonflé qu au premier scan 3D', 'Foot more swollen than at the first 3D scan',
+                'القدم أكثر انتفاخا من أول مسح ثلاثي الأبعاد', 'الساق منفوخة أكثر من أول سكان 3D'),
+        detail: both
+            ? _s(
+                lang,
+                'Un pied gonflé et qui change de couleur doit être vu le jour même (infection ou pied de Charcot possibles).',
+                'A swollen foot that changes colour needs to be seen the same day (possible infection or Charcot foot).',
+                'القدم المتورمة التي يتغير لونها يجب أن تُفحص في نفس اليوم (احتمال التهاب أو قدم شاركو).',
+                'ساق منفوخة ولونها تبدّل لازم تتشاف نهارها (ممكن تلوث ولا ساق شاركو).',
+              )
+            : _s(
+                lang,
+                'Le scan mesure une augmentation au-delà du bruit de mesure. À montrer au médecin.',
+                'The scan measures an increase beyond measurement noise. Show it to the doctor.',
+                'المسح يقيس زيادة تتجاوز هامش الخطأ. اعرضها على الطبيب.',
+                'السكان يقيس زيادة أكثر من هامش الغلط. ورّيها للطبيب.',
+              ),
+        severity: both ? 'urgent' : 'watch',
+        source: 'twin',
+      ));
+    }
+
     // ---- glucose ---------------------------------------------------------
     final glucose = double.tryParse('${answers['glucose'] ?? ''}'.replaceAll(',', '.'));
     if (glucose != null && glucose > 0) {
