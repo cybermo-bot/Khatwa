@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🦶 Khatwa · خطوة
+# Khatwa · خطوة
 
 ### Le pied diabétique, suivi en 3D. Une voix qui parle tunisien. Un médecin qui voit tout, en direct.
 
@@ -8,9 +8,9 @@
 
 [![Live demo](https://img.shields.io/badge/Démo_en_ligne-khatwa--demo.netlify.app-0E5A66?style=for-the-badge&logo=netlify&logoColor=white)](https://khatwa-demo.netlify.app/?demo)
 [![Flutter](https://img.shields.io/badge/Flutter-Android_%2B_Web-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-[![FHIR R4](https://img.shields.io/badge/HL7_FHIR-R4_·_0_erreur-E34F26?style=for-the-badge)](#-interoperability-fhir-r4-and-gazelle)
+[![FHIR R4](https://img.shields.io/badge/HL7_FHIR-R4_·_0_erreur-E34F26?style=for-the-badge)](#interoperability-fhir-r4-and-gazelle)
 [![Supabase](https://img.shields.io/badge/Supabase-EU_(Paris)-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
-[![Voice](https://img.shields.io/badge/Voix-derja_·_عربية_·_FR_·_EN-19C3B5?style=for-the-badge)](#-the-voice-assistant)
+[![Voice](https://img.shields.io/badge/Voix-derja_·_عربية_·_FR_·_EN-19C3B5?style=for-the-badge)](#the-voice-assistant)
 
 **Future Health Connectathon 2026 · Défi 3.1** · *Repérer plus tôt les signes d'alerte du pied diabétique*
 **Telehealth Connect 2026, Tunis**
@@ -29,7 +29,7 @@
 
 ---
 
-## 💡 Why
+## Why
 
 When you live with diabetes, the foot loses feeling and heals badly. A crack, a callus or a small blister can turn into an ulcer, an infection, an amputation. It is caught early only if someone **looks at the foot every day**, including **the sole**, where most ulcers start and where most people cannot see.
 
@@ -39,30 +39,30 @@ Khatwa makes that daily look easy, turns it into a **3D record that follows the 
 
 ---
 
-## ✨ What it does
+## What it does
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### 🧍 For the patient
-- 🦶 **3D digital twin** of their own foot from a 25 s phone video around it, next to a printed A4 sheet
-- 👣 **The sole on the 3D foot**: one photo of the sole is placed on the twin (2 to 3 mm on straight-on photos in our tests), so a callus under the ball of the foot stays at the same spot, visit after visit
-- 📍 **Mark a sign** on any photo (callus, blister, wound, colour change, or "I don't know"), and get the advice of one triage table: *go now, call 190* / *see someone within 24 h* / *keep checking daily*
-- 🎙️ **Talk to Khatwa**: hold the button and ask, in **Tunisian derja**, Arabic, French or English; answers are spoken with a **Tunisian voice**
-- ✅ **Daily foot check**, risk profile (IWGDF 0 to 3), glucose log, 26 learning articles
-- 📤 **"Envoyer au médecin"**: twin, sole, signs and a FHIR bundle, in one tap
+### For the patient
+- **3D digital twin** of their own foot from a 25 s phone video around it, next to a printed A4 sheet
+- **The sole on the 3D foot**: one photo of the sole is placed on the twin (2 to 3 mm on straight-on photos in our tests), so a callus under the ball of the foot stays at the same spot, visit after visit
+- **Mark a sign** on any photo (callus, blister, wound, colour change, or "I don't know"), and get the advice of one triage table: *go now, call 190* / *see someone within 24 h* / *keep checking daily*
+- **Talk to Khatwa**: hold the button and ask, in **Tunisian derja**, Arabic, French or English; answers are spoken with a **Tunisian voice**
+- **Daily foot check**, risk profile (IWGDF 0 to 3), glucose log, 26 learning articles
+- **"Envoyer au médecin"**: twin, sole, signs and a FHIR bundle, in one tap
 
 </td>
 <td width="50%" valign="top">
 
-### 🩺 For the doctor
-- 🚨 **Live triage board**: urgent first, new alerts arrive in a second (a black toe told to the assistant, a wound placed on the sole)
-- 🧊 **Each patient's 3D foot** with the signs pinned where they are, left/right, a visit timeline, measurement trends
-- 🖼️ **Sole photos** side by side over time
-- 💬 Reply to the patient, set the next visit, mark a sign reviewed or healed
-- 🏥 **Export FHIR R4**, validated with the official HL7 validator (0 errors)
-- 🗺️ **Public health view** for decision makers: lesions of every patient on one 3D foot, risk levels, alerts per week, by governorate
+### For the doctor
+- **Live triage board**: urgent first, new alerts arrive in a second (a black toe told to the assistant, a wound placed on the sole)
+- **Each patient's 3D foot** with the signs pinned where they are, left/right, a visit timeline, measurement trends
+- **Sole photos** side by side over time
+- Reply to the patient, set the next visit, mark a sign reviewed or healed
+- **Export FHIR R4**, validated with the official HL7 validator (0 errors)
+- **Public health view** for decision makers: lesions of every patient on one 3D foot, risk levels, alerts per week, by governorate
 
 </td>
 </tr>
@@ -72,24 +72,24 @@ Khatwa makes that daily look easy, turns it into a **3D record that follows the 
 
 ---
 
-## 🏗️ How it fits together
+## How it fits together
 
 ```mermaid
 flowchart LR
-    subgraph P["📱 Patients"]
+    subgraph P["Patients"]
         A["Khatwa app<br/>Android"]
         W["Khatwa web<br/>from a QR code"]
     end
-    subgraph D["🩺 Doctor"]
+    subgraph D["Doctor"]
         DB["Dashboard<br/>web, laptop or tablet"]
     end
-    subgraph S["☁️ Supabase · EU, Paris"]
+    subgraph S["Supabase · EU, Paris"]
         AU["Auth<br/>anonymous patients,<br/>doctor accounts"]
         PG[("Postgres<br/>row-level security")]
         ST[("Storage<br/>3D twins, photos")]
         RT["Realtime"]
     end
-    subgraph C["🧠 Khatwa compute server"]
+    subgraph C["Khatwa compute server"]
         TW["3D twin<br/>reconstruction"]
         SO["Sole and photo<br/>mapping"]
         VO["Voice assistant<br/>+ safety layer"]
@@ -114,30 +114,30 @@ flowchart LR
 
 ---
 
-## 🧊 The 3D digital twin
+## The 3D digital twin
 
 ```mermaid
 flowchart LR
-    V["🎥 25 s video<br/>around the foot"] --> M["📄 Printed A4 sheet<br/>ChArUco pattern<br/>gives scale and<br/>camera positions"]
-    M --> N["🧠 Neural network<br/>FOCUS / TocNet<br/>each pixel → a point<br/>of a standard foot"]
-    N --> T["📐 Triangulation<br/>thousands of<br/>3D points"]
-    T --> F["🦶 Standard foot fitted<br/>to the points and to<br/>the outline in each frame"]
-    F --> R["📏 Measures<br/>length, widths, girth,<br/>instep, volume"]
-    F --> CH["📈 Change since<br/>the first scan"]
+    V["25 s video<br/>around the foot"] --> M["Printed A4 sheet<br/>ChArUco pattern<br/>gives scale and<br/>camera positions"]
+    M --> N["Neural network<br/>FOCUS / TocNet<br/>each pixel → a point<br/>of a standard foot"]
+    N --> T["Triangulation<br/>thousands of<br/>3D points"]
+    T --> F["Standard foot fitted<br/>to the points and to<br/>the outline in each frame"]
+    F --> R["Measures<br/>length, widths, girth,<br/>instep, volume"]
+    F --> CH["Change since<br/>the first scan"]
 ```
 
 Every twin shares the **same mesh**: point number 5 000 is the same anatomical spot on every foot, at every visit. That is what lets Khatwa compare visits and keep a sign in its place.
 
-### 👣 The sole, which a standing scan cannot see
+### The sole, which a standing scan cannot see
 
 ```mermaid
 flowchart LR
-    SP["📸 One photo<br/>of the sole"] --> NR["🧠 Network readings<br/>noisy one by one<br/>(about 15 mm)"]
-    NR --> H["📐 One perspective<br/>transform (homography)<br/>fitted robustly, RANSAC"]
-    H --> E["🎯 Refined on the<br/>sole outline known<br/>from the scan (ECC)"]
-    E --> TX["🖼️ The photo becomes<br/>the texture of<br/>the twin's sole"]
-    E --> A2["📏 Signs outlined<br/>on the sole get a<br/>real area in mm²"]
-    E -.->|"poor fit"| RE["↩️ Refused:<br/>retake straight on"]
+    SP["One photo<br/>of the sole"] --> NR["Network readings<br/>noisy one by one<br/>(about 15 mm)"]
+    NR --> H["One perspective<br/>transform (homography)<br/>fitted robustly, RANSAC"]
+    H --> E["Refined on the<br/>sole outline known<br/>from the scan (ECC)"]
+    E --> TX["The photo becomes<br/>the texture of<br/>the twin's sole"]
+    E --> A2["Signs outlined<br/>on the sole get a<br/>real area in mm²"]
+    E -.->|"poor fit"| RE["Refused:<br/>retake straight on"]
 ```
 
 <img align="right" src="docs/images/sole-render.png" width="120" alt="The model foot's sole, rendered from the 3D model"/>
@@ -148,7 +148,7 @@ Home photos of the sole are an accepted way to catch early warning signs ([Foot 
 
 ---
 
-## 🎙️ The voice assistant
+## The voice assistant
 
 ```mermaid
 sequenceDiagram
@@ -168,7 +168,7 @@ sequenceDiagram
     L-->>S: level can only go UP (never down)
     S-->>App: reply + urgency (+ 190 banner if urgent)
     App->>V: speak it with a Tunisian voice
-    V-->>P: 🔊 answer
+    V-->>P: spoken answer
     S--)Dr: urgent? alert, live (sign labels only, no words kept)
 ```
 
@@ -178,7 +178,7 @@ sequenceDiagram
 
 ---
 
-## ✅ What we measured, honestly
+## What we measured, honestly
 
 | What | Result | How |
 |---|---|---|
@@ -195,23 +195,23 @@ sequenceDiagram
 
 ---
 
-## 🔗 Interoperability: FHIR R4 and Gazelle
+## Interoperability: FHIR R4 and Gazelle
 
 ```mermaid
 flowchart LR
-    TW["🦶 Twin + findings"] --> B["📦 FHIR R4 Bundle"]
+    TW["Twin + findings"] --> B["FHIR R4 Bundle"]
     B --> O1["Observation × 6<br/>measures, UCUM units,<br/>SNOMED body site"]
     B --> O2["Observation<br/>per finding,<br/>preliminary"]
     B --> DR["DocumentReference<br/>the 3D model (glTF)"]
-    B --> V1["✅ HL7 validator<br/>0 errors"]
-    B --> V2["🧪 IHE Gazelle<br/>EVS Client"]
+    B --> V1["HL7 validator<br/>0 errors"]
+    B --> V2["IHE Gazelle<br/>EVS Client"]
 ```
 
 Left and right feet are coded with SNOMED CT (22335008, 7769000), units with UCUM, measurements are `preliminary` (research), findings reported by the patient are never `final`. One bundle per patient, served as `application/fhir+json`.
 
 ---
 
-## 🔐 Privacy and security
+## Privacy and security
 
 - Patients are pseudonymous; the audience's guest accounts hold no real data and are wiped after the event
 - Row-level security in Postgres: a patient reads only their own rows; doctor accounts read patients
@@ -222,7 +222,7 @@ Left and right feet are coded with SNOMED CT (22335008, 7769000), units with UCU
 
 ---
 
-## 🚀 Run it
+## Run it
 
 ```bash
 flutter pub get
@@ -239,7 +239,7 @@ flutter build web --release # the QR demo site
 The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build.
 
 <details>
-<summary><b>📁 Project structure</b></summary>
+<summary><b>Project structure</b></summary>
 
 ```
 lib/
