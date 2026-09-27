@@ -4,17 +4,20 @@ import 'package:flutter/services.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
+import '../ui/foot_map.dart';
 import '../ui/foot_shapes.dart';
 import '../ui/strings.dart';
 
 class _TestPoint {
   final String id;
   final FootSide side;
-  final double dx; // 0..1 inside its own foot box
+  final double dx; // 0..1 on its own foot map
   final double dy;
   final String labelKey;
+  final String zone; // zone of map_zones.json the point lies in
 
-  const _TestPoint(this.id, this.side, this.dx, this.dy, this.labelKey);
+  const _TestPoint(
+      this.id, this.side, this.dx, this.dy, this.labelKey, this.zone);
 }
 
 /// Sensation self-test on the classic monofilament sites.
@@ -33,18 +36,29 @@ class SensoryCheckPage extends StatefulWidget {
 
 class _SensoryCheckPageState extends State<SensoryCheckPage> {
   static const points = <_TestPoint>[
-    // Placed on the anatomy of FootShape: hallux pad, first, third and fifth
-    // metatarsal heads, heel pad. Right foot has the hallux on the left.
-    _TestPoint('r_hallux', FootSide.right, 0.228, 0.100, 'sens.hallux'),
-    _TestPoint('r_met1', FootSide.right, 0.205, 0.262, 'sens.met1'),
-    _TestPoint('r_met3', FootSide.right, 0.480, 0.245, 'sens.met3'),
-    _TestPoint('r_met5', FootSide.right, 0.775, 0.298, 'sens.met5'),
-    _TestPoint('r_heel', FootSide.right, 0.500, 0.855, 'sens.heel'),
-    _TestPoint('l_hallux', FootSide.left, 0.772, 0.100, 'sens.hallux'),
-    _TestPoint('l_met1', FootSide.left, 0.795, 0.262, 'sens.met1'),
-    _TestPoint('l_met3', FootSide.left, 0.520, 0.245, 'sens.met3'),
-    _TestPoint('l_met5', FootSide.left, 0.225, 0.298, 'sens.met5'),
-    _TestPoint('l_heel', FootSide.left, 0.500, 0.855, 'sens.heel'),
+    // Placed on the zones of map_sole (assets/images/map_zones.json): hallux
+    // pad, first, third and fifth metatarsal heads, heel pad. The maps show
+    // the left foot with the hallux on the right; the right foot is mirrored.
+    _TestPoint(
+        'r_hallux', FootSide.right, 0.290, 0.105, 'sens.hallux', 'hallux'),
+    _TestPoint('r_met1', FootSide.right, 0.240, 0.300, 'sens.met1',
+        'forefoot_plantar'),
+    _TestPoint('r_met3', FootSide.right, 0.480, 0.290, 'sens.met3',
+        'forefoot_plantar'),
+    _TestPoint('r_met5', FootSide.right, 0.740, 0.320, 'sens.met5',
+        'forefoot_plantar'),
+    _TestPoint(
+        'r_heel', FootSide.right, 0.500, 0.840, 'sens.heel', 'heel_plantar'),
+    _TestPoint(
+        'l_hallux', FootSide.left, 0.710, 0.105, 'sens.hallux', 'hallux'),
+    _TestPoint(
+        'l_met1', FootSide.left, 0.760, 0.300, 'sens.met1', 'forefoot_plantar'),
+    _TestPoint(
+        'l_met3', FootSide.left, 0.520, 0.290, 'sens.met3', 'forefoot_plantar'),
+    _TestPoint(
+        'l_met5', FootSide.left, 0.260, 0.320, 'sens.met5', 'forefoot_plantar'),
+    _TestPoint(
+        'l_heel', FootSide.left, 0.500, 0.840, 'sens.heel', 'heel_plantar'),
   ];
 
   /// null = not tested, true = felt, false = not felt
@@ -134,7 +148,9 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
               child: Row(
                 children: [
                   Icon(
-                    numb > 0 ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded,
+                    numb > 0
+                        ? Icons.warning_amber_rounded
+                        : Icons.check_circle_outline_rounded,
                     color: numb > 0 ? K.warn : K.ok,
                   ),
                   const SizedBox(width: 12),
@@ -167,7 +183,10 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 11, height: 11, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 11,
+            height: 11,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 6),
         Text(label, style: K.small),
       ],
@@ -175,31 +194,29 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
   }
 
   Widget _foot(FootSide side) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final height = constraints.maxHeight;
-
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _FootMapPainter(side: side),
+    final onSide = points.where((p) => p.side == side);
+    return Center(
+      child: FootMap(
+        side: side,
+        view: FootView.sole,
+        color: K.danger,
+        selected: {
+          for (final p in onSide)
+            if (results[p.id] == false) p.zone,
+        },
+        markers: [
+          for (final point in onSide)
+            FootMapMarker(
+              position: Offset(point.dx, point.dy),
+              size: 38,
+              child: _Dot(
+                state: results[point.id],
+                label: S.t(lang, point.labelKey),
+                onTap: () => _tap(point.id),
               ),
             ),
-            for (final point in points.where((p) => p.side == side))
-              Positioned(
-                left: point.dx * width - 19,
-                top: point.dy * height - 19,
-                child: _Dot(
-                  state: results[point.id],
-                  label: S.t(lang, point.labelKey),
-                  onTap: () => _tap(point.id),
-                ),
-              ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 }
@@ -214,7 +231,8 @@ class _Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = state == null ? K.muted : (state! ? K.ok : K.danger);
-    final background = state == null ? K.card : (state! ? K.okSoft : K.dangerSoft);
+    final background =
+        state == null ? K.card : (state! ? K.okSoft : K.dangerSoft);
 
     return Tooltip(
       message: label,
@@ -240,44 +258,4 @@ class _Dot extends StatelessWidget {
       ),
     );
   }
-}
-
-class _FootMapPainter extends CustomPainter {
-  final FootSide side;
-
-  _FootMapPainter({required this.side});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = FootShape.outline(size, side);
-
-    canvas.drawPath(path, Paint()..color = K.paper);
-    canvas.drawPath(
-      path,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8
-        ..color = K.line,
-    );
-
-    // Faint anatomical reference lines instead of drawn-on toes: the toes are
-    // already part of the silhouette.
-    final detail = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..strokeCap = StrokeCap.round
-      ..color = K.line;
-    for (final line in FootShape.creases(size, side)) {
-      final crease = Path()..moveTo(line.first.dx, line.first.dy);
-      for (var i = 0; i < line.length - 1; i++) {
-        final a = line[i];
-        final b = line[i + 1];
-        crease.quadraticBezierTo(a.dx, a.dy, (a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
-      }
-      canvas.drawPath(crease, detail);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _FootMapPainter old) => old.side != side;
 }

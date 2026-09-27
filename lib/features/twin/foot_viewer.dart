@@ -20,6 +20,15 @@ class FootModel {
   static const modelFoot = FootModel.asset('assets/models/foot_model.glb');
 }
 
+/// A glTF twin as something the 3D viewer can load: a data address in the
+/// browser, a file on Android (a new name per model defeats its cache).
+Future<String> glbSource(Uint8List glb, String id) async {
+  if (kIsWeb) return 'data:model/gltf-binary;base64,${base64Encode(glb)}';
+  final f = File('${(await getTemporaryDirectory()).path}/twin_$id.glb');
+  await f.writeAsBytes(glb);
+  return 'file://${f.path}';
+}
+
 /// A 3D foot the patient can turn with a finger, on Android and in the browser.
 class FootViewer extends StatefulWidget {
   final FootModel model;
@@ -65,13 +74,8 @@ class _FootViewerState extends State<FootViewer> {
     String src;
     if (m.asset != null) {
       src = m.asset!;
-    } else if (kIsWeb) {
-      src = 'data:model/gltf-binary;base64,${base64Encode(m.glb!)}';
     } else {
-      // The Android viewer loads files; a new name per model defeats its cache.
-      final f = File('${(await getTemporaryDirectory()).path}/twin_${m.id}.glb');
-      await f.writeAsBytes(m.glb!);
-      src = 'file://${f.path}';
+      src = await glbSource(m.glb!, m.id);
     }
     if (mounted) setState(() => _src = src);
   }

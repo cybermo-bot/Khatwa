@@ -5,7 +5,7 @@ import '../data/case_store.dart';
 import '../data/khatwa_store.dart';
 import '../ui/app_state.dart';
 import '../ui/app_theme.dart';
-import '../ui/foot_shapes.dart';
+import '../ui/k_image.dart';
 import '../ui/strings.dart';
 
 /// Language + role. First screen of the app.
@@ -35,7 +35,8 @@ class LandingPage extends StatelessWidget {
                       icon: Icon(Icons.language_rounded, color: K.inkSoft),
                       itemBuilder: (context) => [
                         for (final language in S.languages)
-                          PopupMenuItem<String>(value: language, child: Text(language)),
+                          PopupMenuItem<String>(
+                              value: language, child: Text(language)),
                       ],
                     ),
                   ),
@@ -58,7 +59,8 @@ class LandingPage extends StatelessWidget {
                     accent: K.primary,
                     accentSoft: K.primarySoft,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const AuthPage(role: 'patient')),
+                      MaterialPageRoute(
+                          builder: (_) => const AuthPage(role: 'patient')),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -69,7 +71,8 @@ class LandingPage extends StatelessWidget {
                     accent: K.accent,
                     accentSoft: K.accentSoft,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const AuthPage(role: 'doctor')),
+                      MaterialPageRoute(
+                          builder: (_) => const AuthPage(role: 'doctor')),
                     ),
                   ),
                   const SizedBox(height: 26),
@@ -101,50 +104,24 @@ class _Wordmark extends StatelessWidget {
           width: 74,
           height: 74,
           decoration: BoxDecoration(
-            color: K.primaryDark,
             borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                left: 10,
-                top: 28,
-                child: Transform.rotate(
-                  angle: -0.20,
-                  child: SizedBox(
-                    width: 22,
-                    height: 28,
-                    child: CustomPaint(
-                      painter: FootBadgePainter(
-                        side: FootSide.left,
-                        color: const Color(0x60FFFFFF),
-                        filled: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 12,
-                child: Transform.rotate(
-                  angle: -0.20,
-                  child: SizedBox(
-                    width: 28,
-                    height: 36,
-                    child: CustomPaint(
-                      painter: FootBadgePainter(
-                        side: FootSide.right,
-                        color: Colors.white,
-                        filled: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            boxShadow: [
+              BoxShadow(
+                  color: K.glow.withAlpha(K.isDark ? 90 : 40),
+                  blurRadius: 30,
+                  spreadRadius: -4),
             ],
           ),
+          child: KImage('khatwa_logo',
+              radius: 18,
+              placeholder: Container(
+                decoration: BoxDecoration(
+                  color: K.primaryDark,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Icon(Icons.directions_walk_rounded,
+                    color: Colors.white, size: 36),
+              )),
         ),
         const SizedBox(height: 16),
         Text('Khatwa', style: K.display),
@@ -195,7 +172,10 @@ class _RoleCard extends StatelessWidget {
               children: [
                 Text(title, style: K.h2),
                 const SizedBox(height: 2),
-                Text(subtitle, style: K.small, maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(subtitle,
+                    style: K.small,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
@@ -320,8 +300,11 @@ class _AuthPageState extends State<AuthPage> {
                   keyboard: TextInputType.phone,
                 ),
                 if (signUpMode && isDoctor) ...[
-                  KField(label: S.t(lang, 'auth.speciality'), controller: speciality),
-                  KField(label: S.t(lang, 'auth.facility'), controller: facility),
+                  KField(
+                      label: S.t(lang, 'auth.speciality'),
+                      controller: speciality),
+                  KField(
+                      label: S.t(lang, 'auth.facility'), controller: facility),
                 ],
                 KField(
                   label: S.t(lang, 'auth.password'),
@@ -360,9 +343,12 @@ class _AuthPageState extends State<AuthPage> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
                         )
-                      : Text(signUpMode ? S.t(lang, 'auth.signup') : S.t(lang, 'auth.signin')),
+                      : Text(signUpMode
+                          ? S.t(lang, 'auth.signup')
+                          : S.t(lang, 'auth.signin')),
                 ),
                 const SizedBox(height: 6),
                 TextButton(
@@ -372,7 +358,9 @@ class _AuthPageState extends State<AuthPage> {
                             signUpMode = !signUpMode;
                             error = null;
                           }),
-                  child: Text(signUpMode ? S.t(lang, 'auth.have') : S.t(lang, 'auth.none')),
+                  child: Text(signUpMode
+                      ? S.t(lang, 'auth.have')
+                      : S.t(lang, 'auth.none')),
                 ),
               ],
             ),

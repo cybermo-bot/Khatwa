@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../data/khatwa_store.dart';
 import '../data/ai_engine.dart';
+import '../ui/app_theme.dart';
 
 class BasePage extends StatelessWidget {
   final String title;
@@ -17,11 +18,14 @@ class BasePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: child,
+      backgroundColor: K.ground,
+      appBar: AppBar(title: Text(title, style: K.h2)),
+      body: KBackdrop(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: child,
+          ),
         ),
       ),
     );
@@ -674,7 +678,7 @@ class AiReportPage extends StatelessWidget {
               'النظام هذا يعاون في التقييم الأولي وموش تشخيص طبي.',
             ),
             style: TextStyle(
-              color: Colors.grey.shade700,
+              color: K.muted,
               fontSize: 13,
             ),
           ),

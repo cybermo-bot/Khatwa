@@ -196,8 +196,8 @@ class _VoicePageState extends State<VoicePage> {
       if (!mounted) return;
       _failed(mine, audio != null);
       if (e.status == 503 && audio != null) {
-        setState(() => _deviceStt = true);
-        kToast(context, 'Mode sans IA : parlez, le téléphone écrit pour vous.');
+        // The AI is busy or over its quota for a moment: say so, and keep trying it next time.
+        kToast(context, 'L’assistant est très demandé. Réessayez dans un instant, ou écrivez votre question.', error: true);
       } else {
         kToast(context, 'Khatwa n’a pas pu répondre. Réessayez.', error: true);
       }

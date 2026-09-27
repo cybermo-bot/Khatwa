@@ -152,13 +152,16 @@ class _TwinPageState extends State<TwinPage> {
       SizedBox(
         height: 380,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(32),
           child: DecoratedBox(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: K.glassBorder),
               gradient: RadialGradient(
-                center: Alignment(0, -0.2),
-                radius: 1.1,
-                colors: [Color(0xFF123846), Color(0xFF07131A)],
+                center: const Alignment(0, -0.2),
+                radius: 0.95,
+                colors: [K.primarySoft, Color.lerp(K.primarySoft, K.surface, 0.6)!, K.surface],
+                stops: const [0, 0.55, 1],
               ),
             ),
             child: _model == null

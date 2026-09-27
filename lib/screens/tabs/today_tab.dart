@@ -5,10 +5,11 @@ import '../../data/case_store.dart';
 import '../../data/khatwa_store.dart';
 import '../../data/learn_content.dart';
 import '../../data/routine_store.dart';
-import '../../features/twin/foot_hero.dart';
+import '../../features/twin/twin_actions.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
-import '../../ui/foot_art.dart';
+import '../../ui/foot_shapes.dart';
+import '../../ui/foot_twin.dart';
 import '../../ui/strings.dart';
 import '../article_page.dart';
 import '../foot_check.dart';
@@ -71,11 +72,14 @@ class _TodayTabState extends State<TodayTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 6),
+              KReveal(child: _TwinStage(lang: lang)),
               const SizedBox(height: 10),
-              const KReveal(child: FootHero()),
-              const SizedBox(height: 22),
+              const KReveal(order: 1, child: TwinActions()),
+              const SizedBox(height: 14),
               KReveal(
-                child: _CheckPanel(
+                order: 1,
+                child: _CheckCard(
                   lang: lang,
                   done: doneToday,
                   streak: streak,
@@ -85,6 +89,15 @@ class _TodayTabState extends State<TodayTab> {
                       ? null
                       : () => _open(
                           ReportPage(caseId: todayCase.id, language: lang)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              KReveal(
+                order: 2,
+                child: _Tiles(
+                  lang: lang,
+                  checkDone: doneToday,
+                  onGlucose: () => _open(GlycemiaPage(language: lang)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -101,10 +114,6 @@ class _TodayTabState extends State<TodayTab> {
                   article: tip,
                   lang: lang,
                   onTap: () => _open(ArticlePage(article: tip))),
-              const SizedBox(height: 30),
-              KSectionLabel(S.t(lang, 'today.glucose')),
-              _GlucoseRow(
-                  lang: lang, onAdd: () => _open(GlycemiaPage(language: lang))),
               if (last != null) ...[
                 const SizedBox(height: 30),
                 KSectionLabel(S.t(lang, 'home.lastResult')),
@@ -157,9 +166,267 @@ class _TodayTabState extends State<TodayTab> {
       '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
 }
 
-// ---------------------------------------------------------------- check panel
+// ---------------------------------------------------------------- 3D twin
 
-class _CheckPanel extends StatefulWidget {
+/// The first thing the patient sees: their foot as a 3D hologram they can
+/// turn and zoom, with the left/right switch and top/sole shortcuts.
+class _TwinStage extends StatefulWidget {
+  final String lang;
+  const _TwinStage({required this.lang});
+
+  @override
+  State<_TwinStage> createState() => _TwinStageState();
+}
+
+class _TwinStageState extends State<_TwinStage> {
+  FootSide _side = FootSide.left;
+  TwinView _view = TwinView.free;
+  final Map<FootSide, String?> _mine = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMine();
+  }
+
+  /// The patient's own scanned foot for each side, when there is one.
+  Future<void> _loadMine() async {
+    for (final side in FootSide.values) {
+      final src = await myTwinSource(side == FootSide.left ? 'L' : 'R');
+      if (!mounted) return;
+      if (src != null) setState(() => _mine[side] = src);
+    }
+  }
+
+  void _toggleView(TwinView v) =>
+      setState(() => _view = _view == v ? TwinView.free : v);
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = widget.lang;
+    return LayoutBuilder(builder: (context, box) {
+      final height = (box.maxWidth * 1.08).clamp(340.0, 440.0);
+      return Container(
+        height: height,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: K.glassBorder),
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.2),
+            radius: 0.95,
+            colors: [
+              K.primarySoft,
+              Color.lerp(K.primarySoft, K.surface, 0.6)!,
+              K.surface,
+            ],
+            stops: const [0, 0.55, 1],
+          ),
+          boxShadow: K.lift,
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              top: 44,
+              bottom: 52,
+              child: FootTwin(
+                side: _side,
+                view: _view,
+                src: _mine[_side],
+                alt: S.t(lang, 'twin.title'),
+                zoneLabel: (z) => S.t(lang, 'zone.$z'),
+              ),
+            ),
+            PositionedDirectional(
+              start: 14,
+              top: 14,
+              child: _Pill(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: K.glow,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              color: K.glow.withAlpha(70), spreadRadius: 4),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(S.t(lang, 'twin.title'),
+                        style: K.label.copyWith(
+                            color: K.primary, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+            ),
+            PositionedDirectional(
+              end: 12,
+              top: 10,
+              child: _Segmented(
+                options: [S.t(lang, 'twin.left'), S.t(lang, 'twin.right')],
+                selected: _side == FootSide.left ? 0 : 1,
+                onSelect: (i) => setState(
+                    () => _side = i == 0 ? FootSide.left : FootSide.right),
+              ),
+            ),
+            PositionedDirectional(
+              start: 16,
+              end: 12,
+              bottom: 12,
+              child: Row(
+                children: [
+                  Icon(Icons.threesixty_rounded, size: 18, color: K.muted),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(S.t(lang, 'twin.hint'),
+                        style: K.label, overflow: TextOverflow.ellipsis),
+                  ),
+                  _ViewChip(
+                    label: S.t(lang, 'twin.top'),
+                    selected: _view == TwinView.top,
+                    onTap: () => _toggleView(TwinView.top),
+                  ),
+                  const SizedBox(width: 6),
+                  _ViewChip(
+                    label: S.t(lang, 'twin.sole'),
+                    selected: _view == TwinView.sole,
+                    onTap: () => _toggleView(TwinView.sole),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class _Pill extends StatelessWidget {
+  final Widget child;
+  const _Pill({required this.child});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: K.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: K.glassBorder),
+        ),
+        child: child,
+      );
+}
+
+class _Segmented extends StatelessWidget {
+  final List<String> options;
+  final int selected;
+  final ValueChanged<int> onSelect;
+
+  const _Segmented(
+      {required this.options, required this.selected, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: K.surfaceMuted,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < options.length; i++)
+            Semantics(
+              button: true,
+              selected: i == selected,
+              child: GestureDetector(
+                onTap: () => onSelect(i),
+                child: AnimatedContainer(
+                  duration: KMotion.standard,
+                  constraints: const BoxConstraints(minHeight: 38),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: i == selected ? K.surface : Colors.transparent,
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: i == selected
+                        ? [
+                            BoxShadow(
+                                color: Colors.black.withAlpha(18),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1)),
+                          ]
+                        : const [],
+                  ),
+                  child: Text(
+                    options[i],
+                    style: K.label.copyWith(
+                      color: i == selected ? K.ink : K.muted,
+                      fontWeight:
+                          i == selected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ViewChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ViewChip(
+      {required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: KMotion.standard,
+            constraints: const BoxConstraints(minHeight: 38),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: selected ? K.primary : K.surface,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: selected ? K.primary : K.glassBorder),
+            ),
+            child: Text(
+              label,
+              style: K.label.copyWith(
+                color: selected ? K.onPrimary : K.ink,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------- daily check
+
+class _CheckCard extends StatelessWidget {
   final String lang;
   final bool done;
   final int streak;
@@ -167,7 +434,7 @@ class _CheckPanel extends StatefulWidget {
   final VoidCallback onStart;
   final VoidCallback? onSeeResult;
 
-  const _CheckPanel({
+  const _CheckCard({
     required this.lang,
     required this.done,
     required this.streak,
@@ -177,123 +444,188 @@ class _CheckPanel extends StatefulWidget {
   });
 
   @override
-  State<_CheckPanel> createState() => _CheckPanelState();
-}
-
-class _CheckPanelState extends State<_CheckPanel>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pulse = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 2200));
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _sync();
-  }
-
-  @override
-  void didUpdateWidget(covariant _CheckPanel oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _sync();
-  }
-
-  void _sync() {
-    final run = !widget.done && !KMotion.reduced(context);
-    if (run && !_pulse.isAnimating) {
-      _pulse.repeat(reverse: true);
-    } else if (!run && _pulse.isAnimating) {
-      _pulse.stop();
-    }
-  }
-
-  @override
-  void dispose() {
-    _pulse.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final lang = widget.lang;
-    final done = widget.done;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
-      decoration: BoxDecoration(
-        color: K.primarySoft,
-        borderRadius: BorderRadius.circular(K.r28),
-      ),
+    final sub = done
+        ? S.t(lang, 'home.nextTomorrow')
+        : '${photos.clamp(0, 4)} ${S.t(lang, 'today.photosOf')}';
+    return KCard(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  S.t(lang, 'home.todayTitle'),
-                  style: K.h1.copyWith(color: K.primaryStrong),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: done ? K.okSoft : K.primarySoft,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  done ? Icons.check_rounded : Icons.photo_camera_outlined,
+                  color: done ? K.ok : K.primary,
                 ),
               ),
-              if (widget.streak > 0)
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(S.t(lang, 'home.todayTitle'), style: K.h2),
+                    const SizedBox(height: 2),
+                    Text(sub, style: K.small),
+                  ],
+                ),
+              ),
+              if (streak > 0)
                 KTag(
-                  '${widget.streak} ${S.t(lang, 'home.streak')}',
-                  icon: Icons.event_available_rounded,
+                  '$streak ${S.t(lang, 'home.streak')}',
+                  icon: Icons.local_fire_department_outlined,
                   color: K.primaryStrong,
-                  background: K.surface,
+                  background: K.primarySoft,
                 ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            done ? S.t(lang, 'home.nextTomorrow') : S.t(lang, 'home.todaySub'),
-            style: K.body.copyWith(color: K.primaryStrong),
-          ),
-          const SizedBox(height: 18),
-          AnimatedBuilder(
-            animation: _pulse,
-            builder: (context, _) => PhotoPositions(
-              taken: widget.photos.clamp(0, 4),
-              showNext: !done,
-              pulse: Curves.easeInOut.transform(_pulse.value),
-              ground: K.primarySoft,
-              labels: [
-                for (final key in const [
-                  'check.rightSole',
-                  'check.leftSole',
-                  'check.rightTop',
-                  'check.leftTop'
-                ])
-                  S.t(lang, key),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Center(
-            child: Text(
-              '${widget.photos.clamp(0, 4)} ${S.t(lang, 'today.photosOf')}',
-              style: K.label.copyWith(color: K.primaryStrong),
-            ),
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           if (done)
             FilledButton.tonalIcon(
-              onPressed: widget.onSeeResult,
+              onPressed: onSeeResult,
               style: FilledButton.styleFrom(
-                backgroundColor: K.surface,
+                backgroundColor: K.primarySoft,
                 foregroundColor: K.primaryStrong,
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18)),
+                minimumSize: const Size.fromHeight(52),
               ),
               icon: const Icon(Icons.description_outlined, size: 21),
               label: Text(S.t(lang, 'home.seeToday')),
             )
           else
             FilledButton.icon(
-              onPressed: widget.onStart,
-              icon: const Icon(Icons.photo_camera_outlined, size: 22),
+              onPressed: onStart,
+              style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52)),
+              icon: const Icon(Icons.photo_camera_outlined, size: 21),
               label: Text(S.t(lang, 'home.start')),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------- tiles
+
+class _Tiles extends StatelessWidget {
+  final String lang;
+  final bool checkDone;
+  final VoidCallback onGlucose;
+
+  const _Tiles(
+      {required this.lang, required this.checkDone, required this.onGlucose});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = RoutineStore.instance;
+    final doneSet = {...store.done, if (checkDone) 'check'};
+    final count = RoutineStore.steps.where(doneSet.contains).length;
+    final total = RoutineStore.steps.length;
+
+    final readings = KhatwaStore.instance
+        .entriesOfType('glycemia')
+        .where((e) => e['value'] != null)
+        .toList()
+      ..sort((a, b) => '${b['date']}'.compareTo('${a['date']}'));
+    final latest = readings.isEmpty ? null : readings.first;
+    final date = latest == null ? null : DateTime.tryParse('${latest['date']}');
+    const tabular = [FontFeature.tabularFigures()];
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: KCard(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 46,
+                    height: 46,
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(end: total == 0 ? 0 : count / total),
+                      duration: KMotion.standard,
+                      builder: (context, v, _) => CircularProgressIndicator(
+                        value: v,
+                        strokeWidth: 5,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: K.surfaceMuted,
+                        color: K.glow,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('$count/$total',
+                            style: K.h2
+                                .copyWith(fontSize: 20, fontFeatures: tabular)),
+                        Text(S.t(lang, 'twin.care'),
+                            style: K.label, maxLines: 2),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: KCard(
+              onTap: onGlucose,
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    date == null
+                        ? S.t(lang, 'today.glucose')
+                        : '${S.t(lang, 'today.glucose')} · ${formatDate(date)}',
+                    style: K.label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  if (latest == null)
+                    Row(
+                      children: [
+                        Icon(Icons.add_rounded, size: 20, color: K.primary),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(S.t(lang, 'today.glucose.add'),
+                              style: K.bodyStrong.copyWith(color: K.primary)),
+                        ),
+                      ],
+                    )
+                  else
+                    Text.rich(
+                      TextSpan(children: [
+                        TextSpan(
+                            text: '${latest['value']} ',
+                            style: K.h2
+                                .copyWith(fontSize: 20, fontFeatures: tabular)),
+                        TextSpan(
+                            text: '${latest['unit'] ?? 'mg/dL'}',
+                            style: K.label),
+                      ]),
+                    ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -407,8 +739,8 @@ class _RoutineRow extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: done ? K.primary : Colors.transparent,
-                    border:
-                        Border.all(color: done ? K.primary : K.control, width: 2),
+                    border: Border.all(
+                        color: done ? K.primary : K.control, width: 2),
                   ),
                   child: AnimatedSwitcher(
                     duration: KMotion.standard,
@@ -456,7 +788,7 @@ class _RoutineRow extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------- tip and glucose
+// ---------------------------------------------------------------- tip
 
 class _TipCard extends StatelessWidget {
   final LearnArticle article;
@@ -490,63 +822,6 @@ class _TipCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GlucoseRow extends StatelessWidget {
-  final String lang;
-  final VoidCallback onAdd;
-
-  const _GlucoseRow({required this.lang, required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    final readings = KhatwaStore.instance
-        .entriesOfType('glycemia')
-        .where((e) => e['value'] != null)
-        .toList()
-      ..sort((a, b) => '${b['date']}'.compareTo('${a['date']}'));
-    final latest = readings.isEmpty ? null : readings.first;
-    final date = latest == null ? null : DateTime.tryParse('${latest['date']}');
-
-    return KCard(
-      padding: const EdgeInsets.fromLTRB(20, 18, 14, 18),
-      child: Row(
-        children: [
-          Expanded(
-            child: latest == null
-                ? Text(S.t(lang, 'today.glucose.none'), style: K.body)
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            '${latest['value']}',
-                            style: K.display.copyWith(
-                              fontFeatures: const [
-                                FontFeature.tabularFigures()
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text('${latest['unit'] ?? 'mg/dL'}', style: K.small),
-                        ],
-                      ),
-                      if (date != null) Text(formatDate(date), style: K.small),
-                    ],
-                  ),
-          ),
-          TextButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.add_rounded),
-            label: Text(S.t(lang, 'today.glucose.add')),
           ),
         ],
       ),

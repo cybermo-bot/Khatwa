@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/learn_content.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
-import '../../ui/foot_art.dart';
-import '../../ui/foot_shapes.dart';
+import '../../ui/k_image.dart';
 import '../../ui/strings.dart';
 import '../article_page.dart';
 
@@ -29,76 +29,85 @@ class LearnTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 10),
-          // Know your feet: the healthy foot is the reference for everything else.
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-            decoration: BoxDecoration(
-              color: K.primarySoft,
-              borderRadius: BorderRadius.circular(K.r28),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(info(LearnSection.know).title.of(lang),
-                    style: K.h1.copyWith(color: K.primaryStrong)),
-                const SizedBox(height: 4),
-                Text(info(LearnSection.know).subtitle.of(lang),
-                    style: K.body.copyWith(color: K.primaryStrong)),
-                const SizedBox(height: 18),
-                const FeetPair(height: 170, view: FootView.top),
-                const SizedBox(height: 18),
-                FilledButton.icon(
-                  onPressed: () => open(healthy),
-                  icon: const Icon(Icons.favorite_outline_rounded, size: 21),
-                  label: Text(healthy.title.of(lang)),
-                ),
-                const SizedBox(height: 10),
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: K.surface,
-                    foregroundColor: K.primaryStrong,
-                  ),
-                  onPressed: () => open(howTo),
-                  icon: const Icon(Icons.search_rounded, size: 21),
-                  label: Text(S.t(lang, 'today.care.check')),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // The one thing no one should miss.
+          const SizedBox(height: 6),
+          // The one thing no one should miss: urgent signs point to 190.
           KPressable(
             onTap: () => open(whenDoctor),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
+              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
               decoration: BoxDecoration(
                 color: K.dangerSoft,
-                borderRadius: BorderRadius.circular(K.r20),
+                borderRadius: BorderRadius.circular(K.r24),
+                border: Border.all(color: K.danger.withAlpha(60)),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.local_hospital_outlined,
-                      color: K.danger, size: 28),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(whenDoctor.title.of(lang),
-                            style: K.h2.copyWith(color: K.danger)),
-                        const SizedBox(height: 2),
-                        Text(whenDoctor.summary.of(lang),
-                            style: K.body.copyWith(color: K.ink)),
-                      ],
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.local_hospital_outlined,
+                          color: K.danger, size: 26),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(whenDoctor.title.of(lang),
+                                style: K.h2.copyWith(color: K.danger)),
+                            const SizedBox(height: 2),
+                            Text(whenDoctor.summary.of(lang),
+                                style: K.small.copyWith(color: K.ink)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: K.danger,
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: K.danger,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(48),
+                    ),
+                    onPressed: () => launchUrl(Uri(scheme: 'tel', path: '190')),
+                    icon: const Icon(Icons.call_rounded, size: 20),
+                    label: Text(LearnLabels.callEmergency.of(lang)),
                   ),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 28),
+          // Know your feet: the healthy foot is the reference for everything else.
+          KSectionLabel(info(LearnSection.know).title.of(lang)),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 4, bottom: 14),
+            child:
+                Text(info(LearnSection.know).subtitle.of(lang), style: K.body),
+          ),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _FeatureCard(
+                    image: 'sign_healthy',
+                    icon: Icons.favorite_outline_rounded,
+                    title: healthy.title.of(lang),
+                    onTap: () => open(healthy),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _FeatureCard(
+                    image: 'care_check_mirror',
+                    icon: Icons.search_rounded,
+                    title: S.t(lang, 'today.care.check'),
+                    onTap: () => open(howTo),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 32),
@@ -164,19 +173,15 @@ class _SignsGrid extends StatelessWidget {
     return KPressable(
       onTap: () => onOpen(a),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
-        decoration: BoxDecoration(
-          color: K.surface,
-          borderRadius: BorderRadius.circular(K.r20),
-          border: K.isDark ? Border.all(color: K.line) : null,
-          boxShadow: K.lift,
-        ),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 14),
+        decoration: K.glassDecoration(
+            radius: K.r20, border: urgent ? K.danger.withAlpha(90) : null),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Stack(
               children: [
-                ArticleArt(article: a, height: 128),
+                ArticleArt(article: a, height: 116),
                 if (urgent)
                   PositionedDirectional(
                     top: 8,
@@ -234,5 +239,43 @@ class _SignsGrid extends StatelessWidget {
       }
       return Column(children: rows);
     });
+  }
+}
+
+/// A picture card: the illustration on top, the title under it.
+class _FeatureCard extends StatelessWidget {
+  final String image;
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _FeatureCard({
+    required this.image,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      onTap: onTap,
+      radius: K.r20,
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 116,
+            child: KImage(image, icon: icon, radius: K.r14),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(title, style: K.bodyStrong),
+          ),
+        ],
+      ),
+    );
   }
 }
