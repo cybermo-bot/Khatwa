@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'create_account.dart';
+import '../ui/app_state.dart';
+import '../data/khatwa_store.dart';
 import '../ui/app_theme.dart';
 
 class MedicalInformationPage extends StatefulWidget {
@@ -24,6 +25,17 @@ class _MedicalInformationPageState
   final additionalController = TextEditingController();
 
   String? diabetesType;
+
+  @override
+  void initState() {
+    super.initState();
+    final store = KhatwaStore.instance;
+    const types = {'type1', 'type2', 'gestational', 'other'};
+    if (types.contains(store.diabetesType)) diabetesType = store.diabetesType;
+    medicationsController.text = store.medications;
+    allergiesController.text = store.allergies;
+    diseasesController.text = store.otherConditions;
+  }
 
   final Map<String, Map<String, String>> texts = {
     'English': {
@@ -52,7 +64,7 @@ class _MedicalInformationPageState
           'Anything else you want your healthcare team to know',
       'private':
           'Your medical information is private and securely protected.',
-      'continue': 'Continue',
+      'continue': 'Save',
       'error': 'Please select your diabetes type.',
     },
 
@@ -84,7 +96,7 @@ class _MedicalInformationPageState
           'Toute autre information importante',
       'private':
           'Vos informations médicales sont privées et protégées.',
-      'continue': 'Continuer',
+      'continue': 'Enregistrer',
       'error':
           'Veuillez sélectionner votre type de diabète.',
     },
@@ -117,7 +129,7 @@ class _MedicalInformationPageState
           'أي معلومات أخرى تريد أن يعرفها فريقك الطبي',
       'private':
           'معلوماتك الطبية خاصة ومحمية بشكل آمن.',
-      'continue': 'متابعة',
+      'continue': 'حفظ',
       'error':
           'يرجى اختيار نوع السكري.',
     },
@@ -150,18 +162,18 @@ class _MedicalInformationPageState
           'أي حاجة أخرى تحب الفريق الطبي يعرفها',
       'private':
           'معلوماتك الطبية خاصة ومأمّنة.',
-      'continue': 'نكمل',
+      'continue': 'سجّل',
       'error': 'إختار نوع السكري.',
     },
   };
 
   @override
   Widget build(BuildContext context) {
-    final t = texts[widget.language]!;
+    final t = texts[appLanguage.value]!;
 
     final isRTL =
-        widget.language == 'العربية' ||
-        widget.language == 'تونسي';
+        appLanguage.value == 'العربية' ||
+        appLanguage.value == 'تونسي';
 
     return Directionality(
       textDirection:
@@ -174,6 +186,7 @@ class _MedicalInformationPageState
           backgroundColor: K.ground,
           elevation: 0,
           leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
@@ -261,6 +274,7 @@ class _MedicalInformationPageState
                       const SizedBox(height: 10),
 
                       DropdownButtonFormField<String>(
+                        isExpanded: true,
                         initialValue: diabetesType,
 
                         decoration: InputDecoration(
@@ -407,16 +421,19 @@ class _MedicalInformationPageState
                         return;
                       }
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CreateAccountPage(
-                            language:
-                                widget.language,
-                          ),
-                        ),
+                      final extra = [
+                        diseasesController.text.trim(),
+                        if (yearsController.text.trim().isNotEmpty)
+                          '${t['years']}: ${yearsController.text.trim()}',
+                        additionalController.text.trim(),
+                      ].where((s) => s.isNotEmpty).join(' · ');
+                      KhatwaStore.instance.saveMedicalInformation(
+                        diabetesType: diabetesType,
+                        medications: medicationsController.text.trim(),
+                        allergies: allergiesController.text.trim(),
+                        otherConditions: extra,
                       );
+                      Navigator.pop(context);
                     },
 
                     style:

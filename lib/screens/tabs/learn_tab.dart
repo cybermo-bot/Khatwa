@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../features/diet/diet_page.dart';
+import '../../features/common.dart';
 import '../../data/learn_content.dart';
 import '../../ui/app_state.dart';
 import '../../ui/app_theme.dart';
@@ -144,6 +146,16 @@ class LearnTab extends StatelessWidget {
           const SizedBox(height: 32),
           KSectionLabel(info(LearnSection.food).title.of(lang)),
           KGroup(children: [
+            KGroupRow(
+              icon: Icons.restaurant_rounded,
+              title: tr('Alimentation : quoi manger, et combien',
+                  aeb: 'الماكلة: شنوّة تاكل، وقدّاش', ar: 'التغذية: ماذا تأكل وكم', en: 'Food: what to eat, and how much'),
+              subtitle: tr('Assiette, aliments tunisiens, Ramadan, hypoglycémie',
+                  aeb: 'الصحفة، الماكلة التونسية، رمضان، هبوط السكر',
+                  ar: 'الطبق، الأطعمة التونسية، رمضان، انخفاض السكر',
+                  en: 'The plate, Tunisian foods, Ramadan, low blood sugar'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DietPage())),
+            ),
             for (final a in articlesIn(LearnSection.food))
               KGroupRow(
                 icon: a.icon,

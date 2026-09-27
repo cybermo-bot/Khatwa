@@ -31,7 +31,8 @@ class TwinActions extends StatelessWidget {
   void _open(BuildContext context, Widget page) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
 
   @override
-  Widget build(BuildContext context) => Row(children: [
+  Widget build(BuildContext context) => IntrinsicHeight(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _Action(
           icon: Icons.threed_rotation_rounded,
           label: tr('Mon pied 3D', aeb: 'ساقي 3D', ar: 'قدمي 3D', en: 'My 3D foot'),
@@ -50,7 +51,7 @@ class TwinActions extends StatelessWidget {
           primary: true,
           onTap: () => _open(context, const VoicePage()),
         ),
-      ]);
+      ]));
 }
 
 /// Opens the twin when there is one, else the scan.
@@ -110,6 +111,8 @@ class _Action extends StatelessWidget {
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(label,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       style: K.bodyStrong.copyWith(fontSize: 14.5, color: primary ? K.onPrimary : K.ink)),
                 ),

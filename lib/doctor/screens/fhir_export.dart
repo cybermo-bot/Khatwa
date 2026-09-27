@@ -65,7 +65,7 @@ Future<void> showFhirExport(BuildContext context, DoctorRepository repo, Patient
               child: Row(children: [
                 Expanded(child: Text('Bundle FHIR R4 · ${patient.displayName}', style: DText.h2(p))),
                 IconButton(
-                  tooltip: 'Fermer',
+                  tooltip: dl('Fermer', 'Close'),
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => Navigator.of(dialogContext).pop(),
                 ),
@@ -82,7 +82,7 @@ Future<void> showFhirExport(BuildContext context, DoctorRepository repo, Patient
               padding: const EdgeInsets.all(14),
               child: FilledButton.icon(
                 icon: const Icon(Icons.copy_rounded, size: 18),
-                label: const Text('Copier'),
+                label: Text(dl('Copier', 'Copy')),
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: json));
                   if (dialogContext.mounted) Navigator.of(dialogContext).pop();

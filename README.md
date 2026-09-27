@@ -218,7 +218,10 @@ Left and right feet are coded with SNOMED CT (22335008, 7769000), units with UCU
 - The compute server checks every Supabase sign-in, and refuses another patient's record (tested)
 - Photos are re-encoded without EXIF (no GPS, no phone model); uploads have size limits
 - Server data encrypted at rest (AES-256-GCM); an erasure cannot be undone by a scan still processing
-- On the phone: local accounts, hashed passwords, encrypted local data, automatic lock
+- Sign-up confirms the e-mail with a 6-digit code (Supabase Auth); sign-in asks for the code too, except on a device where "Rester connecté" was ticked in the last 30 days
+- On the phone: local accounts, hashed passwords, and everything stored is encrypted with a key sealed by a key derived from the password (older PIN accounts move over at their next sign-in)
+- Automatic sign out after 10 minutes without activity, unless "Rester connecté" was ticked on that device
+- "Continuer en invité": a guest account with no data typed, which can become a real account later
 
 ---
 
@@ -234,7 +237,7 @@ flutter build web --release # the QR demo site
 | Link | Opens |
 |---|---|
 | `https://khatwa-demo.netlify.app/?demo` | a guest patient, straight to the 3D home |
-| `https://khatwa-demo.netlify.app/?medecin` | the doctor dashboard (then "Connecter aux données") |
+| `https://khatwa-demo.netlify.app/?medecin` | the doctor dashboard, live after the demo doctor signs in |
 
 The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build.
 

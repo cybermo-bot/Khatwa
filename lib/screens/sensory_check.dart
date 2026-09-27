@@ -128,13 +128,13 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 18,
+                  runSpacing: 8,
                   children: [
                     _legend(K.ok, S.t(lang, 'sens.felt')),
-                    const SizedBox(width: 18),
                     _legend(K.danger, S.t(lang, 'sens.notFelt')),
-                    const SizedBox(width: 18),
                     _legend(K.line, S.t(lang, 'sens.untested')),
                   ],
                 ),
@@ -208,7 +208,7 @@ class _SensoryCheckPageState extends State<SensoryCheckPage> {
           for (final point in onSide)
             FootMapMarker(
               position: Offset(point.dx, point.dy),
-              size: 38,
+              size: 48,
               child: _Dot(
                 state: results[point.id],
                 label: S.t(lang, point.labelKey),
@@ -234,26 +234,36 @@ class _Dot extends StatelessWidget {
     final background =
         state == null ? K.card : (state! ? K.okSoft : K.dangerSoft);
 
+    // A 48 px target around the 38 px dot.
     return Tooltip(
       message: label,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: background,
-            shape: BoxShape.circle,
-            border: Border.all(color: color, width: state == null ? 1.4 : 2.2),
-          ),
-          child: state == null
-              ? null
-              : Icon(
-                  state! ? Icons.check_rounded : Icons.close_rounded,
-                  size: 19,
-                  color: color,
-                ),
+      child: Semantics(
+        button: true,
+        label: label,
+        value: state == null ? null : (state! ? '✓' : '✗'),
+        excludeSemantics: true,
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Center(
+              child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: background,
+              shape: BoxShape.circle,
+              border:
+                  Border.all(color: color, width: state == null ? 1.4 : 2.2),
+            ),
+            child: state == null
+                ? null
+                : Icon(
+                    state! ? Icons.check_rounded : Icons.close_rounded,
+                    size: 19,
+                    color: color,
+                  ),
+          )),
         ),
       ),
     );

@@ -21,6 +21,7 @@ class _Msg {
   final String urgency; // none | soon | urgent
   final List<String> articles;
   bool pending; // a voice message sent, its words not back yet
+  bool failed = false; // could not reach Khatwa
   _Msg(this.mine, this.text, {this.urgency = 'none', this.articles = const [], this.pending = false});
 }
 
@@ -38,7 +39,9 @@ class VoicePage extends StatefulWidget {
 class _VoicePageState extends State<VoicePage> {
   final _server = KhatwaServer();
   final _recorder = AudioRecorder();
-  final _player = AudioPlayer();
+  // Made on first use: opening the page does not start the audio engine.
+  AudioPlayer? _audio;
+  AudioPlayer get _player => _audio ??= AudioPlayer();
   final _tts = FlutterTts();
   final _stt = SpeechToText();
   final _msgs = <_Msg>[];
@@ -68,7 +71,7 @@ class _VoicePageState extends State<VoicePage> {
   void dispose() {
     _limit?.cancel();
     _recorder.dispose();
-    _player.dispose();
+    _audio?.dispose();
     _tts.stop();
     _stt.stop();
     _scroll.dispose();
@@ -103,7 +106,7 @@ class _VoicePageState extends State<VoicePage> {
     if (_starting || _recording) return;
     _starting = true;
     try {
-      await _player.stop();
+      await _audio?.stop();
       await _tts.stop();
       if (_deviceStt) {
         if (!await _stt.initialize()) {
@@ -211,6 +214,7 @@ class _VoicePageState extends State<VoicePage> {
   void _failed(_Msg mine, bool voice) => setState(() {
         _thinking = false;
         mine.pending = false;
+        mine.failed = true;
         if (voice) mine.text = tr('Message vocal non envoyé', aeb: 'الرسالة ما تبعثتش', ar: 'لم تُرسل الرسالة', en: 'Voice message not sent');
       });
 
@@ -270,7 +274,7 @@ class _VoicePageState extends State<VoicePage> {
           onDown: _down,
           onUp: _up,
           onStopVoice: () async {
-            await _player.stop();
+            await _audio?.stop();
             await _tts.stop();
             setState(() => _speaking = false);
           },
@@ -290,16 +294,21 @@ class _VoicePageState extends State<VoicePage> {
 class _Welcome extends StatelessWidget {
   const _Welcome();
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, box) => SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: (box.maxHeight - 48).clamp(0, double.infinity)),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.record_voice_over_rounded, size: 64, color: K.primary),
           const SizedBox(height: 16),
           Text(tr('Parlez à Khatwa', aeb: 'اضغط على الزر و احكي', ar: 'اضغط على الزر وتحدّث', en: 'Talk to Khatwa'), textAlign: TextAlign.center, style: K.h2),
           const SizedBox(height: 8),
           Text(tr('Maintenez le bouton et parlez, relâchez pour envoyer. Ou touchez une fois pour commencer, une fois pour envoyer.', aeb: 'شدّ على الزر و احكي، و سيّبو باش تبعث.', ar: 'اضغط على الزر مطوّلًا وتحدّث، ثم اتركه للإرسال.', en: 'Hold the button and speak, release to send. Or tap once to start, once to send.'),
               textAlign: TextAlign.center, style: K.body.copyWith(color: K.muted)),
-        ]),
+            ]),
+          ),
+        ),
       );
 }
 
@@ -328,6 +337,17 @@ class _Bubble extends StatelessWidget {
             ])
           else
             Text(m.text, textDirection: dirOf(m.text), style: K.body.copyWith(fontSize: 17, height: 1.5)),
+          if (m.failed) ...[
+            const SizedBox(height: 6),
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.cloud_off_rounded, size: 16, color: K.inkSoft),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(tr('Non envoyé', aeb: 'ما تبعثش', ar: 'لم يُرسل', en: 'Not sent'),
+                    style: K.small.copyWith(color: K.inkSoft)),
+              ),
+            ]),
+          ],
           if (m.articles.isNotEmpty) ...[
             const SizedBox(height: 8),
             Wrap(spacing: 6, runSpacing: 6, children: [
@@ -356,7 +376,10 @@ class _UrgencyTag extends StatelessWidget {
       Icon(urgent ? Icons.emergency_rounded : Icons.schedule_rounded, size: 20, color: colour),
       const SizedBox(width: 6),
       Flexible(
-        child: Text(urgent ? 'Urgent : 190 / عاجل' : 'À voir dans les 24 h / في ظرف 24 ساعة',
+        child: Text(
+            urgent
+                ? tr('Urgent : 190', aeb: 'عاجل: 190', ar: 'عاجل: 190', en: 'Urgent: 190')
+                : tr('À voir dans les 24 h', aeb: 'يتشاف في ظرف 24 ساعة', ar: 'يُفحص خلال 24 ساعة', en: 'To be seen within 24 h'),
             style: TextStyle(color: colour, fontWeight: FontWeight.w700, fontSize: 14)),
       ),
     ]);
@@ -413,7 +436,7 @@ class _Controls extends StatelessWidget {
             TextButton.icon(onPressed: onStopVoice, icon: const Icon(Icons.volume_off_rounded), label: Text(tr('Arrêter la voix', aeb: 'وقّف الصوت', ar: 'أوقف الصوت', en: 'Stop the voice'))),
           Semantics(
             button: true,
-            label: 'Parler à Khatwa',
+            label: tr('Parler à Khatwa', aeb: 'احكي مع خطوة', ar: 'تحدّث مع خطوة', en: 'Talk to Khatwa'),
             child: Listener(
               onPointerDown: (_) => onDown(),
               onPointerUp: (_) => onUp(),

@@ -3,6 +3,7 @@ import 'package:diabetic_foot_app/doctor/screens/doctor_dashboard.dart';
 import 'package:diabetic_foot_app/doctor/screens/patient_view.dart';
 import 'package:diabetic_foot_app/doctor/screens/triage_board.dart';
 import 'package:diabetic_foot_app/doctor/ui/style.dart';
+import 'package:diabetic_foot_app/ui/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,6 +47,16 @@ void main() {
     expect(find.descendant(of: kpiUrgent, matching: find.text('2')), findsOneWidget);
     expect({rowName(tester, 0), rowName(tester, 1)}, {'Patient 03', 'Patient 11'});
     expect(find.text('Orteil noirci signalé'), findsOneWidget);
+  });
+
+  testWidgets('the board follows the app language in English', (tester) async {
+    appLanguage.value = 'English';
+    addTearDown(() => appLanguage.value = 'تونسي');
+    await pumpDashboard(tester, const Size(420, 1400));
+    expect(find.text('Patients followed'), findsOneWidget);
+    expect(find.text('Urgent alerts'), findsOneWidget);
+    expect(find.text('Clinical dashboard'), findsOneWidget);
+    expect(find.text('Patients suivis'), findsNothing);
   });
 
   testWidgets('search filters by pseudonym', (tester) async {

@@ -76,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     // The sample shows the step itself, so it ignores the
                     // current scale.
                     top: Text(
-                      'Aa',
+                      S.isRtl(lang) ? 'أب' : 'Aa',
                       textScaler: TextScaler.noScaling,
                       style: TextStyle(
                         fontFamily: K.family,

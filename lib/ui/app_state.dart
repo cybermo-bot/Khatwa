@@ -6,6 +6,32 @@ import 'strings.dart';
 /// App-wide language. Changing it rebuilds the whole app, including direction.
 final ValueNotifier<String> appLanguage = ValueNotifier<String>(S.fallback);
 
+/// False until the three first-launch cards were seen or skipped.
+final ValueNotifier<bool> appOnboarded = ValueNotifier<bool>(true);
+
+const String _kOnboardedKey = 'khatwa_onboarded';
+
+Future<void> loadOnboarded() async {
+  final prefs = await SharedPreferences.getInstance();
+  appOnboarded.value = prefs.getBool(_kOnboardedKey) ?? false;
+}
+
+Future<void> finishOnboarding() async {
+  appOnboarded.value = true;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(_kOnboardedKey, true);
+}
+
+const String _kLanguageKey = 'khatwa_language';
+
+/// Restores the chosen language, then remembers every change.
+Future<void> loadLanguage() async {
+  final prefs = await SharedPreferences.getInstance();
+  final stored = prefs.getString(_kLanguageKey);
+  if (stored != null && S.languages.contains(stored)) appLanguage.value = stored;
+  appLanguage.addListener(() => prefs.setString(_kLanguageKey, appLanguage.value));
+}
+
 /// Text size, for patients with reduced vision. Many people with diabetes have
 /// retinopathy, so this is not a cosmetic setting.
 final ValueNotifier<double> appTextScale = ValueNotifier<double>(1.0);
@@ -89,6 +115,63 @@ class LanguageButton extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Language switch that names the current language, for the first screens:
+/// someone who cannot read the current language still finds their own.
+class LanguagePill extends StatelessWidget {
+  const LanguagePill({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return PopupMenuButton<String>(
+      tooltip: S.t(appLanguage.value, 'app.language'),
+      onSelected: (value) => appLanguage.value = value,
+      position: PopupMenuPosition.under,
+      itemBuilder: (context) => [
+        for (final language in S.languages)
+          PopupMenuItem<String>(
+            value: language,
+            height: 48,
+            child: Row(
+              children: [
+                if (language == appLanguage.value)
+                  const Icon(Icons.check_rounded, size: 18)
+                else
+                  const SizedBox(width: 18),
+                const SizedBox(width: 10),
+                Text(language, style: const TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+      ],
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: scheme.outline, width: 1.2),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.translate_rounded, size: 18, color: scheme.primary),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(appLanguage.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: scheme.onSurface)),
+            ),
+            const SizedBox(width: 2),
+            Icon(Icons.expand_more_rounded, size: 18, color: scheme.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
   }
 }
