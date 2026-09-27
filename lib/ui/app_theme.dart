@@ -307,6 +307,8 @@ class K {
     );
 
     const buttonShape = StadiumBorder();
+    final focusRing = WidgetStateProperty.resolveWith<BorderSide?>(
+        (states) => states.contains(WidgetState.focused) ? BorderSide(color: ink, width: 2) : null);
     OutlineInputBorder inputBorder(Color color, [double width = 1.2]) =>
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(r14),
@@ -321,6 +323,8 @@ class K {
       scaffoldBackgroundColor: ground,
       splashFactory: InkSparkle.splashFactory,
       highlightColor: Colors.transparent,
+      // Keyboard and switch-access focus must be easy to see.
+      focusColor: primary.withAlpha(_dark ? 70 : 46),
       dividerColor: line,
       textTheme: TextTheme(
         headlineMedium: display,
@@ -349,17 +353,20 @@ class K {
           textStyle: const TextStyle(
               fontFamily: family, fontSize: 17, fontWeight: FontWeight.w600),
           elevation: 0,
-        ),
+        ).copyWith(side: focusRing),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: ink,
           backgroundColor: _dark ? glass : surface,
           minimumSize: const Size.fromHeight(56),
-          side: BorderSide(color: _dark ? glassBorder : control, width: 1.2),
           shape: buttonShape,
           textStyle: const TextStyle(
               fontFamily: family, fontSize: 16, fontWeight: FontWeight.w500),
+        ).copyWith(
+          side: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.focused)
+              ? BorderSide(color: ink, width: 2)
+              : BorderSide(color: _dark ? glassBorder : control, width: 1.2)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(

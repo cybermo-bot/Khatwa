@@ -391,7 +391,7 @@ class _Segmented extends StatelessWidget {
                 onTap: () => onSelect(i),
                 child: AnimatedContainer(
                   duration: KMotion.standard,
-                  constraints: const BoxConstraints(minHeight: 38),
+                  constraints: const BoxConstraints(minHeight: 48),
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(
@@ -443,7 +443,7 @@ class _ViewChip extends StatelessWidget {
           onTap: onTap,
           child: AnimatedContainer(
             duration: KMotion.standard,
-            constraints: const BoxConstraints(minHeight: 38),
+            constraints: const BoxConstraints(minHeight: 48),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(

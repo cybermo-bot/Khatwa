@@ -149,7 +149,7 @@ class LanguagePill extends StatelessWidget {
           ),
       ],
       child: Container(
-        constraints: const BoxConstraints(minHeight: 44),
+        constraints: const BoxConstraints(minHeight: 48),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: scheme.surface,
