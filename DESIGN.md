@@ -23,26 +23,36 @@ colors:
   danger: "#C0352B"
   danger-soft: "#FBE7E4"
   shadow: "#14323A"
-  night-ground: "#0C1417"
-  night-surface: "#132126"
-  night-surface-muted: "#1A2B31"
-  night-ink: "#E9F0F1"
-  night-ink-soft: "#B3C2C6"
-  night-muted: "#8CA0A5"
-  night-line: "#22363C"
-  night-control: "#5E7880"
-  night-primary: "#6FC3CE"
-  night-primary-strong: "#9ADBE3"
-  night-primary-soft: "#173B42"
-  night-on-primary: "#062A30"
-  night-accent: "#D2A6E0"
-  night-accent-soft: "#2F2437"
-  night-ok: "#8BD06A"
-  night-ok-soft: "#1C2E14"
-  night-warn: "#EAB55A"
+  night-ground: "#07131A"
+  night-surface: "#0D2029"
+  night-surface-muted: "#132C37"
+  night-ink: "#EAF6F3"
+  night-ink-soft: "#BCD2D0"
+  night-muted: "#93ADB0"
+  night-line: "#1E3B46"
+  night-control: "#62868E"
+  night-primary: "#19C3B5"
+  night-primary-strong: "#8CEBDD"
+  night-primary-soft: "#0F3A3E"
+  night-on-primary: "#03211F"
+  night-accent: "#CBA8E8"
+  night-accent-soft: "#261F36"
+  night-ok: "#8BD68A"
+  night-ok-soft: "#15301C"
+  night-warn: "#F0B85C"
   night-warn-soft: "#33280F"
-  night-danger: "#F2857B"
-  night-danger-soft: "#3A1C1A"
+  night-danger: "#FF7D72"
+  night-danger-soft: "#3D1716"
+  night-glass: "#0F2430 at 62%"
+  night-glass-border: "#E6FFFB at 14%"
+  night-glow: "#19C3B5"
+  night-mint: "#8CEBDD"
+  night-light-a: "#19C3B5 at 25%"
+  night-light-b: "#0E5A66 at 20%"
+  glass: "#FFFFFF at 78%"
+  glass-border: "#DDE4E7"
+  glow: "#0E5A66"
+  mint: "#1F7A6E"
   skin-fair: "#F0CBAE"
   skin-medium: "#E2AE88"
   skin-deep: "#9C6644"
@@ -91,7 +101,7 @@ typography:
 rounded:
   well: "12px"
   control: "16px"
-  button: "18px"
+  button: "20px"
   surface: "24px"
   hero: "28px"
   pill: "999px"
@@ -186,6 +196,87 @@ components:
 ---
 
 # Design System: Khatwa
+
+## v3 "Clinical futuristic" (demo, September 2026)
+
+v3 is the look of the Telehealth Connect demo, for an audience of ministers,
+doctors and international decision makers, still readable by older patients.
+It changes looks only: behaviour and texts are those of v2. Where this section
+and the v2 text below disagree, **v3 wins**; the v2 text is kept for the rules
+that still hold (triage colours, control edges, sentence case, tabular
+figures, nav scale cap, full width labels, one trailing affordance).
+
+### Theme
+- **Dark by default.** `appThemeMode` starts at dark (`lib/ui/app_state.dart`).
+  Light (the v2 day palette, unchanged) and "follow the phone" stay in Settings.
+- **Night palette v3:** deep navy ground `#07131A`, surfaces `#0D2029`, soft
+  white ink `#EAF6F3`, bright teal `#19C3B5` for action and glow, mint
+  `#8CEBDD` for text on teal washes. Red only for urgent. All body text pairs
+  clear 4.5:1 on ground and surface.
+- **New tokens** in `KPalette` and `K` (the v2 names are all kept):
+  `glass`, `glassBorder`, `glow`, `mint`, `lightA`, `lightB`, `K.r24`,
+  `K.number` (34, 600, tabular figures), `K.glassDecoration()`.
+
+### Surfaces
+- **`KBackdrop`:** the ground lit by two soft radial teal lights (top start,
+  low end). Every `KPage`, the shell and `BasePage` sit on it. Decorative only.
+- **`GlassCard`:** frosted glass: background blur (18), translucent fill with a
+  faint top light, 1 px light edge, rounded 24, a deep soft shadow at night.
+  `glow: true` adds a teal halo for the one thing that matters most on a
+  screen (the daily check card, the Learn hero). `tint` makes a flat tinted
+  card (triage panels). Blur uses `BackdropFilter.grouped` inside the
+  backdrop's `BackdropGroup`, so many cards cost one blur pass.
+- **`KCard` and `KGroup`** are now glass cards, same API.
+- **`KFrosted`:** a frosted strip; used by the page bottom bar and by
+  **`KFrostedNavBar`**, the patient app's navigation bar (text scale capped
+  at 1.0 as before, indicator rounded 16 on primary-soft).
+- **`KBento` / `KBentoTile` / `KStat`:** bento grid for dashboards: two
+  columns on a phone, four from 700 px, tiles span 1 or 2, a row shares the
+  tallest height; `KStat` is a glass number tile (big tabular number, label,
+  icon).
+- Buttons round 20, outlined buttons, chips, fields and segmented buttons
+  are glass at night with the glass edge; focus is teal.
+
+### Motion
+200 to 300 ms implicit animations (`KMotion.standard` 280, `gentle` now 300).
+No gimmicks; everything still goes still with reduced motion.
+
+### Illustrations: no more drawn feet
+All code-drawn feet are gone (`FootArtPainter`, `FeetPair`, `SignArt`,
+`SignPainter`, `FootShape`, `FootGuidePainter`, `FootBadgePainter`).
+Illustrations are images in `assets/images/*.png`, shown by **`KImage`**
+(`lib/ui/k_image.dart`). While an image does not exist yet, `KImage` shows a
+glass tile with a soft teal light, an icon and an optional short label, so
+every screen looks finished either way.
+
+| Where | Image |
+| --- | --- |
+| Articles (`articleImages()` in `lib/ui/sign_art.dart`) | `sign_*`, `care_*` (nails adds `sign_nail_fungus`, socks and shoes adds `care_socks`, beach uses `care_no_barefoot`) |
+| Learn hero | `sign_healthy` |
+| Daily check banner | `scan_setup` |
+| Logo | `khatwa_logo` (brand icon) |
+| Photo positions, slots, capture chips, capture ghost | `map_sole`, `map_top` via `FootMap` |
+
+Not yet placed: `scan_helper`, `scan_sole`, `hero_twin`, `hero_doctor`
+(`hero_twin` is meant for the 3D Today tab, owned by the local session).
+
+### Tap maps
+**`FootMap`** (`lib/ui/foot_map.dart`) shows `map_sole.png` or `map_top.png`
+(rendered from the 3D model) with zones from `assets/images/map_zones.json`:
+normalised polygons named as in `assets/models/foot_regions.json`, for a
+LEFT foot with the big toe on the right edge, 1:2 portrait; the right foot is
+the mirror. Zones can be highlighted (breathing with a pulse), selected, and
+tapped (`onZoneTap`, with semantics buttons per zone), and markers can be
+placed on the map. While the images are missing, the zones draw a quiet
+mosaic of the foot. `FootMapPair` shows both feet, left on the left; feet
+never mirror for right-to-left. App teaching zones map to map zones through
+`FootZone.regions`. The sensory check places its test points on the sole map
+and lights the zone of any point not felt.
+
+The skin tone setting is kept; it now shows round skin swatches.
+
+---
+
 
 This file records the patient app as built at the end of Phase 0 (the five-tab shell, articles, settings). It is derived from the shipped code in `lib/ui/app_theme.dart`, `lib/ui/foot_art.dart`, `lib/ui/sign_art.dart`, `lib/ui/foot_shapes.dart`, `lib/screens/shell.dart`, `lib/screens/tabs/`, `lib/screens/article_page.dart` and `lib/screens/settings_page.dart`. Phases 1 to 5 build on it. The finish review passed with disposition "ship" after four rounds; the current captures are `.impeccable/review/round4` (160 renders from the Flutter test renderer, light and dark, four languages).
 
