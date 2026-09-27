@@ -64,14 +64,15 @@ class _SettingsPageState extends State<SettingsPage> {
             valueListenable: appTextScale,
             builder: (context, scale, _) => _ChoiceRow(
               children: [
-                for (final (option, sample) in const [
-                  (1.0, 17.0),
-                  (1.15, 22.0),
-                  (1.3, 27.0),
+                // The key is written out: on the web 1.0 prints as "1".
+                for (final (option, sample, key) in const [
+                  (1.0, 17.0, '1.0'),
+                  (1.15, 22.0, '1.15'),
+                  (1.3, 27.0, '1.3'),
                 ])
                   _ChoiceTile(
                     selected: scale == option,
-                    label: S.t(lang, 'settings.textSize.$option'),
+                    label: S.t(lang, 'settings.textSize.$key'),
                     onTap: () => saveTextScale(option),
                     // The sample shows the step itself, so it ignores the
                     // current scale.
