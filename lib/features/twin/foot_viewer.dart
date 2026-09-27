@@ -76,8 +76,12 @@ class _FootViewerState extends State<FootViewer> {
     if (mounted) setState(() => _src = src);
   }
 
+  // Widget tests have no web view to draw 3D in.
+  static final bool _inTest = !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+
   @override
   Widget build(BuildContext context) {
+    if (_inTest) return const Center(child: Icon(Icons.view_in_ar_rounded, size: 48));
     final src = _src;
     if (src == null) return const Center(child: CircularProgressIndicator());
     return ModelViewer(

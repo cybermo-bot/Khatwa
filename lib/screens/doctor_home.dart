@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/auth_store.dart';
+import '../data/cloud.dart';
+import '../doctor/data/supabase_repository.dart';
 import '../doctor/screens/doctor_dashboard.dart';
 import '../data/case_store.dart';
 import '../data/fhir_export.dart';
@@ -25,11 +27,26 @@ class DoctorHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final account = AuthStore.instance.current;
     final lang = appLanguage.value;
-    return DoctorDashboard(
-      subtitle: account == null
-          ? null
-          : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
+    return AnimatedBuilder(
+      animation: KhatwaCloud.instance,
+      builder: (context, _) {
+        final live = KhatwaCloud.instance.isDoctor;
+        return DoctorDashboard(
+      // Live Supabase data once the doctor is signed in there; synthetic demo data before.
+      key: ValueKey(live),
+      repository: live ? SupabaseDoctorRepository() : null,
+      subtitle: live
+          ? 'Données partagées en direct'
+          : account == null
+              ? null
+              : '${account.name}${account.speciality.isEmpty ? '' : ' · ${account.speciality}'}',
       actions: [
+        if (!live)
+          IconButton(
+            tooltip: 'Connecter aux données des patients',
+            icon: const Icon(Icons.cloud_sync_outlined, size: 21),
+            onPressed: () => _connect(context),
+          ),
         IconButton(
           tooltip: 'Dossiers reçus',
           icon: const Icon(Icons.inbox_outlined, size: 21),
@@ -65,6 +82,42 @@ class DoctorHomePage extends StatelessWidget {
           },
         ),
       ],
+    );
+      },
+    );
+  }
+
+  /// Doctor sign-in to the shared data (the team gives the email and password).
+  Future<void> _connect(BuildContext context) async {
+    final email = TextEditingController();
+    final password = TextEditingController();
+    String? error;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: const Text('Données des patients'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            TextField(controller: email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'E-mail')),
+            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: 'Mot de passe')),
+            if (error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(error!, style: TextStyle(color: K.danger))),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Annuler')),
+            FilledButton(
+              onPressed: () async {
+                final e = await KhatwaCloud.instance.signInDoctor(email.text, password.text);
+                if (e == null) {
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                } else {
+                  setState(() => error = e);
+                }
+              },
+              child: const Text('Se connecter'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

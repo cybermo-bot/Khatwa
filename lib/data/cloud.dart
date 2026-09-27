@@ -39,10 +39,20 @@ class KhatwaCloud extends ChangeNotifier {
       await Supabase.initialize(url: _url, publishableKey: _key);
       ready = true;
       await _loadServer();
+      await _restoreDoctor();
     } catch (e) {
       lastError = '$e';
     }
     notifyListeners();
+  }
+
+  /// A doctor signed in on this device stays signed in (Supabase keeps the session).
+  Future<void> _restoreDoctor() async {
+    final user = db.auth.currentUser;
+    if (user == null || user.isAnonymous) return;
+    try {
+      _doctor = await db.from('doctors').select('user_id').eq('user_id', user.id).maybeSingle() != null;
+    } catch (_) {}
   }
 
   Future<void> _loadServer() async {

@@ -39,13 +39,17 @@ Future<void> main() async {
 /// account is made on the spot, so the 3D twin and the voice assistant are one
 /// tap away. Guest accounts hold no real data and are wiped after the event.
 Future<void> _demoQuickStart() async {
-  if (!kIsWeb || !Uri.base.queryParameters.containsKey('demo') || AuthStore.instance.isSignedIn) return;
+  final q = Uri.base.queryParameters;
+  final doctor = q.containsKey('medecin');
+  if (!kIsWeb || !(q.containsKey('demo') || doctor) || AuthStore.instance.isSignedIn) return;
   final r = Random.secure();
   final phone = '9${List.generate(7, (_) => r.nextInt(10)).join()}';
   final password = List.generate(16, (_) => 'abcdefghjkmnpqrstuvwxyz23456789'[r.nextInt(31)]).join();
+  // `?medecin` opens the doctor dashboard on the demo laptop (it then signs in to the shared data).
   final result = await AuthStore.instance.signUp(
-      name: 'Invité', phone: phone, password: password, confirm: password, pin: '2468', role: 'patient');
-  if (result == AuthError.none) unawaited(KhatwaCloud.instance.ensurePatient());
+      name: doctor ? 'Dr Démo' : 'Invité', phone: phone, password: password, confirm: password, pin: '2468',
+      role: doctor ? 'doctor' : 'patient');
+  if (result == AuthError.none && !doctor) unawaited(KhatwaCloud.instance.ensurePatient());
 }
 
 class KhatwaApp extends StatefulWidget {

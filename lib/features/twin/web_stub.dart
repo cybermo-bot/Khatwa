@@ -5,3 +5,7 @@ class File {
   final String path;
   Future<File> writeAsBytes(List<int> bytes) async => this;
 }
+
+class Platform {
+  static Map<String, String> get environment => const {};
+}
