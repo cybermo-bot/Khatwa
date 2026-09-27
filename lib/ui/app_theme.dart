@@ -78,33 +78,33 @@ class KPalette {
   });
 
   static const light = KPalette(
-    ground: Color(0xFFF2F4F5),
+    ground: Color(0xFFF4F7F8),
     surface: Color(0xFFFFFFFF),
-    surfaceMuted: Color(0xFFE8EDEF),
-    ink: Color(0xFF14232A),
-    inkSoft: Color(0xFF3F5058),
-    muted: Color(0xFF5F6F76),
-    line: Color(0xFFDDE4E7),
-    control: Color(0xFF76878E),
-    primary: Color(0xFF0E5A66),
-    primaryStrong: Color(0xFF0A434D),
-    primarySoft: Color(0xFFDDECEE),
+    surfaceMuted: Color(0xFFEEF3F4),
+    ink: Color(0xFF0F2A33),
+    inkSoft: Color(0xFF3E5560),
+    muted: Color(0xFF5B7078),
+    line: Color(0xFFE1E8EA),
+    control: Color(0xFF7C9197),
+    primary: Color(0xFF0E7C86),
+    primaryStrong: Color(0xFF0A5A62),
+    primarySoft: Color(0xFFE3F6F3),
     onPrimary: Color(0xFFFFFFFF),
     accent: Color(0xFF7A4A88),
     accentSoft: Color(0xFFF2EAF5),
-    ok: Color(0xFF3A7D1F),
-    okSoft: Color(0xFFE6F2DC),
+    ok: Color(0xFF2F7D32),
+    okSoft: Color(0xFFE5F3E0),
     warn: Color(0xFF9A5E00),
     warnSoft: Color(0xFFFBEDD5),
     danger: Color(0xFFC0352B),
-    dangerSoft: Color(0xFFFBE7E4),
-    shadow: Color(0xFF14323A),
-    glass: Color(0xC7FFFFFF),
-    glassBorder: Color(0xFFDDE4E7),
-    glow: Color(0xFF0E5A66),
-    mint: Color(0xFF1F7A6E),
-    lightA: Color(0x2E19C3B5),
-    lightB: Color(0x1F0E5A66),
+    dangerSoft: Color(0xFFFDECEA),
+    shadow: Color(0xFF0F2A33),
+    glass: Color(0xFFFFFFFF),
+    glassBorder: Color(0xFFE1E8EA),
+    glow: Color(0xFF14B8A6),
+    mint: Color(0xFF0A5A62),
+    lightA: Color(0x0014B8A6),
+    lightB: Color(0x000E7C86),
   );
 
   static const dark = KPalette(
@@ -129,12 +129,12 @@ class KPalette {
     danger: Color(0xFFFF7D72),
     dangerSoft: Color(0xFF3D1716),
     shadow: Color(0xFF000000),
-    glass: Color(0x9E0F2430),
-    glassBorder: Color(0x24E6FFFB),
+    glass: Color(0xFF0D2029),
+    glassBorder: Color(0xFF1E3B46),
     glow: Color(0xFF19C3B5),
     mint: Color(0xFF8CEBDD),
-    lightA: Color(0x4019C3B5),
-    lightB: Color(0x330E5A66),
+    lightA: Color(0x0019C3B5),
+    lightB: Color(0x000E5A66),
   );
 }
 
@@ -179,8 +179,8 @@ class K {
   static Color get lightA => _p.lightA;
   static Color get lightB => _p.lightB;
 
-  /// The v3 glass surface: translucent fill, a faint top light, a one pixel
-  /// light edge. [tint] replaces the fill for tinted cards.
+  /// The card surface of design A: white (night: deep teal), a one pixel
+  /// edge and one very soft shadow. [tint] makes a flat tinted card.
   static BoxDecoration glassDecoration({
     double radius = r24,
     Color? tint,
@@ -188,28 +188,10 @@ class K {
   }) =>
       BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
-        color: tint ?? glass,
-        gradient: tint != null
-            ? null
-            : LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.alphaBlend(
-                      Colors.white.withAlpha(_dark ? 12 : 40), glass),
-                  glass,
-                ],
-              ),
+        color: tint ?? surface,
         border: Border.all(
             color: border ?? glassBorder, width: border != null ? 1.4 : 1),
-        boxShadow: _dark
-            ? [
-                BoxShadow(
-                    color: Colors.black.withAlpha(60),
-                    blurRadius: 30,
-                    offset: const Offset(0, 14)),
-              ]
-            : lift,
+        boxShadow: tint != null ? const [] : lift,
       );
 
   // Earlier names, kept so every screen keeps compiling during the redesign.
@@ -222,13 +204,9 @@ class K {
       ? const []
       : [
           BoxShadow(
-              color: _p.shadow.withAlpha(14),
-              blurRadius: 24,
-              offset: const Offset(0, 8)),
-          BoxShadow(
               color: _p.shadow.withAlpha(10),
-              blurRadius: 3,
-              offset: const Offset(0, 1)),
+              blurRadius: 24,
+              offset: const Offset(0, 10)),
         ];
 
   // ---- radius ----
@@ -328,8 +306,7 @@ class K {
       onErrorContainer: danger,
     );
 
-    final buttonShape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20));
+    const buttonShape = StadiumBorder();
     OutlineInputBorder inputBorder(Color color, [double width = 1.2]) =>
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(r14),
@@ -685,7 +662,7 @@ class _Header extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(title,
-                        style: K.h1,
+                        style: K.h1.copyWith(fontSize: 30, letterSpacing: -0.4),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
                     if (subtitle != null) ...[
@@ -1230,8 +1207,8 @@ class KFrosted extends StatelessWidget {
   }
 }
 
-/// Frosted glass card: background blur, translucent fill, one pixel light
-/// edge and a faint inner light at the top. Rounded 24 px.
+/// The card of design A: white, one pixel edge, rounded 24, one soft
+/// shadow. [blur] is off by default: blur is slow on older phones.
 class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -1252,7 +1229,7 @@ class GlassCard extends StatelessWidget {
     this.radius = K.r24,
     this.tint,
     this.borderColor,
-    this.blur = true,
+    this.blur = false,
     this.onTap,
     this.glow = false,
   });
@@ -1402,8 +1379,10 @@ class KStat extends StatelessWidget {
   }
 }
 
-/// The frosted navigation bar of the patient app. Five labels must fit on a
-/// narrow phone at every text size, so the bar caps its own text scale.
+/// The floating navigation bar of design A: a white pill above the page,
+/// every destination with its icon and its label (older patients read the
+/// label, not the icon), the current one on a dark pill. Five labels must
+/// fit on a narrow phone at every text size, so the bar caps its own scale.
 class KFrostedNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
@@ -1418,49 +1397,100 @@ class KFrostedNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeBg = K.isDark ? K.primary : K.ink;
+    final activeFg = K.isDark ? K.onPrimary : Colors.white;
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.0),
       ),
-      child: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          backgroundColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          indicatorColor: K.primarySoft,
-          indicatorShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(K.r14)),
-          height: 74,
-          labelTextStyle: WidgetStateProperty.resolveWith(
-            (states) => TextStyle(
-              fontFamily: K.family,
-              fontSize: 13.5,
-              fontWeight: states.contains(WidgetState.selected)
-                  ? FontWeight.w600
-                  : FontWeight.w500,
-              color: states.contains(WidgetState.selected)
-                  ? K.primaryStrong
-                  : K.muted,
+      child: SafeArea(
+        top: false,
+        minimum: const EdgeInsets.only(bottom: 10),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+          child: Center(
+            heightFactor: 1,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Container(
+                height: 70,
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: K.surface,
+                  borderRadius: BorderRadius.circular(35),
+                  border: Border.all(color: K.glassBorder),
+                  boxShadow: [
+                    BoxShadow(
+                        color: K.isDark
+                            ? Colors.black.withAlpha(90)
+                            : const Color(0xFF0F2A33).withAlpha(30),
+                        blurRadius: 28,
+                        offset: const Offset(0, 10)),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    for (var i = 0; i < destinations.length; i++)
+                      Expanded(
+                        child: Semantics(
+                          selected: i == selectedIndex,
+                          button: true,
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30),
+                              onTap: () => onSelected(i),
+                              child: AnimatedContainer(
+                                duration: KMotion.standard,
+                                curve: KMotion.standardCurve,
+                                decoration: BoxDecoration(
+                                  color: i == selectedIndex
+                                      ? activeBg
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: IconTheme(
+                                  data: IconThemeData(
+                                    size: 23,
+                                    color:
+                                        i == selectedIndex ? activeFg : K.muted,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      i == selectedIndex
+                                          ? (destinations[i].selectedIcon ??
+                                              destinations[i].icon)
+                                          : destinations[i].icon,
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        destinations[i].label,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.fade,
+                                        softWrap: false,
+                                        style: TextStyle(
+                                          fontFamily: K.family,
+                                          fontSize: 11.5,
+                                          fontWeight: i == selectedIndex
+                                              ? FontWeight.w600
+                                              : FontWeight.w500,
+                                          color: i == selectedIndex
+                                              ? activeFg
+                                              : K.muted,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          iconTheme: WidgetStateProperty.resolveWith(
-            (states) => IconThemeData(
-              size: 25,
-              color: states.contains(WidgetState.selected)
-                  ? K.primaryStrong
-                  : K.muted,
-            ),
-          ),
-        ),
-        child: KFrosted(
-          border: Border(top: BorderSide(color: K.glassBorder)),
-          child: NavigationBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            selectedIndex: selectedIndex,
-            onDestinationSelected: onSelected,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            animationDuration: KMotion.standard,
-            destinations: destinations,
           ),
         ),
       ),
