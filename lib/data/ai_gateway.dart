@@ -304,15 +304,23 @@ class AiGateway {
           continue;
         }
         if (response.statusCode != 200) {
-          return null;
+          // Over quota or busy: the next model, then the server.
+          continue;
         }
 
-        return _textOf(jsonDecode(utf8.decode(response.bodyBytes)));
+        final text = _textOf(jsonDecode(utf8.decode(response.bodyBytes)));
+        if (text != null) return text;
       } catch (_) {
         continue;
       }
     }
-    return null;
+    // This device's key is used up or busy: the Khatwa server tries its own
+    // chain and its backup AI before the rules answer.
+    try {
+      return _textOf(await KhatwaServer().aiGenerate(jsonDecode(body) as Map<String, dynamic>));
+    } catch (_) {
+      return null;
+    }
   }
 
   /// The model's text from a generateContent answer, or null.
