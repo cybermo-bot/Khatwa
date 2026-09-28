@@ -287,7 +287,13 @@ class _CaptureGuidePageState extends State<CaptureGuidePage>
                           child: IgnorePointer(
                             child: Opacity(
                               opacity: _locked ? 0 : 0.28,
-                              child: FootMap(side: step.side, view: step.view),
+                              // The top map is drawn as seen by someone facing
+                              // the patient (toes down); photographing your own
+                              // feet from above, the toes point up.
+                              child: RotatedBox(
+                                quarterTurns: step.view == FootView.top ? 2 : 0,
+                                child: FootMap(side: step.side, view: step.view),
+                              ),
                             ),
                           ),
                         ),
