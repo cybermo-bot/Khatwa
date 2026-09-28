@@ -17,13 +17,21 @@
 
 <br/>
 
-<img src="docs/images/app-home.png" width="250" alt="Khatwa home: the patient's 3D foot"/>
-&nbsp;&nbsp;
-<img src="docs/images/app-voice-urgent.png" width="250" alt="The voice assistant raising an urgent sign with the 190 button"/>
-&nbsp;&nbsp;
-<img src="docs/images/qr-demo.png" width="220" alt="QR code to try Khatwa"/>
+<img src="docs/images/app-landing.png" width="200" alt="Khatwa welcome: the hologram foot, patient or health professional"/>
+&nbsp;
+<img src="docs/images/app-home.png" width="200" alt="Khatwa home: the patient's 3D foot and the daily check"/>
+&nbsp;
+<img src="docs/images/app-learn.png" width="200" alt="The education centre: illustrated warning signs and care"/>
+&nbsp;
+<img src="docs/images/app-voice-urgent.png" width="200" alt="The voice assistant raising an urgent sign with the 190 button"/>
 
-<sub>Home on the patient's 3D foot · an urgent sign told to the assistant · scan to try it (no install)</sub>
+<sub>Welcome · home on the patient's 3D foot · the education centre · an urgent sign told to the assistant</sub>
+
+<br/><br/>
+
+<img src="docs/images/qr-demo.png" width="160" alt="QR code to try Khatwa"/>
+
+<sub>Scan to try it on any phone, no install: <b>khatwa-demo.netlify.app</b></sub>
 
 </div>
 
