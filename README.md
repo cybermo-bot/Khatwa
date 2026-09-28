@@ -49,8 +49,13 @@ Khatwa makes that daily look easy, turns it into a **3D record that follows the 
 - **3D digital twin** of their own foot from a 25 s phone video around it, next to a printed A4 sheet
 - **The sole on the 3D foot**: one photo of the sole is placed on the twin (2 to 3 mm on straight-on photos in our tests), so a callus under the ball of the foot stays at the same spot, visit after visit
 - **Mark a sign** on any photo (callus, blister, wound, colour change, or "I don't know"), and get the advice of one triage table: *go now, call 190* / *see someone within 24 h* / *keep checking daily*
-- **Talk to Khatwa**: hold the button and ask, in **Tunisian derja**, Arabic, French or English; answers are spoken with a **Tunisian voice**
-- **Daily foot check**, risk profile (IWGDF 0 to 3), glucose log, 26 learning articles
+- **Talk to Khatwa**: hold the button and ask, in **Tunisian derja**, Arabic, French or English; the answer appears in 2 to 5 s and is spoken with a **Tunisian voice**
+- **Daily foot check**: four guided photos and a few questions, read by the AI and by the clinical rules; a swelling measured by the 3D twin counts too
+- **Education centre**: 26 illustrated articles (early warning signs, daily care, everyday life: hammam, beach, Ramadan, summer), 21 of them with a checked video from a health body or a clinician
+- **Food, without being strict**: 61 Tunisian foods (fruits included) with a portion anyone can see (your fist, your palm, 3 dates), carbohydrate, Ramadan, hypoglycaemia; no food is forbidden
+- **Reminders**: the evening foot check, care, glucose, a recheck two days after a worrying check, the visit the day before, the doctor's replies
+- **One account, any phone**: e-mail, password and a 6-digit code; a profile photo; guest mode for the curious
+- Risk profile (IWGDF 0 to 3), glucose log, messages from the doctor
 - **"Envoyer au médecin"**: twin, sole, signs and a FHIR bundle, in one tap
 
 </td>
@@ -95,8 +100,9 @@ flowchart LR
         VO["Voice assistant<br/>+ safety layer"]
         FH["FHIR R4 export"]
     end
-    G["Gemini<br/>speech + language"]
-    AZ["Azure Speech<br/>Tunisian voices"]
+    G["Gemini<br/>7 models, free tier"]
+    GQ["Backup AI<br/>Groq"]
+    AZ["Azure Speech<br/>hears and speaks,<br/>Tunisian voices"]
 
     A & W -->|"sign-in token"| C
     A & W <--> S
@@ -105,12 +111,14 @@ flowchart LR
     RT -->|"live"| DB
     DB <--> PG
     VO --> G
+    VO -.->|"Gemini busy<br/>or over quota"| GQ
     VO --> AZ
 ```
 
 - The apps talk to Supabase directly for their own data. Row-level security means a patient sees only their own record, and a doctor account sees the patients.
-- Heavy work (3D, photo mapping, the voice assistant) runs on the compute server, which checks the patient's Supabase sign-in and writes the results back to Supabase, where the doctor sees them live.
-- Patients are **pseudonymous** (a random reference like `k-7f3a9c2b1d`, a pseudonym like "Patient 07"). No name or phone number from the phone ever reaches the server.
+- Heavy work (3D, photo mapping, the voice assistant, the AI reading of the daily photos) runs on the compute server, which checks the patient's Supabase sign-in and writes the results back to Supabase, where the doctor sees them live.
+- **No one types an AI key**: the compute server holds the keys and answers for every device (web and phone). The keys never reach a browser.
+- Patient records are **pseudonymous** (a random reference like `k-7f3a9c2b1d`, a pseudonym like "Patient 07"): that is all the doctor board and the compute server see. The name stays in the patient's own sign-in account.
 
 ---
 
@@ -127,6 +135,8 @@ flowchart LR
 ```
 
 Every twin shares the **same mesh**: point number 5 000 is the same anatomical spot on every foot, at every visit. That is what lets Khatwa compare visits and keep a sign in its place.
+
+**The twin takes part in the daily check.** A growth of the foot since the first scan, beyond the measurement noise (volume, girth, widths), raises the check to *watch*, and to *see someone today* together with a colour change (a swollen, discoloured foot can be an infection or a Charcot foot). The AI gets the measured change as context. The home screen shows the patient's own foot as a hologram once it has been scanned.
 
 ### The sole, which a standing scan cannot see
 
@@ -162,8 +172,10 @@ sequenceDiagram
     participant Dr as Doctor dashboard
     P->>App: holds the button, speaks derja
     App->>S: voice message + sign-in token
-    S->>G: understand + answer from the Learn content
-    G-->>S: transcript, reply, urgency
+    S->>V: speech to text (Tunisian Arabic, French, English)
+    V-->>S: the words
+    S->>G: answer from the Learn content (fast model first)
+    G-->>S: reply, urgency (or a backup AI if Gemini is busy)
     S->>L: check the words against the triage table
     L-->>S: level can only go UP (never down)
     S-->>App: reply + urgency (+ 190 banner if urgent)
@@ -173,7 +185,8 @@ sequenceDiagram
 ```
 
 - **Deterministic safety layer**: a black toe, pus, fever with a foot problem, a spreading redness… always reach *go now, 190*, whatever the AI says. Clothing colours ("black socks") and general questions ("what are the signs of…?") do not raise false alarms. Tested with 170+ cases in derja, arabizi, French and English.
-- **No AI? Still works**: without a network key, answers come from the 26 reviewed Learn articles, with the same safety layer.
+- **Two AIs before any fallback**: Gemini (a chain of 7 models, each with its own free quota), then a backup AI (Groq) when Gemini is busy or over quota, for the voice and for the daily photos. Only if both fail does a rules-only answer from the 26 reviewed articles come in, as a safety net.
+- **Fast**: 2 to 5 s for the written answer through the public server, under 2 s more for the voice.
 - **Privacy**: no audio and no text of the conversation are stored. The doctor's alert carries only the sign labels.
 
 ---
@@ -188,6 +201,9 @@ sequenceDiagram
 | Swelling detection | **8 mm** detected, 4 mm below the noise | same benchmark |
 | Sole photo placement | **2 to 2.6 mm** median (straight on) | rendered sole photos, 10 camera set-ups |
 | Voice safety layer | **170+** test phrases pass | derja, arabizi, FR, EN, negations, doubt |
+| Voice answer time | **2 to 5 s** text, **< 2 s** more for speech | real audio, through the public server |
+| Backup AI | voice **1 to 2 s**, photo **< 1 s** | Gemini switched off on purpose |
+| One account, two devices | sign up on one, sign in on the other | two fresh browsers, live Supabase |
 | FHIR bundle | **0 errors** | official HL7 validator, R4 4.0.1 |
 | End to end | all checks pass | video → twin → change → photo → finding → voice → FHIR → erase |
 
@@ -219,7 +235,7 @@ Left and right feet are coded with SNOMED CT (22335008, 7769000), units with UCU
 - Photos are re-encoded without EXIF (no GPS, no phone model); uploads have size limits
 - Server data encrypted at rest (AES-256-GCM); an erasure cannot be undone by a scan still processing
 - Sign-up confirms the e-mail with a 6-digit code (Supabase Auth); sign-in asks for the code too, except on a device where "Rester connecté" was ticked in the last 30 days
-- On the phone: local accounts, hashed passwords, and everything stored is encrypted with a key sealed by a key derived from the password (older PIN accounts move over at their next sign-in)
+- Accounts live in Supabase Auth (the password is hashed there), so a patient signs in on any device with e-mail, password and the code; the health data recorded on a phone stays encrypted on that phone, with a key sealed by a key derived from the password (older PIN accounts move over at their next sign-in)
 - Automatic sign out after 10 minutes without activity, unless "Rester connecté" was ticked on that device
 - "Continuer en invité": a guest account with no data typed, which can become a real account later
 
@@ -239,7 +255,7 @@ flutter build web --release # the QR demo site
 | `https://khatwa-demo.netlify.app/?demo` | the intro, then the profile choice ("Continuer en invité" in one tap) |
 | `https://khatwa-demo.netlify.app/?medecin` | the doctor dashboard, live after the demo doctor signs in |
 
-The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build.
+The compute server (3D, sole mapping, voice, AI, FHIR) is a Python/FastAPI service kept in a separate repository with its own tests and benchmarks. The app finds it through Supabase (`app_config.server_url`), so its address can change without a new build. The AI and speech keys (Gemini, Groq, Azure) are set on that server only.
 
 <details>
 <summary><b>Project structure</b></summary>
@@ -247,10 +263,13 @@ The compute server (3D, sole mapping, voice, FHIR) is a Python/FastAPI service k
 ```
 lib/
   data/          accounts, encryption, cases, rules, AI gateway, FHIR,
+                 reminders, the 3D twin's signal for the daily check,
                  cloud.dart (Supabase), khatwa_server.dart (compute server)
   features/
     twin/        scan, 3D twin, sole photo, sign photo, 3D viewer
     voice/       the voice-first assistant
+    diet/        Tunisian foods, portions by hand, Ramadan, hypoglycaemia
+    messages/    the doctor's replies and the next visit
   doctor/        dashboard v2: triage board, patient view, public health,
                  demo and Supabase repositories
   screens/       home tabs, daily check, learn, settings, sign-in
